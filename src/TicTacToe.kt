@@ -17,7 +17,30 @@ data class TicTacToeState(
                 return null
         val newBoard = board.copy()
         newBoard[action.x, action.y] = action.piece
-        return TicTacToeState(newBoard, if(currentPlayer == TicTacToeField.Cross) TicTacToeField.Circle else TicTacToeField.Cross)
+        return TicTacToeState(newBoard, if (currentPlayer == TicTacToeField.Cross) TicTacToeField.Circle else TicTacToeField.Cross)
+    }
+
+    fun findWinner(): TicTacToeField? {
+        if(hasPieceWon(TicTacToeField.Cross))
+            return TicTacToeField.Cross
+        else if(hasPieceWon(TicTacToeField.Circle))
+            return TicTacToeField.Circle
+        return null
+    }
+
+    private fun hasPieceWon(piece: TicTacToeField): Boolean {
+        if ((board[0, 0] == piece && board[0, 1] == piece && board[0, 2] == piece) ||
+                (board[1, 0] == piece && board[1, 1] == piece && board[1, 2] == piece) ||
+                (board[2, 0] == piece && board[2, 1] == piece && board[2, 2] == piece))
+            return true
+        if ((board[0, 0] == piece && board[1, 0] == piece && board[2, 0] == piece) ||
+                (board[0, 1] == piece && board[1, 1] == piece && board[2, 1] == piece) ||
+                (board[0, 2] == piece && board[1, 2] == piece && board[2, 2] == piece))
+            return true
+        if ((board[0, 0] == piece && board[1, 1] == piece && board[2, 2] == piece) ||
+                (board[0, 2] == piece && board[1, 1] == piece && board[2, 0] == piece))
+            return true
+        return false
     }
 }
 

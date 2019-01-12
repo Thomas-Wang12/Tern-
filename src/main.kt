@@ -25,6 +25,9 @@ fun main(args: Array<String>) {
             if (newTicTacToe != null)
                 ticTacToe = newTicTacToe
             display.display(ticTacToe.board, getTicTacToeColor)
+            val winner = ticTacToe.findWinner()
+            if(winner != null)
+                println(winner.toString() + " has won!")
         }
     }
 
