@@ -10,9 +10,15 @@ fun main(args: Array<String>) {
     val ticTacToeButton = document.createElement("button") as HTMLButtonElement
     ticTacToeButton.textContent = "Tic Tac Toe"
     document.body!!.appendChild(ticTacToeButton)
+
     val virusButton = document.createElement("button") as HTMLButtonElement
     virusButton.textContent = "Virus"
     document.body!!.appendChild(virusButton)
+
+    val chessButton = document.createElement("button") as HTMLButtonElement
+    chessButton.textContent = "Chess"
+    document.body!!.appendChild(chessButton)
+
     val infoArea = document.createElement("div") as HTMLDivElement
     document.body!!.appendChild(infoArea)
     val canvas = document.createElement("canvas") as HTMLCanvasElement
@@ -29,6 +35,10 @@ fun main(args: Array<String>) {
     virusButton.addEventListener("click", {
         game?.end()
         game = VirusDisplay(canvas, infoArea)
+    })
+    chessButton.addEventListener("click", {
+        game?.end()
+        game = ChessDisplay(canvas, infoArea)
     })
 
 }
