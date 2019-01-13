@@ -1,7 +1,7 @@
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.HTMLDivElement
 
-class VirusDisplay(val canvas: HTMLCanvasElement, val infoArea: HTMLDivElement) {
+class VirusDisplay(val canvas: HTMLCanvasElement, val infoArea: HTMLDivElement) : GameDisplay {
     val players = mutableListOf("Player 1", "Player 2")
     var game = VirusState()
     val squareDisplay = SquareGridDisplay(canvas)
@@ -20,7 +20,7 @@ class VirusDisplay(val canvas: HTMLCanvasElement, val infoArea: HTMLDivElement) 
 
         var sourcePosition: Position? = null
 
-        squareDisplay.registerOnClick {
+        squareDisplay.onClick = {
             if(it.x >= 0 && it.y >= 0 && it.x < game.width && it.y < game.height) {
                 val source = sourcePosition
                 if(source == null){
@@ -43,5 +43,9 @@ class VirusDisplay(val canvas: HTMLCanvasElement, val infoArea: HTMLDivElement) 
                 }
             }
         }
+    }
+
+    override fun end(){
+        squareDisplay.end()
     }
 }

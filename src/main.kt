@@ -1,10 +1,18 @@
 import org.w3c.dom.CanvasRenderingContext2D
+import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.HTMLDivElement
+import org.w3c.dom.events.Event
 import kotlin.browser.document
 import kotlin.browser.window
 
 fun main(args: Array<String>) {
+    val ticTacToeButton = document.createElement("button") as HTMLButtonElement
+    ticTacToeButton.textContent = "Tic Tac Toe"
+    document.body!!.appendChild(ticTacToeButton)
+    val virusButton = document.createElement("button") as HTMLButtonElement
+    virusButton.textContent = "Virus"
+    document.body!!.appendChild(virusButton)
     val infoArea = document.createElement("div") as HTMLDivElement
     document.body!!.appendChild(infoArea)
     val canvas = document.createElement("canvas") as HTMLCanvasElement
@@ -13,9 +21,20 @@ fun main(args: Array<String>) {
     context.canvas.height = window.innerHeight
     document.body!!.appendChild(canvas)
 
-    // VirusDisplay(canvas, infoArea)
-    TicTacToeDisplay(canvas, infoArea)
+    var game: GameDisplay? = null
+    ticTacToeButton.addEventListener("click", {
+        game?.end()
+        game = TicTacToeDisplay(canvas, infoArea)
+    })
+    virusButton.addEventListener("click", {
+        game?.end()
+        game = VirusDisplay(canvas, infoArea)
+    })
 
+}
+
+interface GameDisplay {
+    fun end()
 }
 
 data class Position(val x: Int, val y: Int)

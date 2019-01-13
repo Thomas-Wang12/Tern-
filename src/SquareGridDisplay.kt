@@ -1,11 +1,13 @@
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLCanvasElement
+import org.w3c.dom.events.Event
 import org.w3c.dom.events.MouseEvent
 
 class SquareGridDisplay(val canvas: HTMLCanvasElement) {
     val context: CanvasRenderingContext2D = canvas.getContext("2d") as CanvasRenderingContext2D
     var fieldSize = 40.0
     var gridThickness = 1
+    var onClick: ((Position)-> Unit)? = null
 
     fun <T> display(grid: SquareGrid<T>,
                     fillStyle: (T) -> String,
@@ -34,13 +36,21 @@ class SquareGridDisplay(val canvas: HTMLCanvasElement) {
         }
     }
 
-    fun registerOnClick(onClick: (Position)-> Unit){
-        canvas.addEventListener("click", {
-            val bla = it as MouseEvent
-            val gridPosition = gridCoordsAt(bla.offsetX.toInt(), bla.offsetY.toInt())
-            if(gridPosition != null)
-                onClick(gridPosition)
-        })
+    val clickListener = { event: Event ->
+        event as MouseEvent
+        val gridPosition = gridCoordsAt(event.offsetX.toInt(), event.offsetY.toInt())
+        if(gridPosition != null)
+            onClick?.invoke(gridPosition)
+    }
+
+    init {
+        canvas.addEventListener("click", clickListener)
+    }
+
+    fun end() {
+        canvas.removeEventListener("click", clickListener)
+        val context = canvas.getContext("2d") as CanvasRenderingContext2D
+        context.clearRect(0.0,0.0, canvas.width.toDouble(), canvas.height.toDouble())
     }
 
     fun gridCoordsAt(canvasX: Int, canvasY: Int): Position? {
