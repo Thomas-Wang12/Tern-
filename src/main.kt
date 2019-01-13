@@ -5,6 +5,46 @@ import kotlin.browser.document
 import kotlin.browser.window
 
 fun main(args: Array<String>) {
+    val getVirusColor = { field: Int ->
+        when (field) {
+            0 -> "white"
+            1 -> "yellow"
+            2 -> "red"
+            else -> "green"
+        }
+    }
+    val display = SquareGridDisplay(getOrCreateCanvas())
+
+    var virus = VirusState()
+    display.display(virus.board, getVirusColor)
+
+    var sourcePosition: Position? = null
+
+    display.registerOnClick {
+        if(it.x >= 0 && it.y >= 0 && it.x < virus.width && it.y < virus.height) {
+            val source = sourcePosition
+            if(source == null){
+                sourcePosition = Position(it.x, it.y)
+                println("source" + sourcePosition)
+            }
+            else {
+                sourcePosition = null
+                val action = VirusAction(source, Position(it.x, it.y))
+                println("destination" + Position(it.x, it.y))
+                val newState = virus.nextState(action)
+                if (newState != null)
+                    virus = newState
+                display.display(virus.board, getVirusColor)
+                val winner = virus.findWinner()
+                if(winner != null)
+                    println(winner.toString() + " has won!")
+                else
+                    println("Current player: " + virus.currentPlayer)
+            }
+        }
+    }
+
+    /* TicTacToe
     val getTicTacToeColor = { field: TicTacToeField ->
         when (field) {
             TicTacToeField.Cross -> "green"
@@ -29,15 +69,7 @@ fun main(args: Array<String>) {
             if(winner != null)
                 println(winner.toString() + " has won!")
         }
-    }
-
-    /*display.display(ticTacToe.board, getTicTacToeColor)
-
-    val newTicTacToe = ticTacToe.nextState(TicTacToeAction(TicTacToeField.Cross, 1, 1))
-    if (newTicTacToe != null)
-        ticTacToe = newTicTacToe
-
-    display.display(ticTacToe.board, getTicTacToeColor)*/
+    }*/
 }
 
 var canvas: HTMLCanvasElement? = null
