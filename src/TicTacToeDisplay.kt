@@ -5,7 +5,7 @@ class TicTacToeDisplay(val canvas: HTMLCanvasElement, val infoArea: HTMLDivEleme
     val squareDisplay = SquareGridDisplay(canvas)
 
     init {
-        val getColor = { field: TicTacToeField ->
+        val getColor = { _: TicTacToeField, _: Int, _: Int ->
             "white"
         }
         val draw = { context: CanvasRenderingContext2D, fieldSize: Double, field: TicTacToeField, x: Int, y: Int ->

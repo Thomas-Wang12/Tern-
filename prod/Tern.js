@@ -282,7 +282,7 @@ var Tern = function (_, Kotlin) {
     this.squareDisplay = new SquareGridDisplay(this.canvas);
     var getColor = ChessDisplay_init$lambda;
     var draw = ChessDisplay_init$lambda_0;
-    this.squareDisplay.display_a10zx7$(this.game.board, getColor, draw);
+    this.squareDisplay.display_macai1$(this.game.board, getColor, draw);
     this.infoArea.textContent = 'Current player: ' + this.game.currentPlayer.toString();
     var sourcePosition = {v: null};
     this.squareDisplay.onClick = ChessDisplay_init$lambda_1(sourcePosition, this, getColor, draw);
@@ -290,8 +290,8 @@ var Tern = function (_, Kotlin) {
   ChessDisplay.prototype.end = function () {
     this.squareDisplay.end();
   };
-  function ChessDisplay_init$lambda(piece) {
-    return 'white';
+  function ChessDisplay_init$lambda(f, x, y) {
+    return (x % 2 === 0 ? y % 2 === 0 : y % 2 === 1) ? 'white' : 'grey';
   }
   function ChessDisplay_init$lambda_0(context, fieldSize, piece, x, y) {
     var tmp$;
@@ -329,7 +329,7 @@ var Tern = function (_, Kotlin) {
           var newState = this$ChessDisplay.game.nextState_sg5dg1$(action);
           if (newState != null)
             this$ChessDisplay.game = newState;
-          this$ChessDisplay.squareDisplay.display_a10zx7$(this$ChessDisplay.game.board, closure$getColor, closure$draw);
+          this$ChessDisplay.squareDisplay.display_macai1$(this$ChessDisplay.game.board, closure$getColor, closure$draw);
           var winner = this$ChessDisplay.game.findWinner();
           if (winner != null)
             this$ChessDisplay.infoArea.textContent = winner.toString() + ' has won!';
@@ -755,7 +755,7 @@ var Tern = function (_, Kotlin) {
     this.clickListener = SquareGridDisplay$clickListener$lambda(this);
     this.canvas.addEventListener('click', this.clickListener);
   }
-  SquareGridDisplay.prototype.display_a10zx7$ = function (grid, fillStyle, draw) {
+  SquareGridDisplay.prototype.display_macai1$ = function (grid, fillStyle, draw) {
     if (draw === void 0)
       draw = null;
     var tmp$, tmp$_0;
@@ -766,7 +766,7 @@ var Tern = function (_, Kotlin) {
     for (var y = 0; y < tmp$; y++) {
       tmp$_0 = grid.width;
       for (var x = 0; x < tmp$_0; x++) {
-        this.context.fillStyle = fillStyle(grid.get_vux9f0$(x, y));
+        this.context.fillStyle = fillStyle(grid.get_vux9f0$(x, y), x, y);
         this.context.fillRect(this.gridThickness + x * (this.fieldSize + this.gridThickness), this.gridThickness + y * (this.fieldSize + this.gridThickness), this.fieldSize, this.fieldSize);
         if (draw != null) {
           this.context.save();
@@ -967,14 +967,14 @@ var Tern = function (_, Kotlin) {
     this.squareDisplay = new SquareGridDisplay(this.canvas);
     var getColor = TicTacToeDisplay_init$lambda;
     var draw = TicTacToeDisplay_init$lambda_0;
-    this.squareDisplay.display_a10zx7$(this.game.board, getColor, draw);
+    this.squareDisplay.display_macai1$(this.game.board, getColor, draw);
     this.infoArea.textContent = 'Current player: ' + this.game.currentPlayer.toString();
     this.squareDisplay.onClick = TicTacToeDisplay_init$lambda_1(this, getColor, draw);
   }
   TicTacToeDisplay.prototype.end = function () {
     this.squareDisplay.end();
   };
-  function TicTacToeDisplay_init$lambda(field) {
+  function TicTacToeDisplay_init$lambda(f, f_0, f_1) {
     return 'white';
   }
   function TicTacToeDisplay_init$lambda_0(context, fieldSize, field, x, y) {
@@ -998,7 +998,7 @@ var Tern = function (_, Kotlin) {
         var newTicTacToe = this$TicTacToeDisplay.game.nextState_84fgc1$(action);
         if (newTicTacToe != null)
           this$TicTacToeDisplay.game = newTicTacToe;
-        this$TicTacToeDisplay.squareDisplay.display_a10zx7$(this$TicTacToeDisplay.game.board, closure$getColor, closure$draw);
+        this$TicTacToeDisplay.squareDisplay.display_macai1$(this$TicTacToeDisplay.game.board, closure$getColor, closure$draw);
         var winner = this$TicTacToeDisplay.game.findWinner();
         if (winner != null)
           this$TicTacToeDisplay.infoArea.textContent = winner.toString() + ' has won!';
@@ -1323,7 +1323,7 @@ var Tern = function (_, Kotlin) {
     this.game = new VirusState();
     this.squareDisplay = new SquareGridDisplay(this.canvas);
     var getColor = VirusDisplay_init$lambda;
-    this.squareDisplay.display_a10zx7$(this.game.board, getColor);
+    this.squareDisplay.display_macai1$(this.game.board, getColor);
     this.infoArea.textContent = 'Current player: ' + this.players.get_za3lpa$(this.game.currentPlayer - 1 | 0);
     var sourcePosition = {v: null};
     this.squareDisplay.onClick = VirusDisplay_init$lambda_0(this, sourcePosition, getColor);
@@ -1331,7 +1331,7 @@ var Tern = function (_, Kotlin) {
   VirusDisplay.prototype.end = function () {
     this.squareDisplay.end();
   };
-  function VirusDisplay_init$lambda(piece) {
+  function VirusDisplay_init$lambda(piece, f, f_0) {
     switch (piece) {
       case 0:
         return 'white';
@@ -1357,7 +1357,7 @@ var Tern = function (_, Kotlin) {
           var newState = this$VirusDisplay.game.nextState_ulwrck$(action);
           if (newState != null)
             this$VirusDisplay.game = newState;
-          this$VirusDisplay.squareDisplay.display_a10zx7$(this$VirusDisplay.game.board, closure$getColor);
+          this$VirusDisplay.squareDisplay.display_macai1$(this$VirusDisplay.game.board, closure$getColor);
           var winner = this$VirusDisplay.game.findWinner();
           if (winner != null)
             this$VirusDisplay.infoArea.textContent = this$VirusDisplay.players.get_za3lpa$(winner - 1 | 0) + ' has won!';

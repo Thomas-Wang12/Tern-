@@ -7,7 +7,7 @@ class VirusDisplay(val canvas: HTMLCanvasElement, val infoArea: HTMLDivElement) 
     val squareDisplay = SquareGridDisplay(canvas)
 
     init {
-        val getColor = { piece: Int ->
+        val getColor = { piece: Int, _: Int, _: Int ->
             when (piece) {
                 0 -> "white"
                 1 -> "yellow"

@@ -10,7 +10,7 @@ class SquareGridDisplay(val canvas: HTMLCanvasElement) {
     var onClick: ((Position)-> Unit)? = null
 
     fun <T> display(grid: SquareGrid<T>,
-                    fillStyle: (T) -> String,
+                    fillStyle: (T, x: Int, y: Int) -> String,
                     draw: ((context: CanvasRenderingContext2D, fieldSize: Double, field: T, x: Int, y: Int) -> Unit)? = null ) {
         context.fillStyle = "black"
         if (gridThickness > 0)
@@ -19,7 +19,7 @@ class SquareGridDisplay(val canvas: HTMLCanvasElement) {
                     grid.width * (fieldSize + gridThickness) + gridThickness)
         for (y in 0 until grid.height) {
             for (x in 0 until grid.width) {
-                context.fillStyle = fillStyle(grid[x, y])
+                context.fillStyle = fillStyle(grid[x, y], x, y)
                 context.fillRect(
                         gridThickness + x.toDouble() * (fieldSize + gridThickness),
                         gridThickness + y.toDouble() * (fieldSize + gridThickness),

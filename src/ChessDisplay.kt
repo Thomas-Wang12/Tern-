@@ -5,8 +5,11 @@ class ChessDisplay(val canvas: HTMLCanvasElement, val infoArea: HTMLDivElement) 
     val squareDisplay = SquareGridDisplay(canvas)
 
     init {
-        val getColor = { piece: ChessPiece? ->
-            "white"
+        val getColor = { _: ChessPiece?, x: Int, y: Int ->
+            if (if (x % 2 == 0) y % 2 == 0 else y % 2 == 1)
+                "white"
+            else
+                "grey"
         }
         val draw = { context: CanvasRenderingContext2D, fieldSize: Double, piece: ChessPiece?, x: Int, y: Int ->
             context.fillStyle = "black"
@@ -14,12 +17,12 @@ class ChessDisplay(val canvas: HTMLCanvasElement, val infoArea: HTMLDivElement) 
             context.textBaseline = CanvasTextBaseline.TOP
             val isBlack = piece?.player == ChessPlayer.Black
             when (piece?.type) {
-                ChessPieceType.King -> context.fillText(if(isBlack) "♚" else "♔", 0.0, 0.0)
-                ChessPieceType.Queen -> context.fillText(if(isBlack) "♛" else "♕", 0.0, 0.0)
-                ChessPieceType.Knight -> context.fillText(if(isBlack) "♞" else "♘", 0.0, 0.0)
-                ChessPieceType.Rook -> context.fillText(if(isBlack) "♜" else "♖", 0.0, 0.0)
-                ChessPieceType.Bishop -> context.fillText(if(isBlack) "♝" else "♗", 0.0, 0.0)
-                ChessPieceType.Pawn -> context.fillText(if(isBlack) "♟" else "♙", 0.0, 0.0)
+                ChessPieceType.King -> context.fillText(if (isBlack) "♚" else "♔", 0.0, 0.0)
+                ChessPieceType.Queen -> context.fillText(if (isBlack) "♛" else "♕", 0.0, 0.0)
+                ChessPieceType.Knight -> context.fillText(if (isBlack) "♞" else "♘", 0.0, 0.0)
+                ChessPieceType.Rook -> context.fillText(if (isBlack) "♜" else "♖", 0.0, 0.0)
+                ChessPieceType.Bishop -> context.fillText(if (isBlack) "♝" else "♗", 0.0, 0.0)
+                ChessPieceType.Pawn -> context.fillText(if (isBlack) "♟" else "♙", 0.0, 0.0)
             }
         }
         squareDisplay.display(game.board, getColor, draw)
@@ -28,13 +31,12 @@ class ChessDisplay(val canvas: HTMLCanvasElement, val infoArea: HTMLDivElement) 
         var sourcePosition: Position? = null
 
         squareDisplay.onClick = {
-            if(it.x >= 0 && it.y >= 0 && it.x < 8 && it.y < 8) {
+            if (it.x >= 0 && it.y >= 0 && it.x < 8 && it.y < 8) {
                 val source = sourcePosition
-                if(source == null){
+                if (source == null) {
                     sourcePosition = Position(it.x, it.y)
                     println("source" + sourcePosition)
-                }
-                else {
+                } else {
                     sourcePosition = null
                     val action = ChessAction(source, Position(it.x, it.y))
                     println("destination" + Position(it.x, it.y))
@@ -43,7 +45,7 @@ class ChessDisplay(val canvas: HTMLCanvasElement, val infoArea: HTMLDivElement) 
                         game = newState
                     squareDisplay.display(game.board, getColor, draw)
                     val winner = game.findWinner()
-                    if(winner != null)
+                    if (winner != null)
                         infoArea.textContent = winner.toString() + " has won!"
                     else
                         infoArea.textContent = "Current player: " + game.currentPlayer.toString()
