@@ -32,6 +32,8 @@ data class ChessState(
 ) {
     fun isLegal(action: ChessAction): Boolean {
         val piece = board[action.source] ?: return false
+        if (piece.player != currentPlayer)
+            return false
         return piece.isLegal(board, action)
     }
 

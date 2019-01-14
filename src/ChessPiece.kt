@@ -1,5 +1,8 @@
 import kotlin.math.abs
 
+/// Original code by Lasse
+/// Ported from Java by Kristjan
+
 data class ChessPiece(val type: ChessPieceType, val player: ChessPlayer, val hasMoved: Boolean = false) {
     fun isLegal(board: SquareGrid<ChessPiece?>, action: ChessAction): Boolean {
         return when (type) {
@@ -16,7 +19,80 @@ data class ChessPiece(val type: ChessPieceType, val player: ChessPlayer, val has
         //Checks if the step size is exactly one
         if (abs(action.source.x - action.destination.x) <= 1 && abs(action.source.y - action.destination.y) <= 1)
             return true
-        // TODO: castling
+        //The rest in this method is in case of castling
+        if (hasMoved || isInCheck(board, action.source))
+            return false
+        if (player === ChessPlayer.White) {
+            //If the castling is done with the rook to the left of the white king
+            if (action.source.x - action.destination.x == 2 && action.source.y == action.destination.y) {
+                val cornerPiece = board[0, 0]
+                //Checks if the corner piece is a rook of the correct colour and it has not moved
+                if (cornerPiece == null
+                        || cornerPiece.player !== ChessPlayer.White
+                        || cornerPiece.type !== ChessPieceType.Rook
+                        || cornerPiece.hasMoved)
+                    return false
+                //Checks if there is any pieces between the king and the rook
+                for (i in action.source.x - 1 downTo action.destination.x + 1)
+                    if (board[i, 0] != null)
+                        return false
+                //Checks if the king would be in check if it was standing between current position and the destination
+                if(!isIntermediatePositionSafe(board, action.source.copy(x = action.source.x - 1), action.source))
+                    return false
+                return true
+            } else if (action.source.x - action.destination.x == -2 && action.source.y == action.destination.y) {
+                val cornerPiece = board[board.width - 1, 0]
+                //Checks if the corner piece is a rook of the correct colour and it has not moved
+                if (cornerPiece == null
+                        || cornerPiece.player !== ChessPlayer.White
+                        || cornerPiece.type !== ChessPieceType.Rook
+                        || cornerPiece.hasMoved)
+                    return false
+                //Checks if there is any pieces between the king and the rook
+                for (i in action.source.x + 1 until action.destination.x)
+                    if (board[i, 0] != null)
+                        return false
+                //Checks if the king would be in check if it was standing between current position and the destination
+                if(!isIntermediatePositionSafe(board, action.source.copy(x = action.source.x + 1), action.source))
+                    return false
+                return true
+            }//If the castling is done with the rook to the right of the white king
+        } else {
+            //If the castling is done with the rook to the left of the black king
+            if (action.source.x - action.destination.x == 2 && action.source.y == action.destination.y) {
+                val cornerPiece = board[0, board.height - 1]
+                //Checks if the corner piece is a rook of the correct colour and it has not moved
+                if (cornerPiece == null
+                        || cornerPiece.player !== ChessPlayer.Black
+                        || cornerPiece.type !== ChessPieceType.Rook
+                        || cornerPiece.hasMoved)
+                    return false
+                //Checks if there is any pieces between the king and the rook
+                for (i in action.source.x - 1 downTo action.destination.x + 1)
+                    if (board[i, board.height - 1] != null)
+                        return false
+                //Checks if the king would be in check if it was standing between current position and the destination
+                if(!isIntermediatePositionSafe(board, action.source.copy(x = action.source.x - 1), action.source))
+                    return false
+                return true
+            } else if (action.source.x - action.destination.x == -2 && action.source.y == action.destination.y) {
+                val cornerPiece = board[board.width - 1, board.height - 1]
+                //Checks if the corner piece is a rook of the correct colour and it has not moved
+                if (cornerPiece == null
+                        || cornerPiece.player !== ChessPlayer.Black
+                        || cornerPiece.type !== ChessPieceType.Rook
+                        || cornerPiece.hasMoved)
+                    return false
+                //Checks if there is any pieces between the king and the rook
+                for (i in action.source.x + 1 until action.destination.x)
+                    if (board[i, board.height - 1] != null)
+                        return false
+                //Checks if the king would be in check if it was standing between current position and the destination
+                if(!isIntermediatePositionSafe(board, action.source.copy(x = action.source.x + 1), action.source))
+                    return false
+                return true
+            }//If the castling is done with the rook to the right of the black king
+        }
         return false
     }
 
@@ -119,6 +195,32 @@ data class ChessPiece(val type: ChessPieceType, val player: ChessPlayer, val has
                     return true
             }
             //TODO - en passant
+        }
+        return false
+    }
+
+    private fun isIntermediatePositionSafe(board: SquareGrid<ChessPiece?>, intermediatePosition: Position, originalPosition: Position): Boolean {
+        board[intermediatePosition] = this
+        board[originalPosition] = null
+        if(isInCheck(board, intermediatePosition)){
+            board[intermediatePosition] = null
+            board[originalPosition] = this
+            return false
+        }
+        board[intermediatePosition] = null
+        board[originalPosition] = this
+        return true
+    }
+
+    private fun isInCheck(board: SquareGrid<ChessPiece?>, position: Position): Boolean {
+        //Checks if any enemy piece (except the king) can move to this kings position
+        for (i in 0 until board.height) {
+            for (j in 0 until board.width) {
+                val piece = board[i,j]?: continue
+                if (piece.player != player && piece.type != ChessPieceType.King) // bit of a hack
+                    if(piece.isLegal(board, ChessAction(Position(i,j), position)))
+                        return true
+            }
         }
         return false
     }

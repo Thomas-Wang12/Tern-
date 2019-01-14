@@ -3,20 +3,603 @@ if (typeof kotlin === 'undefined') {
 }
 var Tern = function (_, Kotlin) {
   'use strict';
-  var throwCCE = Kotlin.throwCCE;
-  var ensureNotNull = Kotlin.ensureNotNull;
-  var Unit = Kotlin.kotlin.Unit;
-  var Kind_INTERFACE = Kotlin.Kind.INTERFACE;
   var Kind_CLASS = Kotlin.Kind.CLASS;
-  var numberToInt = Kotlin.numberToInt;
   var Enum = Kotlin.kotlin.Enum;
   var throwISE = Kotlin.throwISE;
-  var abs = Kotlin.kotlin.math.abs_za3lpa$;
-  var mutableListOf = Kotlin.kotlin.collections.mutableListOf_i5x0yv$;
+  var equals = Kotlin.equals;
+  var Unit = Kotlin.kotlin.Unit;
   var toString = Kotlin.toString;
   var println = Kotlin.kotlin.io.println_s8jyv4$;
+  var abs = Kotlin.kotlin.math.abs_za3lpa$;
+  var throwCCE = Kotlin.throwCCE;
+  var ensureNotNull = Kotlin.ensureNotNull;
+  var Kind_INTERFACE = Kotlin.Kind.INTERFACE;
+  var numberToInt = Kotlin.numberToInt;
+  var mutableListOf = Kotlin.kotlin.collections.mutableListOf_i5x0yv$;
+  ChessPieceType.prototype = Object.create(Enum.prototype);
+  ChessPieceType.prototype.constructor = ChessPieceType;
+  ChessPlayer.prototype = Object.create(Enum.prototype);
+  ChessPlayer.prototype.constructor = ChessPlayer;
   TicTacToeField.prototype = Object.create(Enum.prototype);
   TicTacToeField.prototype.constructor = TicTacToeField;
+  function ChessState(board, currentPlayer) {
+    if (board === void 0)
+      board = new SquareGrid(8, 8, ChessState_init$lambda);
+    if (currentPlayer === void 0)
+      currentPlayer = ChessPlayer$White_getInstance();
+    this.board = board;
+    this.currentPlayer = currentPlayer;
+  }
+  ChessState.prototype.isLegal_t6cjbe$ = function (action) {
+    var tmp$;
+    tmp$ = this.board.get_dfplqh$(action.source);
+    if (tmp$ == null) {
+      return false;
+    }
+    var piece = tmp$;
+    if (piece.player !== this.currentPlayer)
+      return false;
+    return piece.isLegal_xm7weo$(this.board, action);
+  };
+  ChessState.prototype.nextState_sg5dg1$ = function (action, skipLegalCheck) {
+    if (skipLegalCheck === void 0)
+      skipLegalCheck = false;
+    var tmp$;
+    if (!skipLegalCheck)
+      if (!this.isLegal_t6cjbe$(action))
+        return null;
+    var newBoard = this.board.copy_urw29u$();
+    newBoard.set_39d550$(action.destination, (tmp$ = this.board.get_dfplqh$(action.source)) != null ? tmp$.copy_9wx23a$(void 0, void 0, true) : null);
+    newBoard.set_39d550$(action.source, null);
+    return new ChessState(newBoard, this.currentPlayer === ChessPlayer$White_getInstance() ? ChessPlayer$Black_getInstance() : ChessPlayer$White_getInstance());
+  };
+  ChessState.prototype.findWinner = function () {
+    return null;
+  };
+  function ChessState_init$lambda(x, y) {
+    switch (y) {
+      case 0:
+        switch (x) {
+          case 0:
+            return new ChessPiece(ChessPieceType$Rook_getInstance(), ChessPlayer$White_getInstance());
+          case 1:
+            return new ChessPiece(ChessPieceType$Knight_getInstance(), ChessPlayer$White_getInstance());
+          case 2:
+            return new ChessPiece(ChessPieceType$Bishop_getInstance(), ChessPlayer$White_getInstance());
+          case 3:
+            return new ChessPiece(ChessPieceType$Queen_getInstance(), ChessPlayer$White_getInstance());
+          case 4:
+            return new ChessPiece(ChessPieceType$King_getInstance(), ChessPlayer$White_getInstance());
+          case 5:
+            return new ChessPiece(ChessPieceType$Bishop_getInstance(), ChessPlayer$White_getInstance());
+          case 6:
+            return new ChessPiece(ChessPieceType$Knight_getInstance(), ChessPlayer$White_getInstance());
+          case 7:
+            return new ChessPiece(ChessPieceType$Rook_getInstance(), ChessPlayer$White_getInstance());
+          default:return null;
+        }
+
+      case 1:
+        return new ChessPiece(ChessPieceType$Pawn_getInstance(), ChessPlayer$White_getInstance());
+      case 6:
+        return new ChessPiece(ChessPieceType$Pawn_getInstance(), ChessPlayer$Black_getInstance());
+      case 7:
+        switch (x) {
+          case 0:
+            return new ChessPiece(ChessPieceType$Rook_getInstance(), ChessPlayer$Black_getInstance());
+          case 1:
+            return new ChessPiece(ChessPieceType$Knight_getInstance(), ChessPlayer$Black_getInstance());
+          case 2:
+            return new ChessPiece(ChessPieceType$Bishop_getInstance(), ChessPlayer$Black_getInstance());
+          case 3:
+            return new ChessPiece(ChessPieceType$Queen_getInstance(), ChessPlayer$Black_getInstance());
+          case 4:
+            return new ChessPiece(ChessPieceType$King_getInstance(), ChessPlayer$Black_getInstance());
+          case 5:
+            return new ChessPiece(ChessPieceType$Bishop_getInstance(), ChessPlayer$Black_getInstance());
+          case 6:
+            return new ChessPiece(ChessPieceType$Knight_getInstance(), ChessPlayer$Black_getInstance());
+          case 7:
+            return new ChessPiece(ChessPieceType$Rook_getInstance(), ChessPlayer$Black_getInstance());
+          default:return null;
+        }
+
+      default:return null;
+    }
+  }
+  ChessState.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'ChessState',
+    interfaces: []
+  };
+  ChessState.prototype.component1 = function () {
+    return this.board;
+  };
+  ChessState.prototype.component2 = function () {
+    return this.currentPlayer;
+  };
+  ChessState.prototype.copy_u6lhfp$ = function (board, currentPlayer) {
+    return new ChessState(board === void 0 ? this.board : board, currentPlayer === void 0 ? this.currentPlayer : currentPlayer);
+  };
+  ChessState.prototype.toString = function () {
+    return 'ChessState(board=' + Kotlin.toString(this.board) + (', currentPlayer=' + Kotlin.toString(this.currentPlayer)) + ')';
+  };
+  ChessState.prototype.hashCode = function () {
+    var result = 0;
+    result = result * 31 + Kotlin.hashCode(this.board) | 0;
+    result = result * 31 + Kotlin.hashCode(this.currentPlayer) | 0;
+    return result;
+  };
+  ChessState.prototype.equals = function (other) {
+    return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.board, other.board) && Kotlin.equals(this.currentPlayer, other.currentPlayer)))));
+  };
+  function ChessAction(source, destination) {
+    this.source = source;
+    this.destination = destination;
+  }
+  ChessAction.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'ChessAction',
+    interfaces: []
+  };
+  ChessAction.prototype.component1 = function () {
+    return this.source;
+  };
+  ChessAction.prototype.component2 = function () {
+    return this.destination;
+  };
+  ChessAction.prototype.copy_vwqnnw$ = function (source, destination) {
+    return new ChessAction(source === void 0 ? this.source : source, destination === void 0 ? this.destination : destination);
+  };
+  ChessAction.prototype.toString = function () {
+    return 'ChessAction(source=' + Kotlin.toString(this.source) + (', destination=' + Kotlin.toString(this.destination)) + ')';
+  };
+  ChessAction.prototype.hashCode = function () {
+    var result = 0;
+    result = result * 31 + Kotlin.hashCode(this.source) | 0;
+    result = result * 31 + Kotlin.hashCode(this.destination) | 0;
+    return result;
+  };
+  ChessAction.prototype.equals = function (other) {
+    return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.source, other.source) && Kotlin.equals(this.destination, other.destination)))));
+  };
+  function ChessPieceType(name, ordinal) {
+    Enum.call(this);
+    this.name$ = name;
+    this.ordinal$ = ordinal;
+  }
+  function ChessPieceType_initFields() {
+    ChessPieceType_initFields = function () {
+    };
+    ChessPieceType$King_instance = new ChessPieceType('King', 0);
+    ChessPieceType$Queen_instance = new ChessPieceType('Queen', 1);
+    ChessPieceType$Bishop_instance = new ChessPieceType('Bishop', 2);
+    ChessPieceType$Knight_instance = new ChessPieceType('Knight', 3);
+    ChessPieceType$Rook_instance = new ChessPieceType('Rook', 4);
+    ChessPieceType$Pawn_instance = new ChessPieceType('Pawn', 5);
+  }
+  var ChessPieceType$King_instance;
+  function ChessPieceType$King_getInstance() {
+    ChessPieceType_initFields();
+    return ChessPieceType$King_instance;
+  }
+  var ChessPieceType$Queen_instance;
+  function ChessPieceType$Queen_getInstance() {
+    ChessPieceType_initFields();
+    return ChessPieceType$Queen_instance;
+  }
+  var ChessPieceType$Bishop_instance;
+  function ChessPieceType$Bishop_getInstance() {
+    ChessPieceType_initFields();
+    return ChessPieceType$Bishop_instance;
+  }
+  var ChessPieceType$Knight_instance;
+  function ChessPieceType$Knight_getInstance() {
+    ChessPieceType_initFields();
+    return ChessPieceType$Knight_instance;
+  }
+  var ChessPieceType$Rook_instance;
+  function ChessPieceType$Rook_getInstance() {
+    ChessPieceType_initFields();
+    return ChessPieceType$Rook_instance;
+  }
+  var ChessPieceType$Pawn_instance;
+  function ChessPieceType$Pawn_getInstance() {
+    ChessPieceType_initFields();
+    return ChessPieceType$Pawn_instance;
+  }
+  ChessPieceType.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'ChessPieceType',
+    interfaces: [Enum]
+  };
+  function ChessPieceType$values() {
+    return [ChessPieceType$King_getInstance(), ChessPieceType$Queen_getInstance(), ChessPieceType$Bishop_getInstance(), ChessPieceType$Knight_getInstance(), ChessPieceType$Rook_getInstance(), ChessPieceType$Pawn_getInstance()];
+  }
+  ChessPieceType.values = ChessPieceType$values;
+  function ChessPieceType$valueOf(name) {
+    switch (name) {
+      case 'King':
+        return ChessPieceType$King_getInstance();
+      case 'Queen':
+        return ChessPieceType$Queen_getInstance();
+      case 'Bishop':
+        return ChessPieceType$Bishop_getInstance();
+      case 'Knight':
+        return ChessPieceType$Knight_getInstance();
+      case 'Rook':
+        return ChessPieceType$Rook_getInstance();
+      case 'Pawn':
+        return ChessPieceType$Pawn_getInstance();
+      default:throwISE('No enum constant ChessPieceType.' + name);
+    }
+  }
+  ChessPieceType.valueOf_61zpoe$ = ChessPieceType$valueOf;
+  function ChessPlayer(name, ordinal) {
+    Enum.call(this);
+    this.name$ = name;
+    this.ordinal$ = ordinal;
+  }
+  function ChessPlayer_initFields() {
+    ChessPlayer_initFields = function () {
+    };
+    ChessPlayer$White_instance = new ChessPlayer('White', 0);
+    ChessPlayer$Black_instance = new ChessPlayer('Black', 1);
+  }
+  var ChessPlayer$White_instance;
+  function ChessPlayer$White_getInstance() {
+    ChessPlayer_initFields();
+    return ChessPlayer$White_instance;
+  }
+  var ChessPlayer$Black_instance;
+  function ChessPlayer$Black_getInstance() {
+    ChessPlayer_initFields();
+    return ChessPlayer$Black_instance;
+  }
+  ChessPlayer.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'ChessPlayer',
+    interfaces: [Enum]
+  };
+  function ChessPlayer$values() {
+    return [ChessPlayer$White_getInstance(), ChessPlayer$Black_getInstance()];
+  }
+  ChessPlayer.values = ChessPlayer$values;
+  function ChessPlayer$valueOf(name) {
+    switch (name) {
+      case 'White':
+        return ChessPlayer$White_getInstance();
+      case 'Black':
+        return ChessPlayer$Black_getInstance();
+      default:throwISE('No enum constant ChessPlayer.' + name);
+    }
+  }
+  ChessPlayer.valueOf_61zpoe$ = ChessPlayer$valueOf;
+  function ChessDisplay(canvas, infoArea) {
+    this.canvas = canvas;
+    this.infoArea = infoArea;
+    this.game = new ChessState();
+    this.squareDisplay = new SquareGridDisplay(this.canvas);
+    var getColor = ChessDisplay_init$lambda;
+    var draw = ChessDisplay_init$lambda_0;
+    this.squareDisplay.display_a10zx7$(this.game.board, getColor, draw);
+    this.infoArea.textContent = 'Current player: ' + this.game.currentPlayer.toString();
+    var sourcePosition = {v: null};
+    this.squareDisplay.onClick = ChessDisplay_init$lambda_1(sourcePosition, this, getColor, draw);
+  }
+  ChessDisplay.prototype.end = function () {
+    this.squareDisplay.end();
+  };
+  function ChessDisplay_init$lambda(piece) {
+    return 'white';
+  }
+  function ChessDisplay_init$lambda_0(context, fieldSize, piece, x, y) {
+    var tmp$;
+    context.fillStyle = 'black';
+    context.font = fieldSize.toString() + 'px arial';
+    context.textBaseline = 'top';
+    var isBlack = equals(piece != null ? piece.player : null, ChessPlayer$Black_getInstance());
+    tmp$ = piece != null ? piece.type : null;
+    if (equals(tmp$, ChessPieceType$King_getInstance()))
+      context.fillText(isBlack ? '\u265A' : '\u2654', 0.0, 0.0);
+    else if (equals(tmp$, ChessPieceType$Queen_getInstance()))
+      context.fillText(isBlack ? '\u265B' : '\u2655', 0.0, 0.0);
+    else if (equals(tmp$, ChessPieceType$Knight_getInstance()))
+      context.fillText(isBlack ? '\u265E' : '\u2658', 0.0, 0.0);
+    else if (equals(tmp$, ChessPieceType$Rook_getInstance()))
+      context.fillText(isBlack ? '\u265C' : '\u2656', 0.0, 0.0);
+    else if (equals(tmp$, ChessPieceType$Bishop_getInstance()))
+      context.fillText(isBlack ? '\u265D' : '\u2657', 0.0, 0.0);
+    else if (equals(tmp$, ChessPieceType$Pawn_getInstance()))
+      context.fillText(isBlack ? '\u265F' : '\u2659', 0.0, 0.0);
+    return Unit;
+  }
+  function ChessDisplay_init$lambda_1(closure$sourcePosition, this$ChessDisplay, closure$getColor, closure$draw) {
+    return function (it) {
+      if (it.x >= 0 && it.y >= 0 && it.x < 8 && it.y < 8) {
+        var source = closure$sourcePosition.v;
+        if (source == null) {
+          closure$sourcePosition.v = new Position(it.x, it.y);
+          println('source' + toString(closure$sourcePosition.v));
+        }
+         else {
+          closure$sourcePosition.v = null;
+          var action = new ChessAction(source, new Position(it.x, it.y));
+          println('destination' + toString(new Position(it.x, it.y)));
+          var newState = this$ChessDisplay.game.nextState_sg5dg1$(action);
+          if (newState != null)
+            this$ChessDisplay.game = newState;
+          this$ChessDisplay.squareDisplay.display_a10zx7$(this$ChessDisplay.game.board, closure$getColor, closure$draw);
+          var winner = this$ChessDisplay.game.findWinner();
+          if (winner != null)
+            this$ChessDisplay.infoArea.textContent = winner.toString() + ' has won!';
+          else
+            this$ChessDisplay.infoArea.textContent = 'Current player: ' + this$ChessDisplay.game.currentPlayer.toString();
+        }
+      }
+      return Unit;
+    };
+  }
+  ChessDisplay.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'ChessDisplay',
+    interfaces: [GameDisplay]
+  };
+  function ChessPiece(type, player, hasMoved) {
+    if (hasMoved === void 0)
+      hasMoved = false;
+    this.type = type;
+    this.player = player;
+    this.hasMoved = hasMoved;
+  }
+  ChessPiece.prototype.isLegal_xm7weo$ = function (board, action) {
+    var tmp$;
+    switch (this.type.name) {
+      case 'King':
+        tmp$ = this.isKingMoveLegal_0(board, action);
+        break;
+      case 'Queen':
+        tmp$ = this.isQueenMoveLegal_0(board, action);
+        break;
+      case 'Bishop':
+        tmp$ = this.isBishopMoveLegal_0(board, action);
+        break;
+      case 'Knight':
+        tmp$ = this.isKnightMoveLegal_0(board, action);
+        break;
+      case 'Rook':
+        tmp$ = this.isRookMoveLegal_0(board, action);
+        break;
+      case 'Pawn':
+        tmp$ = this.isPawnMoveLegal_0(board, action);
+        break;
+      default:tmp$ = Kotlin.noWhenBranchMatched();
+        break;
+    }
+    return tmp$;
+  };
+  ChessPiece.prototype.isKingMoveLegal_0 = function (board, action) {
+    var tmp$, tmp$_0, tmp$_1, tmp$_2, tmp$_3, tmp$_4, tmp$_5, tmp$_6;
+    if (abs(action.source.x - action.destination.x | 0) <= 1 && abs(action.source.y - action.destination.y | 0) <= 1)
+      return true;
+    if (this.hasMoved || this.isInCheck_0(board, action.source))
+      return false;
+    if (this.player === ChessPlayer$White_getInstance()) {
+      if ((action.source.x - action.destination.x | 0) === 2 && action.source.y === action.destination.y) {
+        var cornerPiece = board.get_vux9f0$(0, 0);
+        if (cornerPiece == null || cornerPiece.player !== ChessPlayer$White_getInstance() || cornerPiece.type !== ChessPieceType$Rook_getInstance() || cornerPiece.hasMoved)
+          return false;
+        tmp$ = action.source.x - 1 | 0;
+        tmp$_0 = action.destination.x + 1 | 0;
+        for (var i = tmp$; i >= tmp$_0; i--)
+          if (board.get_vux9f0$(i, 0) != null)
+            return false;
+        if (!this.isIntermediatePositionSafe_0(board, action.source.copy_vux9f0$(action.source.x - 1 | 0), action.source))
+          return false;
+        return true;
+      }
+       else if ((action.source.x - action.destination.x | 0) === -2 && action.source.y === action.destination.y) {
+        var cornerPiece_0 = board.get_vux9f0$(board.width - 1 | 0, 0);
+        if (cornerPiece_0 == null || cornerPiece_0.player !== ChessPlayer$White_getInstance() || cornerPiece_0.type !== ChessPieceType$Rook_getInstance() || cornerPiece_0.hasMoved)
+          return false;
+        tmp$_1 = action.source.x + 1 | 0;
+        tmp$_2 = action.destination.x;
+        for (var i_0 = tmp$_1; i_0 < tmp$_2; i_0++)
+          if (board.get_vux9f0$(i_0, 0) != null)
+            return false;
+        if (!this.isIntermediatePositionSafe_0(board, action.source.copy_vux9f0$(action.source.x + 1 | 0), action.source))
+          return false;
+        return true;
+      }
+    }
+     else {
+      if ((action.source.x - action.destination.x | 0) === 2 && action.source.y === action.destination.y) {
+        var cornerPiece_1 = board.get_vux9f0$(0, board.height - 1 | 0);
+        if (cornerPiece_1 == null || cornerPiece_1.player !== ChessPlayer$Black_getInstance() || cornerPiece_1.type !== ChessPieceType$Rook_getInstance() || cornerPiece_1.hasMoved)
+          return false;
+        tmp$_3 = action.source.x - 1 | 0;
+        tmp$_4 = action.destination.x + 1 | 0;
+        for (var i_1 = tmp$_3; i_1 >= tmp$_4; i_1--)
+          if (board.get_vux9f0$(i_1, board.height - 1 | 0) != null)
+            return false;
+        if (!this.isIntermediatePositionSafe_0(board, action.source.copy_vux9f0$(action.source.x - 1 | 0), action.source))
+          return false;
+        return true;
+      }
+       else if ((action.source.x - action.destination.x | 0) === -2 && action.source.y === action.destination.y) {
+        var cornerPiece_2 = board.get_vux9f0$(board.width - 1 | 0, board.height - 1 | 0);
+        if (cornerPiece_2 == null || cornerPiece_2.player !== ChessPlayer$Black_getInstance() || cornerPiece_2.type !== ChessPieceType$Rook_getInstance() || cornerPiece_2.hasMoved)
+          return false;
+        tmp$_5 = action.source.x + 1 | 0;
+        tmp$_6 = action.destination.x;
+        for (var i_2 = tmp$_5; i_2 < tmp$_6; i_2++)
+          if (board.get_vux9f0$(i_2, board.height - 1 | 0) != null)
+            return false;
+        if (!this.isIntermediatePositionSafe_0(board, action.source.copy_vux9f0$(action.source.x + 1 | 0), action.source))
+          return false;
+        return true;
+      }
+    }
+    return false;
+  };
+  ChessPiece.prototype.isQueenMoveLegal_0 = function (board, action) {
+    if (this.isBishopMoveLegal_0(board, action) || this.isRookMoveLegal_0(board, action))
+      return true;
+    return false;
+  };
+  ChessPiece.prototype.isBishopMoveLegal_0 = function (board, action) {
+    if (abs(action.source.x - action.destination.x | 0) !== abs(action.source.y - action.destination.y | 0))
+      return false;
+    if ((action.source.x - action.destination.x | 0) > 0 && (action.source.y - action.destination.y | 0) > 0) {
+      var tilesBetween = new Position(action.source.x - 1 | 0, action.source.y - 1 | 0);
+      while (!(tilesBetween != null ? tilesBetween.equals(action.destination) : null)) {
+        if (board.get_dfplqh$(tilesBetween) != null)
+          return false;
+        tilesBetween = new Position(tilesBetween.x - 1 | 0, tilesBetween.y - 1 | 0);
+      }
+    }
+     else if ((action.source.x - action.destination.x | 0) > 0 && (action.source.y - action.destination.y | 0) < 0) {
+      var tilesBetween_0 = new Position(action.source.x - 1 | 0, action.source.y + 1 | 0);
+      while (!(tilesBetween_0 != null ? tilesBetween_0.equals(action.destination) : null)) {
+        if (board.get_dfplqh$(tilesBetween_0) != null)
+          return false;
+        tilesBetween_0 = new Position(tilesBetween_0.x - 1 | 0, tilesBetween_0.y + 1 | 0);
+      }
+    }
+     else if ((action.source.x - action.destination.x | 0) < 0 && (action.source.y - action.destination.y | 0) < 0) {
+      var tilesBetween_1 = new Position(action.source.x + 1 | 0, action.source.y + 1 | 0);
+      while (!(tilesBetween_1 != null ? tilesBetween_1.equals(action.destination) : null)) {
+        if (board.get_dfplqh$(tilesBetween_1) != null)
+          return false;
+        tilesBetween_1 = new Position(tilesBetween_1.x + 1 | 0, tilesBetween_1.y + 1 | 0);
+      }
+    }
+     else if ((action.source.x - action.destination.x | 0) < 0 && (action.source.y - action.destination.y | 0) > 0) {
+      var tilesBetween_2 = new Position(action.source.x + 1 | 0, action.source.y - 1 | 0);
+      while (!(tilesBetween_2 != null ? tilesBetween_2.equals(action.destination) : null)) {
+        if (board.get_dfplqh$(tilesBetween_2) != null)
+          return false;
+        tilesBetween_2 = new Position(tilesBetween_2.x + 1 | 0, tilesBetween_2.y - 1 | 0);
+      }
+    }
+    return true;
+  };
+  ChessPiece.prototype.isKnightMoveLegal_0 = function (board, action) {
+    if (abs(action.source.x - action.destination.x | 0) === 2 && abs(action.source.y - action.destination.y | 0) === 1 || (abs(action.source.x - action.destination.x | 0) === 1 && abs(action.source.y - action.destination.y | 0) === 2))
+      return true;
+    return false;
+  };
+  ChessPiece.prototype.isRookMoveLegal_0 = function (board, action) {
+    var tmp$, tmp$_0, tmp$_1, tmp$_2, tmp$_3, tmp$_4, tmp$_5, tmp$_6;
+    if (!(action.source.x === action.destination.x || action.source.y === action.destination.y))
+      return false;
+    if ((action.source.x - action.destination.x | 0) < 0) {
+      tmp$ = action.source.x + 1 | 0;
+      tmp$_0 = action.destination.x;
+      for (var i = tmp$; i < tmp$_0; i++)
+        if (board.get_vux9f0$(i, action.source.y) != null)
+          return false;
+    }
+     else if ((action.source.x - action.destination.x | 0) > 0) {
+      tmp$_1 = action.source.x - 1 | 0;
+      tmp$_2 = action.destination.x + 1 | 0;
+      for (var i_0 = tmp$_1; i_0 >= tmp$_2; i_0--)
+        if (board.get_vux9f0$(i_0, action.source.y) != null)
+          return false;
+    }
+     else if ((action.source.x - action.destination.x | 0) < 0) {
+      tmp$_3 = action.source.y + 1 | 0;
+      tmp$_4 = action.destination.y;
+      for (var i_1 = tmp$_3; i_1 < tmp$_4; i_1++)
+        if (board.get_vux9f0$(action.source.x, i_1) != null)
+          return false;
+    }
+     else if ((action.source.x - action.destination.x | 0) > 0) {
+      tmp$_5 = action.source.y - 1 | 0;
+      tmp$_6 = action.destination.y + 1 | 0;
+      for (var i_2 = tmp$_5; i_2 >= tmp$_6; i_2--)
+        if (board.get_vux9f0$(action.source.x, i_2) != null)
+          return false;
+    }
+    return true;
+  };
+  ChessPiece.prototype.isPawnMoveLegal_0 = function (board, action) {
+    var stepDirection = this.player === ChessPlayer$White_getInstance() ? 1 : -1;
+    if (action.source.x === action.destination.x && (action.source.y + stepDirection | 0) === action.destination.y)
+      if (board.get_dfplqh$(action.destination) == null)
+        return true;
+    if (abs(action.source.x - action.destination.x | 0) === 1 && (action.source.y + stepDirection | 0) === action.destination.y)
+      if (board.get_dfplqh$(action.destination) != null)
+        return true;
+    if (!this.hasMoved) {
+      if (action.source.x === action.destination.x && (action.source.y + (2 * stepDirection | 0) | 0) === action.destination.y) {
+        var tileBetween = new Position(action.source.x, action.source.y + stepDirection | 0);
+        if (board.get_dfplqh$(action.destination) == null && board.get_dfplqh$(tileBetween) == null)
+          return true;
+      }
+    }
+    return false;
+  };
+  ChessPiece.prototype.isIntermediatePositionSafe_0 = function (board, intermediatePosition, originalPosition) {
+    board.set_39d550$(intermediatePosition, this);
+    board.set_39d550$(originalPosition, null);
+    if (this.isInCheck_0(board, intermediatePosition)) {
+      board.set_39d550$(intermediatePosition, null);
+      board.set_39d550$(originalPosition, this);
+      return false;
+    }
+    board.set_39d550$(intermediatePosition, null);
+    board.set_39d550$(originalPosition, this);
+    return true;
+  };
+  ChessPiece.prototype.isInCheck_0 = function (board, position) {
+    var tmp$, tmp$_0, tmp$_1;
+    tmp$ = board.height;
+    for (var i = 0; i < tmp$; i++) {
+      tmp$_0 = board.width;
+      for (var j = 0; j < tmp$_0; j++) {
+        tmp$_1 = board.get_vux9f0$(i, j);
+        if (tmp$_1 == null) {
+          continue;
+        }
+        var piece = tmp$_1;
+        if (piece.player !== this.player && piece.type !== ChessPieceType$King_getInstance())
+          if (piece.isLegal_xm7weo$(board, new ChessAction(new Position(i, j), position)))
+            return true;
+      }
+    }
+    return false;
+  };
+  ChessPiece.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'ChessPiece',
+    interfaces: []
+  };
+  ChessPiece.prototype.component1 = function () {
+    return this.type;
+  };
+  ChessPiece.prototype.component2 = function () {
+    return this.player;
+  };
+  ChessPiece.prototype.component3 = function () {
+    return this.hasMoved;
+  };
+  ChessPiece.prototype.copy_9wx23a$ = function (type, player, hasMoved) {
+    return new ChessPiece(type === void 0 ? this.type : type, player === void 0 ? this.player : player, hasMoved === void 0 ? this.hasMoved : hasMoved);
+  };
+  ChessPiece.prototype.toString = function () {
+    return 'ChessPiece(type=' + Kotlin.toString(this.type) + (', player=' + Kotlin.toString(this.player)) + (', hasMoved=' + Kotlin.toString(this.hasMoved)) + ')';
+  };
+  ChessPiece.prototype.hashCode = function () {
+    var result = 0;
+    result = result * 31 + Kotlin.hashCode(this.type) | 0;
+    result = result * 31 + Kotlin.hashCode(this.player) | 0;
+    result = result * 31 + Kotlin.hashCode(this.hasMoved) | 0;
+    return result;
+  };
+  ChessPiece.prototype.equals = function (other) {
+    return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.type, other.type) && Kotlin.equals(this.player, other.player) && Kotlin.equals(this.hasMoved, other.hasMoved)))));
+  };
   function main$lambda(closure$game, closure$canvas, closure$infoArea) {
     return function (it) {
       var tmp$;
@@ -33,24 +616,36 @@ var Tern = function (_, Kotlin) {
       return Unit;
     };
   }
+  function main$lambda_1(closure$game, closure$canvas, closure$infoArea) {
+    return function (it) {
+      var tmp$;
+      (tmp$ = closure$game.v) != null ? (tmp$.end(), Unit) : null;
+      closure$game.v = new ChessDisplay(closure$canvas, closure$infoArea);
+      return Unit;
+    };
+  }
   function main(args) {
-    var tmp$, tmp$_0, tmp$_1, tmp$_2, tmp$_3;
+    var tmp$, tmp$_0, tmp$_1, tmp$_2, tmp$_3, tmp$_4;
     var ticTacToeButton = Kotlin.isType(tmp$ = document.createElement('button'), HTMLButtonElement) ? tmp$ : throwCCE();
     ticTacToeButton.textContent = 'Tic Tac Toe';
     ensureNotNull(document.body).appendChild(ticTacToeButton);
     var virusButton = Kotlin.isType(tmp$_0 = document.createElement('button'), HTMLButtonElement) ? tmp$_0 : throwCCE();
     virusButton.textContent = 'Virus';
     ensureNotNull(document.body).appendChild(virusButton);
-    var infoArea = Kotlin.isType(tmp$_1 = document.createElement('div'), HTMLDivElement) ? tmp$_1 : throwCCE();
+    var chessButton = Kotlin.isType(tmp$_1 = document.createElement('button'), HTMLButtonElement) ? tmp$_1 : throwCCE();
+    chessButton.textContent = 'Chess';
+    ensureNotNull(document.body).appendChild(chessButton);
+    var infoArea = Kotlin.isType(tmp$_2 = document.createElement('div'), HTMLDivElement) ? tmp$_2 : throwCCE();
     ensureNotNull(document.body).appendChild(infoArea);
-    var canvas = Kotlin.isType(tmp$_2 = document.createElement('canvas'), HTMLCanvasElement) ? tmp$_2 : throwCCE();
-    var context = Kotlin.isType(tmp$_3 = canvas.getContext('2d'), CanvasRenderingContext2D) ? tmp$_3 : throwCCE();
+    var canvas = Kotlin.isType(tmp$_3 = document.createElement('canvas'), HTMLCanvasElement) ? tmp$_3 : throwCCE();
+    var context = Kotlin.isType(tmp$_4 = canvas.getContext('2d'), CanvasRenderingContext2D) ? tmp$_4 : throwCCE();
     context.canvas.width = window.innerWidth;
     context.canvas.height = window.innerHeight;
     ensureNotNull(document.body).appendChild(canvas);
     var game = {v: null};
     ticTacToeButton.addEventListener('click', main$lambda(game, canvas, infoArea));
     virusButton.addEventListener('click', main$lambda_0(game, canvas, infoArea));
+    chessButton.addEventListener('click', main$lambda_1(game, canvas, infoArea));
   }
   function GameDisplay() {
   }
@@ -107,8 +702,14 @@ var Tern = function (_, Kotlin) {
   SquareGrid.prototype.get_vux9f0$ = function (x, y) {
     return this.fields.get_za3lpa$(x + Kotlin.imul(this.width, y) | 0);
   };
+  SquareGrid.prototype.get_dfplqh$ = function (position) {
+    return this.fields.get_za3lpa$(position.x + Kotlin.imul(this.width, position.y) | 0);
+  };
   SquareGrid.prototype.set_vq7693$ = function (x, y, value) {
     this.fields.set_wxm5ur$(x + Kotlin.imul(this.width, y) | 0, value);
+  };
+  SquareGrid.prototype.set_39d550$ = function (position, value) {
+    this.fields.set_wxm5ur$(position.x + Kotlin.imul(this.width, position.y) | 0, value);
   };
   SquareGrid.$metadata$ = {
     kind: Kind_CLASS,
@@ -772,6 +1373,36 @@ var Tern = function (_, Kotlin) {
     simpleName: 'VirusDisplay',
     interfaces: [GameDisplay]
   };
+  _.ChessState = ChessState;
+  _.ChessAction = ChessAction;
+  Object.defineProperty(ChessPieceType, 'King', {
+    get: ChessPieceType$King_getInstance
+  });
+  Object.defineProperty(ChessPieceType, 'Queen', {
+    get: ChessPieceType$Queen_getInstance
+  });
+  Object.defineProperty(ChessPieceType, 'Bishop', {
+    get: ChessPieceType$Bishop_getInstance
+  });
+  Object.defineProperty(ChessPieceType, 'Knight', {
+    get: ChessPieceType$Knight_getInstance
+  });
+  Object.defineProperty(ChessPieceType, 'Rook', {
+    get: ChessPieceType$Rook_getInstance
+  });
+  Object.defineProperty(ChessPieceType, 'Pawn', {
+    get: ChessPieceType$Pawn_getInstance
+  });
+  _.ChessPieceType = ChessPieceType;
+  Object.defineProperty(ChessPlayer, 'White', {
+    get: ChessPlayer$White_getInstance
+  });
+  Object.defineProperty(ChessPlayer, 'Black', {
+    get: ChessPlayer$Black_getInstance
+  });
+  _.ChessPlayer = ChessPlayer;
+  _.ChessDisplay = ChessDisplay;
+  _.ChessPiece = ChessPiece;
   _.main_kand9s$ = main;
   _.GameDisplay = GameDisplay;
   _.Position = Position;
