@@ -163,12 +163,12 @@ data class ChessPiece(val type: ChessPieceType, val player: ChessPlayer, val has
                 if (board[i, action.source.y] != null)
                     return false
         }
-        else if (action.source.x - action.destination.x < 0) {
+        else if (action.source.y - action.destination.y < 0) {
             for (i in action.source.y + 1 until action.destination.y)
                 if (board[action.source.x, i] != null)
                     return false
         }
-        else if (action.source.x - action.destination.x > 0) {
+        else if (action.source.y - action.destination.y > 0) {
             for (i in action.source.y - 1 downTo action.destination.y + 1)
                 if (board[action.source.x, i] != null)
                     return false

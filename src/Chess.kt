@@ -1,3 +1,5 @@
+import kotlin.math.abs
+
 data class ChessState(
         val board: SquareGrid<ChessPiece?> = SquareGrid(8, 8, { x, y ->
             when (y) {
@@ -42,13 +44,33 @@ data class ChessState(
             if (!isLegal(action))
                 return null
         val newBoard = board.copy()
-        newBoard[action.destination] = board[action.source]?.copy(hasMoved = true)
+        var newPiece = board[action.source]?.copy(hasMoved = true) as ChessPiece
+        if (newPiece.type == ChessPieceType.Pawn) {
+            if ((action.destination.y == 0 && newPiece.player == ChessPlayer.Black) ||
+                    (action.destination.y == board.height - 1 && newPiece.player == ChessPlayer.White))
+                newPiece = newPiece.copy(type = ChessPieceType.Queen)
+        }
+        if (newPiece.type == ChessPieceType.King && abs(action.source.x - action.destination.x) == 2) {
+            moveCastlingRook(action)
+        }
+        newBoard[action.destination] = newPiece
         newBoard[action.source] = null
         return ChessState(newBoard, if (currentPlayer == ChessPlayer.White) ChessPlayer.Black else ChessPlayer.White)
     }
 
     fun findWinner(): ChessPlayer? {
         return null
+    }
+
+    private fun moveCastlingRook(action: ChessAction){
+        if(action.destination.x <4){
+            board[action.destination.x + 1, action.source.y] = board[0, action.source.y]
+            board[0, action.source.y] = null
+        }
+        else {
+            board[action.destination.x - 1, action.source.y] = board[board.width - 1, action.source.y]
+            board[board.width - 1, action.source.y] = null
+        }
     }
 }
 
