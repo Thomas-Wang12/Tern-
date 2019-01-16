@@ -1,6 +1,6 @@
 import org.w3c.dom.*
 
-class ChessDisplay(val canvas: HTMLCanvasElement, val infoArea: HTMLDivElement) : GameDisplay {
+class ChessDisplay(val canvas: HTMLCanvasElement, val infoArea: HTMLDivElement) {
 	var game = ChessState()
 	val squareDisplay = SquareGridDisplay(canvas)
 
@@ -52,9 +52,5 @@ class ChessDisplay(val canvas: HTMLCanvasElement, val infoArea: HTMLDivElement) 
 				}
 			}
 		}
-	}
-
-	override fun end() {
-		squareDisplay.end()
 	}
 }

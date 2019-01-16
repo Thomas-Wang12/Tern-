@@ -27,24 +27,21 @@ fun main(args: Array<String>) {
 	context.canvas.height = window.innerHeight
 	document.body!!.appendChild(canvas)
 
-	var game: GameDisplay? = null
+	var game: GameDisplay<*,*,*,*,*>? = null
 	ticTacToeButton.addEventListener("click", {
 		game?.end()
 		game = TicTacToeDisplay(canvas, infoArea)
 	})
 	virusButton.addEventListener("click", {
-		game?.end()
-		game = VirusDisplay(canvas, infoArea)
+		//game?.end()
+		//game = VirusDisplay(canvas, infoArea)
 	})
 	chessButton.addEventListener("click", {
-		game?.end()
-		game = ChessDisplay(canvas, infoArea)
+		//game?.end()
+		//game = ChessDisplay(canvas, infoArea)
 	})
 
 }
 
-interface GameDisplay {
-	fun end()
-}
 
 data class Position(val x: Int, val y: Int)

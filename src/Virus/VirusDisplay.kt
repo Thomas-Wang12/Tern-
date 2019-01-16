@@ -1,7 +1,6 @@
-import org.w3c.dom.HTMLCanvasElement
-import org.w3c.dom.HTMLDivElement
+import org.w3c.dom.*
 
-class VirusDisplay(val canvas: HTMLCanvasElement, val infoArea: HTMLDivElement) : GameDisplay {
+class VirusDisplay(val canvas: HTMLCanvasElement, val infoArea: HTMLDivElement) {
 	val players = mutableListOf("Player 1", "Player 2")
 	var game = VirusState()
 	val squareDisplay = SquareGridDisplay(canvas)
@@ -42,9 +41,5 @@ class VirusDisplay(val canvas: HTMLCanvasElement, val infoArea: HTMLDivElement) 
 				}
 			}
 		}
-	}
-
-	override fun end() {
-		squareDisplay.end()
 	}
 }
