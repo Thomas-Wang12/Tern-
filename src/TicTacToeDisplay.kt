@@ -1,9 +1,10 @@
 import org.w3c.dom.*
+import kotlinx.coroutines.*
 
 class TicTacToeDisplay(val canvas: HTMLCanvasElement, val infoArea: HTMLDivElement) : GameDisplay {
     var game = TicTacToe()
     val squareDisplay = SquareGridDisplay(canvas)
-    var aiDelay = 10
+    var aiDelay = 500L
     val players: MutableMap<String, Any> = mutableMapOf()
 
 
@@ -29,9 +30,8 @@ class TicTacToeDisplay(val canvas: HTMLCanvasElement, val infoArea: HTMLDivEleme
         updateDisplay(null)
 
         squareDisplay.onClick = {
-            if (it.x >= 0 && it.y >= 0 && it.x < 3 && it.y < 3) {
+            if(players[game.currentPlayer()] is Player && it.x >= 0 && it.y >= 0 && it.x < 3 && it.y < 3)
                 performAction(TicTacToeAction(game.state.currentPlayer, it.x, it.y))
-            }
         }
     }
 
@@ -53,7 +53,10 @@ class TicTacToeDisplay(val canvas: HTMLCanvasElement, val infoArea: HTMLDivEleme
 
     fun awaitActionFrom(player: Any?) {
         if(player is TicTacToeAI)
-            performAction(player.requestAction(game.state))
+            GlobalScope.launch {
+                delay(aiDelay)
+                performAction(player.requestAction(game.state))
+            }
     }
 
     override fun end() {
