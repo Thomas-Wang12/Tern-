@@ -38,7 +38,7 @@ fun main(args: Array<String>) {
 	})
 	chessButton.addEventListener("click", {
 		game?.end()
-		//game = ChessDisplay(canvas, infoArea)
+		game = ChessDisplay(canvas, infoArea)
 	})
 
 }

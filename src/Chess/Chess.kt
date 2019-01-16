@@ -1,7 +1,12 @@
 import kotlin.math.abs
 
+class Chess(override var state: ChessState = ChessState())
+	: BoardGame<ChessState, ChessPiece?, ChessAction, ChessPlayer>() {
+
+}
+
 data class ChessState(
-		val board: SquareGrid<ChessPiece?> = SquareGrid(8, 8, { x, y ->
+		override val board: SquareGrid<ChessPiece?> = SquareGrid(8, 8, { x, y ->
 			when (y) {
 				0 -> when (x) {
 					0 -> ChessPiece(ChessPieceType.Rook, ChessPlayer.White)
@@ -30,19 +35,22 @@ data class ChessState(
 				else -> null
 			}
 		}),
-		val currentPlayer: ChessPlayer = ChessPlayer.White
-) {
-	fun isLegal(action: ChessAction): Boolean {
+		override val currentPlayer: ChessPlayer = ChessPlayer.White,
+		override val players: List<ChessPlayer> = listOf(ChessPlayer.White, ChessPlayer.Black)
+) : BoardGameState<ChessPiece?, ChessAction, ChessPlayer> {
+
+	override fun isLegal(action: ChessAction): Boolean {
 		val piece = board[action.source] ?: return false
 		if (piece.player != currentPlayer)
 			return false
 		return piece.isLegal(board, action)
 	}
 
-	fun nextState(action: ChessAction, skipLegalCheck: Boolean = false): ChessState? {
-		if (!skipLegalCheck)
-			if (!isLegal(action))
-				return null
+	override fun possibleActions(): List<ChessAction> {
+		return listOf() // TODO
+	}
+
+	override fun nextState(action: ChessAction): BoardGameState<ChessPiece?, ChessAction, ChessPlayer> {
 		val newBoard = board.copy()
 		var newPiece = board[action.source]?.copy(hasMoved = true) as ChessPiece
 		if (newPiece.type == ChessPieceType.Pawn) {
@@ -58,8 +66,8 @@ data class ChessState(
 		return ChessState(newBoard, if (currentPlayer == ChessPlayer.White) ChessPlayer.Black else ChessPlayer.White)
 	}
 
-	fun findWinner(): ChessPlayer? {
-		return null
+	override fun findWinner(): ChessPlayer? {
+		return null // TODO
 	}
 
 	private fun moveCastlingRook(action: ChessAction) {

@@ -1,32 +1,49 @@
 if (typeof kotlin === 'undefined') {
   throw new Error("Error loading module 'Tern'. Its dependency 'kotlin' was not found. Please, check whether 'kotlin' is loaded prior to 'Tern'.");
 }
-var Tern = function (_, Kotlin) {
+if (typeof this['kotlinx-coroutines-core'] === 'undefined') {
+  throw new Error("Error loading module 'Tern'. Its dependency 'kotlinx-coroutines-core' was not found. Please, check whether 'kotlinx-coroutines-core' is loaded prior to 'Tern'.");
+}
+var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   'use strict';
   var throwCCE = Kotlin.throwCCE;
   var Kind_CLASS = Kotlin.Kind.CLASS;
   var Kind_INTERFACE = Kotlin.Kind.INTERFACE;
   var abs = Kotlin.kotlin.math.abs_za3lpa$;
+  var listOf = Kotlin.kotlin.collections.listOf_i5x0yv$;
   var Enum = Kotlin.kotlin.Enum;
   var throwISE = Kotlin.throwISE;
   var equals = Kotlin.equals;
   var Unit = Kotlin.kotlin.Unit;
-  var toString = Kotlin.toString;
-  var println = Kotlin.kotlin.io.println_s8jyv4$;
+  var coroutines = $module$kotlinx_coroutines_core.kotlinx.coroutines;
+  var delay = $module$kotlinx_coroutines_core.kotlinx.coroutines.delay_s8cxhz$;
+  var COROUTINE_SUSPENDED = Kotlin.kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED;
+  var CoroutineImpl = Kotlin.kotlin.coroutines.CoroutineImpl;
+  var launch = $module$kotlinx_coroutines_core.kotlinx.coroutines.launch_s496o7$;
+  var L500 = Kotlin.Long.fromInt(500);
   var ensureNotNull = Kotlin.ensureNotNull;
   var numberToInt = Kotlin.numberToInt;
   var toList = Kotlin.kotlin.collections.toList_7wnvza$;
-  var listOf = Kotlin.kotlin.collections.listOf_i5x0yv$;
   var until = Kotlin.kotlin.ranges.until_dqglrj$;
-  var mutableListOf = Kotlin.kotlin.collections.mutableListOf_i5x0yv$;
+  var IntRange = Kotlin.kotlin.ranges.IntRange;
+  Chess.prototype = Object.create(BoardGame.prototype);
+  Chess.prototype.constructor = Chess;
   ChessPieceType.prototype = Object.create(Enum.prototype);
   ChessPieceType.prototype.constructor = ChessPieceType;
   ChessPlayer.prototype = Object.create(Enum.prototype);
   ChessPlayer.prototype.constructor = ChessPlayer;
+  ChessDisplay.prototype = Object.create(GameDisplay.prototype);
+  ChessDisplay.prototype.constructor = ChessDisplay;
   TicTacToe.prototype = Object.create(BoardGame.prototype);
   TicTacToe.prototype.constructor = TicTacToe;
   TicTacToePiece.prototype = Object.create(Enum.prototype);
   TicTacToePiece.prototype.constructor = TicTacToePiece;
+  TicTacToeDisplay.prototype = Object.create(GameDisplay.prototype);
+  TicTacToeDisplay.prototype.constructor = TicTacToeDisplay;
+  Virus.prototype = Object.create(BoardGame.prototype);
+  Virus.prototype.constructor = Virus;
+  VirusDisplay.prototype = Object.create(GameDisplay.prototype);
+  VirusDisplay.prototype.constructor = VirusDisplay;
   var LinkedHashMap_init = Kotlin.kotlin.collections.LinkedHashMap_init_q3lmfv$;
   function BoardGame() {
     this.players = LinkedHashMap_init();
@@ -59,15 +76,52 @@ var Tern = function (_, Kotlin) {
     simpleName: 'BoardGameState',
     interfaces: []
   };
-  function ChessState(board, currentPlayer) {
+  function Chess(state) {
+    if (state === void 0)
+      state = new ChessState();
+    BoardGame.call(this);
+    this.state_vr5uhj$_0 = state;
+  }
+  Object.defineProperty(Chess.prototype, 'state', {
+    get: function () {
+      return this.state_vr5uhj$_0;
+    },
+    set: function (state) {
+      this.state_vr5uhj$_0 = state;
+    }
+  });
+  Chess.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'Chess',
+    interfaces: [BoardGame]
+  };
+  function ChessState(board, currentPlayer, players) {
     if (board === void 0)
       board = new SquareGrid(8, 8, ChessState_init$lambda);
     if (currentPlayer === void 0)
       currentPlayer = ChessPlayer$White_getInstance();
-    this.board = board;
-    this.currentPlayer = currentPlayer;
+    if (players === void 0)
+      players = listOf([ChessPlayer$White_getInstance(), ChessPlayer$Black_getInstance()]);
+    this.board_mlguen$_0 = board;
+    this.currentPlayer_mainy5$_0 = currentPlayer;
+    this.players_otp1fp$_0 = players;
   }
-  ChessState.prototype.isLegal_t6cjbe$ = function (action) {
+  Object.defineProperty(ChessState.prototype, 'board', {
+    get: function () {
+      return this.board_mlguen$_0;
+    }
+  });
+  Object.defineProperty(ChessState.prototype, 'currentPlayer', {
+    get: function () {
+      return this.currentPlayer_mainy5$_0;
+    }
+  });
+  Object.defineProperty(ChessState.prototype, 'players', {
+    get: function () {
+      return this.players_otp1fp$_0;
+    }
+  });
+  ChessState.prototype.isLegal_11rc$ = function (action) {
     var tmp$;
     tmp$ = this.board.get_dfplqh$(action.source);
     if (tmp$ == null) {
@@ -78,13 +132,12 @@ var Tern = function (_, Kotlin) {
       return false;
     return piece.isLegal_xm7weo$(this.board, action);
   };
-  ChessState.prototype.nextState_sg5dg1$ = function (action, skipLegalCheck) {
-    if (skipLegalCheck === void 0)
-      skipLegalCheck = false;
+  var emptyList = Kotlin.kotlin.collections.emptyList_287e2$;
+  ChessState.prototype.possibleActions = function () {
+    return emptyList();
+  };
+  ChessState.prototype.nextState_11rc$ = function (action) {
     var tmp$, tmp$_0;
-    if (!skipLegalCheck)
-      if (!this.isLegal_t6cjbe$(action))
-        return null;
     var newBoard = this.board.copy_urw29u$();
     var newPiece = Kotlin.isType(tmp$_0 = (tmp$ = this.board.get_dfplqh$(action.source)) != null ? tmp$.copy_9wx23a$(void 0, void 0, true) : null, ChessPiece) ? tmp$_0 : throwCCE();
     if (newPiece.type === ChessPieceType$Pawn_getInstance()) {
@@ -165,7 +218,7 @@ var Tern = function (_, Kotlin) {
   ChessState.$metadata$ = {
     kind: Kind_CLASS,
     simpleName: 'ChessState',
-    interfaces: []
+    interfaces: [BoardGameState]
   };
   ChessState.prototype.component1 = function () {
     return this.board;
@@ -173,20 +226,24 @@ var Tern = function (_, Kotlin) {
   ChessState.prototype.component2 = function () {
     return this.currentPlayer;
   };
-  ChessState.prototype.copy_u6lhfp$ = function (board, currentPlayer) {
-    return new ChessState(board === void 0 ? this.board : board, currentPlayer === void 0 ? this.currentPlayer : currentPlayer);
+  ChessState.prototype.component3 = function () {
+    return this.players;
+  };
+  ChessState.prototype.copy_tdyev3$ = function (board, currentPlayer, players) {
+    return new ChessState(board === void 0 ? this.board : board, currentPlayer === void 0 ? this.currentPlayer : currentPlayer, players === void 0 ? this.players : players);
   };
   ChessState.prototype.toString = function () {
-    return 'ChessState(board=' + Kotlin.toString(this.board) + (', currentPlayer=' + Kotlin.toString(this.currentPlayer)) + ')';
+    return 'ChessState(board=' + Kotlin.toString(this.board) + (', currentPlayer=' + Kotlin.toString(this.currentPlayer)) + (', players=' + Kotlin.toString(this.players)) + ')';
   };
   ChessState.prototype.hashCode = function () {
     var result = 0;
     result = result * 31 + Kotlin.hashCode(this.board) | 0;
     result = result * 31 + Kotlin.hashCode(this.currentPlayer) | 0;
+    result = result * 31 + Kotlin.hashCode(this.players) | 0;
     return result;
   };
   ChessState.prototype.equals = function (other) {
-    return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.board, other.board) && Kotlin.equals(this.currentPlayer, other.currentPlayer)))));
+    return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.board, other.board) && Kotlin.equals(this.currentPlayer, other.currentPlayer) && Kotlin.equals(this.players, other.players)))));
   };
   function ChessAction(source, destination) {
     this.source = source;
@@ -331,24 +388,48 @@ var Tern = function (_, Kotlin) {
   }
   ChessPlayer.valueOf_61zpoe$ = ChessPlayer$valueOf;
   function ChessDisplay(canvas, infoArea) {
-    this.canvas = canvas;
-    this.infoArea = infoArea;
-    this.game = new ChessState();
-    this.squareDisplay = new SquareGridDisplay(this.canvas);
-    var getColor = ChessDisplay_init$lambda;
-    var draw = ChessDisplay_init$lambda_0;
-    this.squareDisplay.display_macai1$(this.game.board, getColor, draw);
-    this.infoArea.textContent = 'Current player: ' + this.game.currentPlayer.toString();
+    GameDisplay.call(this, canvas, infoArea);
+    this.game_vohlt0$_0 = new Chess();
+    this.getColor_tn0utd$_0 = ChessDisplay$getColor$lambda;
+    this.draw_vpud9y$_0 = ChessDisplay$draw$lambda;
+    var $receiver = this.game.players;
+    var key = ChessPlayer$White_getInstance();
+    $receiver.put_xwzc9p$(key, 'White');
+    var $receiver_0 = this.players;
+    var value = new Player();
+    $receiver_0.put_xwzc9p$('White', value);
+    var $receiver_1 = this.game.players;
+    var key_0 = ChessPlayer$Black_getInstance();
+    $receiver_1.put_xwzc9p$(key_0, 'Black');
+    var $receiver_2 = this.players;
+    var value_0 = new Player();
+    $receiver_2.put_xwzc9p$('Black', value_0);
+    this.updateDisplay_pdl1vj$(null);
     var sourcePosition = {v: null};
-    this.squareDisplay.onClick = ChessDisplay_init$lambda_1(sourcePosition, this, getColor, draw);
+    this.squareDisplay.onClick = ChessDisplay_init$lambda(sourcePosition, this);
   }
-  ChessDisplay.prototype.end = function () {
-    this.squareDisplay.end();
-  };
-  function ChessDisplay_init$lambda(f, x, y) {
+  Object.defineProperty(ChessDisplay.prototype, 'game', {
+    get: function () {
+      return this.game_vohlt0$_0;
+    },
+    set: function (game) {
+      this.game_vohlt0$_0 = game;
+    }
+  });
+  Object.defineProperty(ChessDisplay.prototype, 'getColor', {
+    get: function () {
+      return this.getColor_tn0utd$_0;
+    }
+  });
+  Object.defineProperty(ChessDisplay.prototype, 'draw', {
+    get: function () {
+      return this.draw_vpud9y$_0;
+    }
+  });
+  function ChessDisplay$getColor$lambda(f, x, y) {
     return (x % 2 === 0 ? y % 2 === 0 : y % 2 === 1) ? 'white' : 'grey';
   }
-  function ChessDisplay_init$lambda_0(context, fieldSize, piece, x, y) {
+  function ChessDisplay$draw$lambda(context, fieldSize, piece, f, f_0) {
     var tmp$;
     context.fillStyle = 'black';
     context.font = fieldSize.toString() + 'px arial';
@@ -369,27 +450,16 @@ var Tern = function (_, Kotlin) {
       context.fillText(isBlack ? '\u265F' : '\u2659', 0.0, 0.0);
     return Unit;
   }
-  function ChessDisplay_init$lambda_1(closure$sourcePosition, this$ChessDisplay, closure$getColor, closure$draw) {
+  function ChessDisplay_init$lambda(closure$sourcePosition, this$ChessDisplay) {
     return function (it) {
       if (it.x >= 0 && it.y >= 0 && it.x < 8 && it.y < 8) {
         var source = closure$sourcePosition.v;
         if (source == null) {
           closure$sourcePosition.v = new Position(it.x, it.y);
-          println('source' + toString(closure$sourcePosition.v));
         }
          else {
           closure$sourcePosition.v = null;
-          var action = new ChessAction(source, new Position(it.x, it.y));
-          println('destination' + toString(new Position(it.x, it.y)));
-          var newState = this$ChessDisplay.game.nextState_sg5dg1$(action);
-          if (newState != null)
-            this$ChessDisplay.game = newState;
-          this$ChessDisplay.squareDisplay.display_macai1$(this$ChessDisplay.game.board, closure$getColor, closure$draw);
-          var winner = this$ChessDisplay.game.findWinner();
-          if (winner != null)
-            this$ChessDisplay.infoArea.textContent = winner.toString() + ' has won!';
-          else
-            this$ChessDisplay.infoArea.textContent = 'Current player: ' + this$ChessDisplay.game.currentPlayer.toString();
+          this$ChessDisplay.performAction_11re$(new ChessAction(source, new Position(it.x, it.y)));
         }
       }
       return Unit;
@@ -655,6 +725,112 @@ var Tern = function (_, Kotlin) {
   ChessPiece.prototype.equals = function (other) {
     return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.type, other.type) && Kotlin.equals(this.player, other.player) && Kotlin.equals(this.hasMoved, other.hasMoved)))));
   };
+  function GameDisplay(canvas, infoArea) {
+    this.canvas = canvas;
+    this.infoArea = infoArea;
+    this.squareDisplay = new SquareGridDisplay(this.canvas);
+    this.aiDelay = L500;
+    this.players = LinkedHashMap_init();
+  }
+  GameDisplay.prototype.performAction_11re$ = function (action) {
+    this.game.performAction_11rd$(action);
+    this.updateDisplay_pdl1vj$(this.game.winner);
+    if (this.game.winner != null || this.game.state.possibleActions().isEmpty())
+      return;
+    var $receiver = this.players;
+    var key = this.game.currentPlayer();
+    var tmp$;
+    this.awaitActionFrom_s8jyv4$((Kotlin.isType(tmp$ = $receiver, Map) ? tmp$ : throwCCE()).get_11rb$(key));
+  };
+  GameDisplay.prototype.updateDisplay_pdl1vj$ = function (winner) {
+    if (winner != null)
+      this.infoArea.textContent = winner + ' has won!';
+    else
+      this.infoArea.textContent = 'Current player: ' + this.game.currentPlayer();
+    this.squareDisplay.display_j6czkq$(this.game.state.board, this.getColor, this.draw);
+  };
+  function GameDisplay$awaitActionFrom$lambda(this$GameDisplay_0, closure$player_0) {
+    return function ($receiver, continuation_0, suspended) {
+      var instance = new Coroutine$GameDisplay$awaitActionFrom$lambda(this$GameDisplay_0, closure$player_0, $receiver, this, continuation_0);
+      if (suspended)
+        return instance;
+      else
+        return instance.doResume(null);
+    };
+  }
+  function Coroutine$GameDisplay$awaitActionFrom$lambda(this$GameDisplay_0, closure$player_0, $receiver, controller, continuation_0) {
+    CoroutineImpl.call(this, continuation_0);
+    this.$controller = controller;
+    this.exceptionState_0 = 1;
+    this.local$this$GameDisplay = this$GameDisplay_0;
+    this.local$closure$player = closure$player_0;
+  }
+  Coroutine$GameDisplay$awaitActionFrom$lambda.$metadata$ = {
+    kind: Kotlin.Kind.CLASS,
+    simpleName: null,
+    interfaces: [CoroutineImpl]
+  };
+  Coroutine$GameDisplay$awaitActionFrom$lambda.prototype = Object.create(CoroutineImpl.prototype);
+  Coroutine$GameDisplay$awaitActionFrom$lambda.prototype.constructor = Coroutine$GameDisplay$awaitActionFrom$lambda;
+  Coroutine$GameDisplay$awaitActionFrom$lambda.prototype.doResume = function () {
+    do
+      try {
+        switch (this.state_0) {
+          case 0:
+            this.state_0 = 2;
+            this.result_0 = delay(this.local$this$GameDisplay.aiDelay, this);
+            if (this.result_0 === COROUTINE_SUSPENDED)
+              return COROUTINE_SUSPENDED;
+            continue;
+          case 1:
+            throw this.exception_0;
+          case 2:
+            return this.local$this$GameDisplay.performAction_11re$(this.local$closure$player.requestAction_11rb$(this.local$this$GameDisplay.game.state)), Unit;
+          default:this.state_0 = 1;
+            throw new Error('State Machine Unreachable execution');
+        }
+      }
+       catch (e) {
+        if (this.state_0 === 1) {
+          this.exceptionState_0 = this.state_0;
+          throw e;
+        }
+         else {
+          this.state_0 = this.exceptionState_0;
+          this.exception_0 = e;
+        }
+      }
+     while (true);
+  };
+  GameDisplay.prototype.awaitActionFrom_s8jyv4$ = function (player) {
+    var tmp$;
+    if (Kotlin.isType(player, AIPlayer)) {
+      Kotlin.isType(tmp$ = player, AIPlayer) ? tmp$ : throwCCE();
+      launch(coroutines.GlobalScope, void 0, void 0, GameDisplay$awaitActionFrom$lambda(this, player));
+    }
+  };
+  GameDisplay.prototype.end = function () {
+    this.squareDisplay.end();
+  };
+  GameDisplay.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'GameDisplay',
+    interfaces: []
+  };
+  function Player() {
+  }
+  Player.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'Player',
+    interfaces: []
+  };
+  function AIPlayer() {
+  }
+  AIPlayer.$metadata$ = {
+    kind: Kind_INTERFACE,
+    simpleName: 'AIPlayer',
+    interfaces: []
+  };
   function main$lambda(closure$game, closure$canvas, closure$infoArea) {
     return function (it) {
       var tmp$;
@@ -702,13 +878,6 @@ var Tern = function (_, Kotlin) {
     virusButton.addEventListener('click', main$lambda_0(game, canvas, infoArea));
     chessButton.addEventListener('click', main$lambda_1(game, canvas, infoArea));
   }
-  function GameDisplay() {
-  }
-  GameDisplay.$metadata$ = {
-    kind: Kind_INTERFACE,
-    simpleName: 'GameDisplay',
-    interfaces: []
-  };
   function Position(x, y) {
     this.x = x;
     this.y = y;
@@ -810,10 +979,12 @@ var Tern = function (_, Kotlin) {
     this.clickListener = SquareGridDisplay$clickListener$lambda(this);
     this.canvas.addEventListener('click', this.clickListener);
   }
-  SquareGridDisplay.prototype.display_macai1$ = function (grid, fillStyle, draw) {
+  SquareGridDisplay.prototype.display_j6czkq$ = function (grid, fillStyle, draw) {
+    if (fillStyle === void 0)
+      fillStyle = null;
     if (draw === void 0)
       draw = null;
-    var tmp$, tmp$_0;
+    var tmp$, tmp$_0, tmp$_1;
     this.context.fillStyle = 'black';
     if (this.gridThickness > 0)
       this.context.fillRect(0.0, 0.0, grid.height * (this.fieldSize + this.gridThickness) + this.gridThickness, grid.width * (this.fieldSize + this.gridThickness) + this.gridThickness);
@@ -821,7 +992,7 @@ var Tern = function (_, Kotlin) {
     for (var y = 0; y < tmp$; y++) {
       tmp$_0 = grid.width;
       for (var x = 0; x < tmp$_0; x++) {
-        this.context.fillStyle = fillStyle(grid.get_vux9f0$(x, y), x, y);
+        this.context.fillStyle = (tmp$_1 = fillStyle != null ? fillStyle(grid.get_vux9f0$(x, y), x, y) : null) != null ? tmp$_1 : 'white';
         this.context.fillRect(this.gridThickness + x * (this.fieldSize + this.gridThickness), this.gridThickness + y * (this.fieldSize + this.gridThickness), this.fieldSize, this.fieldSize);
         if (draw != null) {
           this.context.save();
@@ -1054,14 +1225,10 @@ var Tern = function (_, Kotlin) {
   }
   TicTacToePiece.valueOf_61zpoe$ = TicTacToePiece$valueOf;
   function TicTacToeDisplay(canvas, infoArea) {
-    this.canvas = canvas;
-    this.infoArea = infoArea;
-    this.game = new TicTacToe();
-    this.squareDisplay = new SquareGridDisplay(this.canvas);
-    this.aiDelay = 10;
-    this.players = LinkedHashMap_init();
-    this.getColor = TicTacToeDisplay$getColor$lambda;
-    this.draw = TicTacToeDisplay$draw$lambda;
+    GameDisplay.call(this, canvas, infoArea);
+    this.game_p4bo12$_0 = new TicTacToe();
+    this.getColor_fajsqn$_0 = null;
+    this.draw_p5ofi0$_0 = TicTacToeDisplay$draw$lambda;
     var $receiver = this.game.players;
     var key = TicTacToePiece$Cross_getInstance();
     $receiver.put_xwzc9p$(key, 'Cross');
@@ -1077,34 +1244,25 @@ var Tern = function (_, Kotlin) {
     this.updateDisplay_pdl1vj$(null);
     this.squareDisplay.onClick = TicTacToeDisplay_init$lambda(this);
   }
-  TicTacToeDisplay.prototype.performAction_eukm6g$ = function (action) {
-    this.game.performAction_11rd$(action);
-    this.updateDisplay_pdl1vj$(this.game.winner);
-    if (this.game.winner != null)
-      return;
-    var $receiver = this.players;
-    var key = this.game.currentPlayer();
-    var tmp$;
-    this.awaitActionFrom_s8jyv4$((Kotlin.isType(tmp$ = $receiver, Map) ? tmp$ : throwCCE()).get_11rb$(key));
-  };
-  TicTacToeDisplay.prototype.updateDisplay_pdl1vj$ = function (winner) {
-    if (winner != null)
-      this.infoArea.textContent = winner + ' has won!';
-    else
-      this.infoArea.textContent = 'Current player: ' + this.game.currentPlayer();
-    this.squareDisplay.display_macai1$(this.game.state.board, this.getColor, this.draw);
-  };
-  TicTacToeDisplay.prototype.awaitActionFrom_s8jyv4$ = function (player) {
-    if (Kotlin.isType(player, TicTacToeAI))
-      this.performAction_eukm6g$(player.requestAction_11rb$(this.game.state));
-  };
-  TicTacToeDisplay.prototype.end = function () {
-    this.squareDisplay.end();
-  };
-  function TicTacToeDisplay$getColor$lambda(f, f_0, f_1) {
-    return 'white';
-  }
-  function TicTacToeDisplay$draw$lambda(context, fieldSize, piece, x, y) {
+  Object.defineProperty(TicTacToeDisplay.prototype, 'game', {
+    get: function () {
+      return this.game_p4bo12$_0;
+    },
+    set: function (game) {
+      this.game_p4bo12$_0 = game;
+    }
+  });
+  Object.defineProperty(TicTacToeDisplay.prototype, 'getColor', {
+    get: function () {
+      return this.getColor_fajsqn$_0;
+    }
+  });
+  Object.defineProperty(TicTacToeDisplay.prototype, 'draw', {
+    get: function () {
+      return this.draw_p5ofi0$_0;
+    }
+  });
+  function TicTacToeDisplay$draw$lambda(context, fieldSize, piece, f, f_0) {
     context.fillStyle = 'black';
     context.font = fieldSize.toString() + 'px arial';
     context.textBaseline = 'top';
@@ -1116,9 +1274,11 @@ var Tern = function (_, Kotlin) {
   }
   function TicTacToeDisplay_init$lambda(this$TicTacToeDisplay) {
     return function (it) {
-      if (it.x >= 0 && it.y >= 0 && it.x < 3 && it.y < 3) {
-        this$TicTacToeDisplay.performAction_eukm6g$(new TicTacToeAction(this$TicTacToeDisplay.game.state.currentPlayer, it.x, it.y));
-      }
+      var $receiver = this$TicTacToeDisplay.players;
+      var key = this$TicTacToeDisplay.game.currentPlayer();
+      var tmp$;
+      if (Kotlin.isType((Kotlin.isType(tmp$ = $receiver, Map) ? tmp$ : throwCCE()).get_11rb$(key), Player) && it.x >= 0 && it.y >= 0 && it.x < 3 && it.y < 3)
+        this$TicTacToeDisplay.performAction_11re$(new TicTacToeAction(this$TicTacToeDisplay.game.state.currentPlayer, it.x, it.y));
       return Unit;
     };
   }
@@ -1126,27 +1286,6 @@ var Tern = function (_, Kotlin) {
     kind: Kind_CLASS,
     simpleName: 'TicTacToeDisplay',
     interfaces: [GameDisplay]
-  };
-  function Player() {
-  }
-  Player.$metadata$ = {
-    kind: Kind_CLASS,
-    simpleName: 'Player',
-    interfaces: []
-  };
-  function AIPlayer() {
-  }
-  AIPlayer.$metadata$ = {
-    kind: Kind_INTERFACE,
-    simpleName: 'AIPlayer',
-    interfaces: []
-  };
-  function TicTacToeAI() {
-  }
-  TicTacToeAI.$metadata$ = {
-    kind: Kind_INTERFACE,
-    simpleName: 'TicTacToeAI',
-    interfaces: [AIPlayer]
   };
   function TicTacToeAIRandom(name) {
     this.name_6bxo0e$_0 = name;
@@ -1167,9 +1306,28 @@ var Tern = function (_, Kotlin) {
   TicTacToeAIRandom.$metadata$ = {
     kind: Kind_CLASS,
     simpleName: 'TicTacToeAIRandom',
-    interfaces: [TicTacToeAI]
+    interfaces: [AIPlayer]
   };
-  function VirusState(width, height, playerCount, board, currentPlayer) {
+  function Virus(state) {
+    if (state === void 0)
+      state = new VirusState();
+    BoardGame.call(this);
+    this.state_bleigq$_0 = state;
+  }
+  Object.defineProperty(Virus.prototype, 'state', {
+    get: function () {
+      return this.state_bleigq$_0;
+    },
+    set: function (state) {
+      this.state_bleigq$_0 = state;
+    }
+  });
+  Virus.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'Virus',
+    interfaces: [BoardGame]
+  };
+  function VirusState(width, height, playerCount, board, currentPlayer, players) {
     if (width === void 0)
       width = 5;
     if (height === void 0)
@@ -1180,13 +1338,31 @@ var Tern = function (_, Kotlin) {
       board = new SquareGrid(width, height, VirusState_init$lambda(playerCount, height));
     if (currentPlayer === void 0)
       currentPlayer = 1;
+    if (players === void 0)
+      players = toList(new IntRange(1, playerCount));
     this.width = width;
     this.height = height;
     this.playerCount = playerCount;
-    this.board = board;
-    this.currentPlayer = currentPlayer;
+    this.board_8pifzm$_0 = board;
+    this.currentPlayer_54tmti$_0 = currentPlayer;
+    this.players_h1tl8i$_0 = players;
   }
-  VirusState.prototype.isLegal_4meavh$ = function (action) {
+  Object.defineProperty(VirusState.prototype, 'board', {
+    get: function () {
+      return this.board_8pifzm$_0;
+    }
+  });
+  Object.defineProperty(VirusState.prototype, 'currentPlayer', {
+    get: function () {
+      return this.currentPlayer_54tmti$_0;
+    }
+  });
+  Object.defineProperty(VirusState.prototype, 'players', {
+    get: function () {
+      return this.players_h1tl8i$_0;
+    }
+  });
+  VirusState.prototype.isLegal_11rc$ = function (action) {
     if (!this.isWithinBoard_0(action.source) || !this.isWithinBoard_0(action.destination))
       return false;
     if (this.board.get_vux9f0$(action.source.x, action.source.y) !== this.currentPlayer)
@@ -1197,12 +1373,46 @@ var Tern = function (_, Kotlin) {
       return false;
     return true;
   };
-  VirusState.prototype.nextState_ulwrck$ = function (action, skipLegalCheck) {
-    if (skipLegalCheck === void 0)
-      skipLegalCheck = false;
-    if (!skipLegalCheck)
-      if (!this.isLegal_4meavh$(action))
-        return null;
+  var Math_0 = Math;
+  VirusState.prototype.possibleActions = function () {
+    var tmp$, tmp$_0, tmp$_1, tmp$_2, tmp$_3, tmp$_4;
+    var actions = ArrayList_init_0();
+    tmp$ = this.width;
+    for (var i = 0; i < tmp$; i++) {
+      tmp$_0 = this.height;
+      for (var j = 0; j < tmp$_0; j++) {
+        if (this.board.get_vux9f0$(i, j) !== 0)
+          continue;
+        var exists = false;
+        var b = i - 2 | 0;
+        tmp$_1 = Math_0.max(0, b);
+        var a = this.width;
+        var b_0 = i + 3 | 0;
+        tmp$_2 = Math_0.min(a, b_0);
+        for (var n = tmp$_1; n < tmp$_2; n++) {
+          var b_1 = j - 2 | 0;
+          tmp$_3 = Math_0.max(0, b_1);
+          var a_0 = this.height;
+          var b_2 = j + 3 | 0;
+          tmp$_4 = Math_0.min(a_0, b_2);
+          for (var m = tmp$_3; m < tmp$_4; m++) {
+            if (this.board.get_vux9f0$(n, m) !== this.currentPlayer)
+              continue;
+            var action = new VirusAction(new Position(n, m), new Position(i, j));
+            if (abs(action.source.x - action.destination.x | 0) > 1 || abs(action.source.y - action.destination.y | 0) > 1) {
+              actions.add_11rb$(action);
+            }
+             else if (!exists) {
+              actions.add_11rb$(action);
+              exists = true;
+            }
+          }
+        }
+      }
+    }
+    return toList(actions);
+  };
+  VirusState.prototype.nextState_11rc$ = function (action) {
     var newBoard = this.board.copy_urw29u$();
     if (abs(action.source.x - action.destination.x | 0) > 1 || abs(action.source.y - action.destination.y | 0) > 1)
       newBoard.set_vq7693$(action.source.x, action.source.y, 0);
@@ -1282,7 +1492,6 @@ var Tern = function (_, Kotlin) {
     }
     return winner;
   };
-  var Math_0 = Math;
   VirusState.prototype.findMovablePlayers_0 = function (board) {
     var tmp$, tmp$_0, tmp$_1, tmp$_2, tmp$_3, tmp$_4;
     var size = this.playerCount + 1 | 0;
@@ -1406,7 +1615,7 @@ var Tern = function (_, Kotlin) {
   VirusState.$metadata$ = {
     kind: Kind_CLASS,
     simpleName: 'VirusState',
-    interfaces: []
+    interfaces: [BoardGameState]
   };
   VirusState.prototype.component1 = function () {
     return this.width;
@@ -1423,11 +1632,14 @@ var Tern = function (_, Kotlin) {
   VirusState.prototype.component5 = function () {
     return this.currentPlayer;
   };
-  VirusState.prototype.copy_jj468x$ = function (width, height, playerCount, board, currentPlayer) {
-    return new VirusState(width === void 0 ? this.width : width, height === void 0 ? this.height : height, playerCount === void 0 ? this.playerCount : playerCount, board === void 0 ? this.board : board, currentPlayer === void 0 ? this.currentPlayer : currentPlayer);
+  VirusState.prototype.component6 = function () {
+    return this.players;
+  };
+  VirusState.prototype.copy_1vh1ys$ = function (width, height, playerCount, board, currentPlayer, players) {
+    return new VirusState(width === void 0 ? this.width : width, height === void 0 ? this.height : height, playerCount === void 0 ? this.playerCount : playerCount, board === void 0 ? this.board : board, currentPlayer === void 0 ? this.currentPlayer : currentPlayer, players === void 0 ? this.players : players);
   };
   VirusState.prototype.toString = function () {
-    return 'VirusState(width=' + Kotlin.toString(this.width) + (', height=' + Kotlin.toString(this.height)) + (', playerCount=' + Kotlin.toString(this.playerCount)) + (', board=' + Kotlin.toString(this.board)) + (', currentPlayer=' + Kotlin.toString(this.currentPlayer)) + ')';
+    return 'VirusState(width=' + Kotlin.toString(this.width) + (', height=' + Kotlin.toString(this.height)) + (', playerCount=' + Kotlin.toString(this.playerCount)) + (', board=' + Kotlin.toString(this.board)) + (', currentPlayer=' + Kotlin.toString(this.currentPlayer)) + (', players=' + Kotlin.toString(this.players)) + ')';
   };
   VirusState.prototype.hashCode = function () {
     var result = 0;
@@ -1436,10 +1648,11 @@ var Tern = function (_, Kotlin) {
     result = result * 31 + Kotlin.hashCode(this.playerCount) | 0;
     result = result * 31 + Kotlin.hashCode(this.board) | 0;
     result = result * 31 + Kotlin.hashCode(this.currentPlayer) | 0;
+    result = result * 31 + Kotlin.hashCode(this.players) | 0;
     return result;
   };
   VirusState.prototype.equals = function (other) {
-    return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.width, other.width) && Kotlin.equals(this.height, other.height) && Kotlin.equals(this.playerCount, other.playerCount) && Kotlin.equals(this.board, other.board) && Kotlin.equals(this.currentPlayer, other.currentPlayer)))));
+    return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.width, other.width) && Kotlin.equals(this.height, other.height) && Kotlin.equals(this.playerCount, other.playerCount) && Kotlin.equals(this.board, other.board) && Kotlin.equals(this.currentPlayer, other.currentPlayer) && Kotlin.equals(this.players, other.players)))));
   };
   function VirusAction(source, destination) {
     this.source = source;
@@ -1472,21 +1685,47 @@ var Tern = function (_, Kotlin) {
     return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.source, other.source) && Kotlin.equals(this.destination, other.destination)))));
   };
   function VirusDisplay(canvas, infoArea) {
-    this.canvas = canvas;
-    this.infoArea = infoArea;
-    this.players = mutableListOf(['Player 1', 'Player 2']);
-    this.game = new VirusState();
-    this.squareDisplay = new SquareGridDisplay(this.canvas);
-    var getColor = VirusDisplay_init$lambda;
-    this.squareDisplay.display_macai1$(this.game.board, getColor);
-    this.infoArea.textContent = 'Current player: ' + this.players.get_za3lpa$(this.game.currentPlayer - 1 | 0);
+    GameDisplay.call(this, canvas, infoArea);
+    this.game_rcjipt$_0 = new Virus();
+    this.getColor_csj3a4$_0 = VirusDisplay$getColor$lambda;
+    this.draw_rdwa6r$_0 = null;
+    var $receiver = this.game.players;
+    var value = 'Player 1';
+    $receiver.put_xwzc9p$(1, value);
+    var $receiver_0 = this.players;
+    var key = 'Player 1';
+    var value_0 = new Player();
+    $receiver_0.put_xwzc9p$(key, value_0);
+    var $receiver_1 = this.game.players;
+    var value_1 = 'Player 2';
+    $receiver_1.put_xwzc9p$(2, value_1);
+    var $receiver_2 = this.players;
+    var key_0 = 'Player 2';
+    var value_2 = new Player();
+    $receiver_2.put_xwzc9p$(key_0, value_2);
+    this.updateDisplay_pdl1vj$(null);
     var sourcePosition = {v: null};
-    this.squareDisplay.onClick = VirusDisplay_init$lambda_0(this, sourcePosition, getColor);
+    this.squareDisplay.onClick = VirusDisplay_init$lambda(this, sourcePosition);
   }
-  VirusDisplay.prototype.end = function () {
-    this.squareDisplay.end();
-  };
-  function VirusDisplay_init$lambda(piece, f, f_0) {
+  Object.defineProperty(VirusDisplay.prototype, 'game', {
+    get: function () {
+      return this.game_rcjipt$_0;
+    },
+    set: function (game) {
+      this.game_rcjipt$_0 = game;
+    }
+  });
+  Object.defineProperty(VirusDisplay.prototype, 'getColor', {
+    get: function () {
+      return this.getColor_csj3a4$_0;
+    }
+  });
+  Object.defineProperty(VirusDisplay.prototype, 'draw', {
+    get: function () {
+      return this.draw_rdwa6r$_0;
+    }
+  });
+  function VirusDisplay$getColor$lambda(piece, f, f_0) {
     switch (piece) {
       case 0:
         return 'white';
@@ -1497,27 +1736,16 @@ var Tern = function (_, Kotlin) {
       default:return 'green';
     }
   }
-  function VirusDisplay_init$lambda_0(this$VirusDisplay, closure$sourcePosition, closure$getColor) {
+  function VirusDisplay_init$lambda(this$VirusDisplay, closure$sourcePosition) {
     return function (it) {
-      if (it.x >= 0 && it.y >= 0 && it.x < this$VirusDisplay.game.width && it.y < this$VirusDisplay.game.height) {
+      if (it.x >= 0 && it.y >= 0 && it.x < this$VirusDisplay.game.state.width && it.y < this$VirusDisplay.game.state.height) {
         var source = closure$sourcePosition.v;
         if (source == null) {
           closure$sourcePosition.v = new Position(it.x, it.y);
-          println('source' + toString(closure$sourcePosition.v));
         }
          else {
           closure$sourcePosition.v = null;
-          var action = new VirusAction(source, new Position(it.x, it.y));
-          println('destination' + toString(new Position(it.x, it.y)));
-          var newState = this$VirusDisplay.game.nextState_ulwrck$(action);
-          if (newState != null)
-            this$VirusDisplay.game = newState;
-          this$VirusDisplay.squareDisplay.display_macai1$(this$VirusDisplay.game.board, closure$getColor);
-          var winner = this$VirusDisplay.game.findWinner();
-          if (winner != null)
-            this$VirusDisplay.infoArea.textContent = this$VirusDisplay.players.get_za3lpa$(winner - 1 | 0) + ' has won!';
-          else
-            this$VirusDisplay.infoArea.textContent = 'Current player: ' + this$VirusDisplay.players.get_za3lpa$(this$VirusDisplay.game.currentPlayer - 1 | 0);
+          this$VirusDisplay.performAction_11re$(new VirusAction(source, new Position(it.x, it.y)));
         }
       }
       return Unit;
@@ -1530,6 +1758,7 @@ var Tern = function (_, Kotlin) {
   };
   _.BoardGame = BoardGame;
   _.BoardGameState = BoardGameState;
+  _.Chess = Chess;
   _.ChessState = ChessState;
   _.ChessAction = ChessAction;
   Object.defineProperty(ChessPieceType, 'King', {
@@ -1560,8 +1789,10 @@ var Tern = function (_, Kotlin) {
   _.ChessPlayer = ChessPlayer;
   _.ChessDisplay = ChessDisplay;
   _.ChessPiece = ChessPiece;
-  _.main_kand9s$ = main;
   _.GameDisplay = GameDisplay;
+  _.Player = Player;
+  _.AIPlayer = AIPlayer;
+  _.main_kand9s$ = main;
   _.Position = Position;
   _.SquareGrid = SquareGrid;
   _.SquareGridDisplay = SquareGridDisplay;
@@ -1576,14 +1807,12 @@ var Tern = function (_, Kotlin) {
   });
   _.TicTacToePiece = TicTacToePiece;
   _.TicTacToeDisplay = TicTacToeDisplay;
-  _.Player = Player;
-  _.AIPlayer = AIPlayer;
-  _.TicTacToeAI = TicTacToeAI;
   _.TicTacToeAIRandom = TicTacToeAIRandom;
+  _.Virus = Virus;
   _.VirusState = VirusState;
   _.VirusAction = VirusAction;
   _.VirusDisplay = VirusDisplay;
   main([]);
   Kotlin.defineModule('Tern', _);
   return _;
-}(typeof Tern === 'undefined' ? {} : Tern, kotlin);
+}(typeof Tern === 'undefined' ? {} : Tern, kotlin, this['kotlinx-coroutines-core']);
