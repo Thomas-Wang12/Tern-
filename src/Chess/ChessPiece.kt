@@ -1,4 +1,6 @@
 import kotlin.math.abs
+import kotlin.math.max
+import kotlin.math.min
 
 /// Original code by Lasse
 /// Ported from Java by Kristjan
@@ -220,5 +222,48 @@ data class ChessPiece(val type: ChessPieceType, val player: ChessPlayer, val has
 			}
 		}
 		return false
+	}
+
+	fun possibleMoves(board: SquareGrid<ChessPiece?>, position: Position): List<ChessAction> {
+		return when (type) {
+			ChessPieceType.King -> possibleKingMoves(board, position)
+			ChessPieceType.Queen -> possibleQueenMoves(board, position)
+			ChessPieceType.Bishop -> possibleBishopMoves(board, position)
+			ChessPieceType.Knight -> possibleKnightMoves(board, position)
+			ChessPieceType.Rook -> possibleRookMoves(board, position)
+			ChessPieceType.Pawn -> possiblePawnMoves(board, position)
+		}
+	}
+
+	private fun possibleKingMoves(board: SquareGrid<ChessPiece?>, position: Position): List<ChessAction> {
+		val actions = mutableListOf<ChessAction>()
+		for(i in max(0, position.x-1)..min(7, position.x+1)){
+			for(j in max(0, position.y-1)..min(7, position.y+1)){
+				if(board[i,j]?.player != player)
+					actions.add(ChessAction(position, Position(i,j)))
+			}
+		}
+		// TODO: castling
+		return actions
+	}
+
+	private fun possibleQueenMoves(board: SquareGrid<ChessPiece?>, position: Position): List<ChessAction> {
+		return possibleKingMoves(board, position) // TODO
+	}
+
+	private fun possibleBishopMoves(board: SquareGrid<ChessPiece?>, position: Position): List<ChessAction> {
+		return possibleKingMoves(board, position) // TODO
+	}
+
+	private fun possibleKnightMoves(board: SquareGrid<ChessPiece?>, position: Position): List<ChessAction> {
+		return possibleKingMoves(board, position) // TODO
+	}
+
+	private fun possibleRookMoves(board: SquareGrid<ChessPiece?>, position: Position): List<ChessAction> {
+		return possibleKingMoves(board, position) // TODO
+	}
+
+	private fun possiblePawnMoves(board: SquareGrid<ChessPiece?>, position: Position): List<ChessAction> {
+		return possibleKingMoves(board, position) // TODO
 	}
 }

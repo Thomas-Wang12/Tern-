@@ -43,11 +43,23 @@ data class ChessState(
 		val piece = board[action.source] ?: return false
 		if (piece.player != currentPlayer)
 			return false
+		val enemy = board[action.destination]
+		if (enemy?.player == currentPlayer)
+			return false
 		return piece.isLegal(board, action)
 	}
 
 	override fun possibleActions(): List<ChessAction> {
-		return listOf() // TODO
+		val actions = mutableListOf<ChessAction>()
+		for (i in 0 until 8) {
+			for (j in 0 until 8) {
+				val piece = board[i,j]
+				if(piece?.player != currentPlayer)
+					continue
+				actions.addAll(piece.possibleMoves(board, Position(i, j)))
+			}
+		}
+		return actions.toList()
 	}
 
 	override fun nextState(action: ChessAction): BoardGameState<ChessPiece?, ChessAction, ChessPlayer> {

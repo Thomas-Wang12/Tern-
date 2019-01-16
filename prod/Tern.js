@@ -9,11 +9,12 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   var throwCCE = Kotlin.throwCCE;
   var Kind_CLASS = Kotlin.Kind.CLASS;
   var Kind_INTERFACE = Kotlin.Kind.INTERFACE;
+  var equals = Kotlin.equals;
+  var toList = Kotlin.kotlin.collections.toList_7wnvza$;
   var abs = Kotlin.kotlin.math.abs_za3lpa$;
   var listOf = Kotlin.kotlin.collections.listOf_i5x0yv$;
   var Enum = Kotlin.kotlin.Enum;
   var throwISE = Kotlin.throwISE;
-  var equals = Kotlin.equals;
   var Unit = Kotlin.kotlin.Unit;
   var coroutines = $module$kotlinx_coroutines_core.kotlinx.coroutines;
   var delay = $module$kotlinx_coroutines_core.kotlinx.coroutines.delay_s8cxhz$;
@@ -24,7 +25,6 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   var until = Kotlin.kotlin.ranges.until_dqglrj$;
   var ensureNotNull = Kotlin.ensureNotNull;
   var numberToInt = Kotlin.numberToInt;
-  var toList = Kotlin.kotlin.collections.toList_7wnvza$;
   var IntRange = Kotlin.kotlin.ranges.IntRange;
   Chess.prototype = Object.create(BoardGame.prototype);
   Chess.prototype.constructor = Chess;
@@ -130,11 +130,23 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     var piece = tmp$;
     if (piece.player !== this.currentPlayer)
       return false;
+    var enemy = this.board.get_dfplqh$(action.destination);
+    if (equals(enemy != null ? enemy.player : null, this.currentPlayer))
+      return false;
     return piece.isLegal_xm7weo$(this.board, action);
   };
-  var emptyList = Kotlin.kotlin.collections.emptyList_287e2$;
+  var ArrayList_init = Kotlin.kotlin.collections.ArrayList_init_287e2$;
   ChessState.prototype.possibleActions = function () {
-    return emptyList();
+    var actions = ArrayList_init();
+    for (var i = 0; i < 8; i++) {
+      for (var j = 0; j < 8; j++) {
+        var piece = this.board.get_vux9f0$(i, j);
+        if (!equals(piece != null ? piece.player : null, this.currentPlayer))
+          continue;
+        actions.addAll_brywnq$(piece.possibleMoves_iy0w7l$(this.board, new Position(i, j)));
+      }
+    }
+    return toList(actions);
   };
   ChessState.prototype.nextState_11rc$ = function (action) {
     var tmp$, tmp$_0;
@@ -698,6 +710,67 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     }
     return false;
   };
+  ChessPiece.prototype.possibleMoves_iy0w7l$ = function (board, position) {
+    var tmp$;
+    switch (this.type.name) {
+      case 'King':
+        tmp$ = this.possibleKingMoves_0(board, position);
+        break;
+      case 'Queen':
+        tmp$ = this.possibleQueenMoves_0(board, position);
+        break;
+      case 'Bishop':
+        tmp$ = this.possibleBishopMoves_0(board, position);
+        break;
+      case 'Knight':
+        tmp$ = this.possibleKnightMoves_0(board, position);
+        break;
+      case 'Rook':
+        tmp$ = this.possibleRookMoves_0(board, position);
+        break;
+      case 'Pawn':
+        tmp$ = this.possiblePawnMoves_0(board, position);
+        break;
+      default:tmp$ = Kotlin.noWhenBranchMatched();
+        break;
+    }
+    return tmp$;
+  };
+  var Math_0 = Math;
+  ChessPiece.prototype.possibleKingMoves_0 = function (board, position) {
+    var tmp$, tmp$_0, tmp$_1, tmp$_2, tmp$_3;
+    var actions = ArrayList_init();
+    var b = position.x - 1 | 0;
+    tmp$ = Math_0.max(0, b);
+    var b_0 = position.x + 1 | 0;
+    tmp$_0 = Math_0.min(7, b_0);
+    for (var i = tmp$; i <= tmp$_0; i++) {
+      var b_1 = position.y - 1 | 0;
+      tmp$_1 = Math_0.max(0, b_1);
+      var b_2 = position.y + 1 | 0;
+      tmp$_2 = Math_0.min(7, b_2);
+      for (var j = tmp$_1; j <= tmp$_2; j++) {
+        if (!equals((tmp$_3 = board.get_vux9f0$(i, j)) != null ? tmp$_3.player : null, this.player))
+          actions.add_11rb$(new ChessAction(position, new Position(i, j)));
+      }
+    }
+    return actions;
+  };
+  ChessPiece.prototype.possibleQueenMoves_0 = function (board, position) {
+    return this.possibleKingMoves_0(board, position);
+  };
+  ChessPiece.prototype.possibleBishopMoves_0 = function (board, position) {
+    return this.possibleKingMoves_0(board, position);
+  };
+  ChessPiece.prototype.possibleKnightMoves_0 = function (board, position) {
+    return this.possibleKingMoves_0(board, position);
+  };
+  ChessPiece.prototype.possibleRookMoves_0 = function (board, position) {
+    return this.possibleKingMoves_0(board, position);
+  };
+  ChessPiece.prototype.possiblePawnMoves_0 = function (board, position) {
+    return this.possibleKingMoves_0(board, position);
+  };
   ChessPiece.$metadata$ = {
     kind: Kind_CLASS,
     simpleName: 'ChessPiece',
@@ -926,11 +999,11 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   Position.prototype.equals = function (other) {
     return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.x, other.x) && Kotlin.equals(this.y, other.y)))));
   };
-  var ArrayList_init = Kotlin.kotlin.collections.ArrayList_init_ww73n8$;
+  var ArrayList_init_0 = Kotlin.kotlin.collections.ArrayList_init_ww73n8$;
   function SquareGrid(width, height, init, fields) {
     if (fields === void 0) {
       var size = Kotlin.imul(width, height);
-      var list = ArrayList_init(size);
+      var list = ArrayList_init_0(size);
       for (var index = 0; index < size; index++) {
         list.add_11rb$(init(index % width, index / width | 0));
       }
@@ -1103,9 +1176,8 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
       return false;
     return true;
   };
-  var ArrayList_init_0 = Kotlin.kotlin.collections.ArrayList_init_287e2$;
   TicTacToeState.prototype.possibleActions = function () {
-    var actions = ArrayList_init_0();
+    var actions = ArrayList_init();
     for (var i = 0; i <= 2; i++) {
       for (var j = 0; j <= 2; j++)
         if (this.board.get_vux9f0$(i, j) == null)
@@ -1370,10 +1442,9 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
       return false;
     return true;
   };
-  var Math_0 = Math;
   VirusState.prototype.possibleActions = function () {
     var tmp$, tmp$_0, tmp$_1, tmp$_2, tmp$_3, tmp$_4;
-    var actions = ArrayList_init_0();
+    var actions = ArrayList_init();
     tmp$ = this.width;
     for (var i = 0; i < tmp$; i++) {
       tmp$_0 = this.height;
@@ -1417,7 +1488,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     this.switchSurroundings_0(action.destination, newBoard);
     var movablePlayers = this.findMovablePlayers_0(newBoard);
     var nextPlayer = this.currentPlayer + 1 | 0;
-    var destination = ArrayList_init_0();
+    var destination = ArrayList_init();
     var tmp$;
     tmp$ = movablePlayers.iterator();
     while (tmp$.hasNext()) {
@@ -1442,7 +1513,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   VirusState.prototype.findWinner = function () {
     var tmp$, tmp$_0;
     var size = this.playerCount + 1 | 0;
-    var list = ArrayList_init(size);
+    var list = ArrayList_init_0(size);
     for (var index = 0; index < size; index++) {
       list.add_11rb$(0);
     }
@@ -1453,7 +1524,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
       pieces.set_wxm5ur$(field, pieces.get_za3lpa$(field) + 1 | 0);
     }
     var movablePlayers = this.findMovablePlayers_0(this.board);
-    var destination = ArrayList_init_0();
+    var destination = ArrayList_init();
     var tmp$_1;
     tmp$_1 = movablePlayers.iterator();
     while (tmp$_1.hasNext()) {
@@ -1492,7 +1563,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   VirusState.prototype.findMovablePlayers_0 = function (board) {
     var tmp$, tmp$_0, tmp$_1, tmp$_2, tmp$_3, tmp$_4;
     var size = this.playerCount + 1 | 0;
-    var list = ArrayList_init(size);
+    var list = ArrayList_init_0(size);
     for (var index = 0; index < size; index++) {
       list.add_11rb$(false);
     }
@@ -1517,7 +1588,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
           for (var m = tmp$_3; m < tmp$_4; m++) {
             if (board.get_vux9f0$(n, m) > 0)
               movablePlayers.set_wxm5ur$(board.get_vux9f0$(n, m), true);
-            var destination = ArrayList_init_0();
+            var destination = ArrayList_init();
             var tmp$_5;
             tmp$_5 = movablePlayers.iterator();
             while (tmp$_5.hasNext()) {
