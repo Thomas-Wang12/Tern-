@@ -2,10 +2,15 @@ import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 
+class Virus(override var state: VirusState = VirusState())
+	: BoardGame<VirusState, Int, VirusAction, Int>() {
+
+}
+
 data class VirusState(
 		val width: Int = 5, val height: Int = 5,
 		val playerCount: Int = 2,
-		val board: SquareGrid<Int> = SquareGrid(width, height, { x, y ->
+		override val board: SquareGrid<Int> = SquareGrid(width, height, { x, y ->
 			if (x == 0 && y == 0) {
 				when (playerCount) {
 					2 -> 1
@@ -36,9 +41,11 @@ data class VirusState(
 				}
 			} else 0
 		}),
-		val currentPlayer: Int = 1
-) {
-	fun isLegal(action: VirusAction): Boolean {
+		override val currentPlayer: Int = 1,
+		override val players: List<Int> = (1..playerCount).toList()
+) : BoardGameState<Int, VirusAction, Int> {
+
+	override fun isLegal(action: VirusAction): Boolean {
 		if (!isWithinBoard(action.source) || !isWithinBoard(action.destination))
 			return false
 		if (board[action.source.x, action.source.y] != currentPlayer)
@@ -50,10 +57,34 @@ data class VirusState(
 		return true
 	}
 
-	fun nextState(action: VirusAction, skipLegalCheck: Boolean = false): VirusState? {
-		if (!skipLegalCheck)
-			if (!isLegal(action))
-				return null
+	override fun possibleActions(): List<VirusAction> {
+		val actions = mutableListOf<VirusAction>()
+		for (i in 0 until width) {
+			for (j in 0 until height) {
+				if (board[i, j] != 0)
+					continue
+
+				var exists = false
+				for (n in max(0, i - 2) until min(width, i + 3)) {
+					for (m in max(0, j - 2) until min(height, j + 3)) {
+						if (board[n, m] != currentPlayer)
+							continue
+						val action = VirusAction(Position(n, m), Position(i, j))
+						if (abs(action.source.x - action.destination.x) > 1 ||
+								abs(action.source.y - action.destination.y) > 1) {
+							actions.add(action)
+						} else if (!exists) {
+							actions.add(action)
+							exists = true
+						}
+					}
+				}
+			}
+		}
+		return actions.toList()
+	}
+
+	override fun nextState(action: VirusAction): VirusState {
 		val newBoard = board.copy()
 		if (abs(action.source.x - action.destination.x) > 1 || abs(action.source.y - action.destination.y) > 1)
 			newBoard[action.source.x, action.source.y] = 0
@@ -75,7 +106,7 @@ data class VirusState(
 		return VirusState(board = newBoard, currentPlayer = nextPlayer)
 	}
 
-	fun findWinner(): Int? {
+	override fun findWinner(): Int? {
 		val pieces = MutableList(playerCount + 1) { 0 }
 		for (field in board.fields)
 			pieces[field]++

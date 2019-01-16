@@ -1,43 +1,37 @@
 import org.w3c.dom.*
 
-class VirusDisplay(val canvas: HTMLCanvasElement, val infoArea: HTMLDivElement) {
-	val players = mutableListOf("Player 1", "Player 2")
-	var game = VirusState()
-	val squareDisplay = SquareGridDisplay(canvas)
+class VirusDisplay(canvas: HTMLCanvasElement, infoArea: HTMLDivElement)
+	: GameDisplay<Virus, VirusState, Int, VirusAction, Int>(canvas, infoArea) {
+	override var game = Virus()
+
+	override val getColor = { piece: Int, _: Int, _: Int ->
+		when (piece) {
+			0 -> "white"
+			1 -> "yellow"
+			2 -> "red"
+			else -> "green"
+		}
+	}
+	override val draw = null
 
 	init {
-		val getColor = { piece: Int, _: Int, _: Int ->
-			when (piece) {
-				0 -> "white"
-				1 -> "yellow"
-				2 -> "red"
-				else -> "green"
-			}
-		}
-		squareDisplay.display(game.board, getColor)
-		infoArea.textContent = "Current player: " + players[game.currentPlayer - 1]
+		game.players[1] = "Player 1"
+		players["Player 1"] = Player()
+		game.players[2] = "Player 2"
+		players["Player 2"] = Player()
+
+		updateDisplay(null)
 
 		var sourcePosition: Position? = null
 
 		squareDisplay.onClick = {
-			if (it.x >= 0 && it.y >= 0 && it.x < game.width && it.y < game.height) {
+			if (it.x >= 0 && it.y >= 0 && it.x < game.state.width && it.y < game.state.height) {
 				val source = sourcePosition
 				if (source == null) {
 					sourcePosition = Position(it.x, it.y)
-					println("source" + sourcePosition)
 				} else {
 					sourcePosition = null
-					val action = VirusAction(source, Position(it.x, it.y))
-					println("destination" + Position(it.x, it.y))
-					val newState = game.nextState(action)
-					if (newState != null)
-						game = newState
-					squareDisplay.display(game.board, getColor)
-					val winner = game.findWinner()
-					if (winner != null)
-						infoArea.textContent = players[winner - 1] + " has won!"
-					else
-						infoArea.textContent = "Current player: " + players[game.currentPlayer - 1]
+					performAction(VirusAction(source, Position(it.x, it.y)))
 				}
 			}
 		}

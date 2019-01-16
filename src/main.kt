@@ -33,11 +33,11 @@ fun main(args: Array<String>) {
 		game = TicTacToeDisplay(canvas, infoArea)
 	})
 	virusButton.addEventListener("click", {
-		//game?.end()
-		//game = VirusDisplay(canvas, infoArea)
+		game?.end()
+		game = VirusDisplay(canvas, infoArea)
 	})
 	chessButton.addEventListener("click", {
-		//game?.end()
+		game?.end()
 		//game = ChessDisplay(canvas, infoArea)
 	})
 
