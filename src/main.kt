@@ -27,7 +27,7 @@ fun main(args: Array<String>) {
 	context.canvas.height = window.innerHeight
 	document.body!!.appendChild(canvas)
 
-	var game: GameDisplay<*,*,*,*,*>? = null
+	var game: GameDisplay<*, *, *, *, *>? = null
 	ticTacToeButton.addEventListener("click", {
 		game?.end()
 		game = TicTacToeDisplay(canvas, infoArea)
@@ -44,4 +44,8 @@ fun main(args: Array<String>) {
 }
 
 
-data class Position(val x: Int, val y: Int)
+data class Position(val x: Int, val y: Int) {
+	fun add(i: Int, j: Int): Position {
+		return Position(x + i, y + j)
+	}
+}

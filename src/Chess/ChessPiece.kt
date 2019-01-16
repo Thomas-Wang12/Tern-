@@ -237,10 +237,10 @@ data class ChessPiece(val type: ChessPieceType, val player: ChessPlayer, val has
 
 	private fun possibleKingMoves(board: SquareGrid<ChessPiece?>, position: Position): List<ChessAction> {
 		val actions = mutableListOf<ChessAction>()
-		for(i in max(0, position.x-1)..min(7, position.x+1)){
-			for(j in max(0, position.y-1)..min(7, position.y+1)){
-				if(board[i,j]?.player != player)
-					actions.add(ChessAction(position, Position(i,j)))
+		for (i in max(0, position.x - 1)..min(7, position.x + 1)) {
+			for (j in max(0, position.y - 1)..min(7, position.y + 1)) {
+				if (board[i, j]?.player != player)
+					actions.add(ChessAction(position, Position(i, j)))
 			}
 		}
 		// TODO: castling
@@ -248,22 +248,120 @@ data class ChessPiece(val type: ChessPieceType, val player: ChessPlayer, val has
 	}
 
 	private fun possibleQueenMoves(board: SquareGrid<ChessPiece?>, position: Position): List<ChessAction> {
-		return possibleKingMoves(board, position) // TODO
+		var actions = mutableListOf<ChessAction>()
+		actions.addAll(possibleBishopMoves(board, position))
+		actions.addAll(possibleRookMoves(board, position))
+		return actions
 	}
 
 	private fun possibleBishopMoves(board: SquareGrid<ChessPiece?>, position: Position): List<ChessAction> {
-		return possibleKingMoves(board, position) // TODO
+		val actions = mutableListOf<ChessAction>()
+		for (i in 1..7) {
+			val pos = Position(position.x + i, position.y + i)
+			if (pos.x < 8 && pos.y < 8 && board[pos]?.player != player)
+				actions.add(ChessAction(position, pos))
+			else break
+		}
+		for (i in 1..7) {
+			val pos = Position(position.x + i, position.y - i)
+			if (pos.x < 8 && pos.y >= 0 && board[pos]?.player != player)
+				actions.add(ChessAction(position, pos))
+			else break
+		}
+		for (i in 1..7) {
+			val pos = Position(position.x - i, position.y + i)
+			if (pos.x >= 0 && pos.y < 8 && board[pos]?.player != player)
+				actions.add(ChessAction(position, pos))
+			else break
+		}
+		for (i in 1..7) {
+			val pos = Position(position.x - i, position.y - i)
+			if (pos.x >= 0 && pos.y >= 0 && board[pos]?.player != player)
+				actions.add(ChessAction(position, pos))
+			else break
+		}
+		return actions
 	}
 
 	private fun possibleKnightMoves(board: SquareGrid<ChessPiece?>, position: Position): List<ChessAction> {
-		return possibleKingMoves(board, position) // TODO
+		val actions = mutableListOf<ChessAction>()
+		var destination = position.add(1, 2)
+		if (isWithinBoard(destination) && board[destination]?.player != player)
+			actions.add(ChessAction(position, destination))
+		destination = position.add(2, 1)
+		if (isWithinBoard(destination) && board[destination]?.player != player)
+			actions.add(ChessAction(position, destination))
+		destination = position.add(1, -2)
+		if (isWithinBoard(destination) && board[destination]?.player != player)
+			actions.add(ChessAction(position, destination))
+		destination = position.add(2, -1)
+		if (isWithinBoard(destination) && board[destination]?.player != player)
+			actions.add(ChessAction(position, destination))
+		destination = position.add(-1, 2)
+		if (isWithinBoard(destination) && board[destination]?.player != player)
+			actions.add(ChessAction(position, destination))
+		destination = position.add(-2, 1)
+		if (isWithinBoard(destination) && board[destination]?.player != player)
+			actions.add(ChessAction(position, destination))
+		destination = position.add(-1, -2)
+		if (isWithinBoard(destination) && board[destination]?.player != player)
+			actions.add(ChessAction(position, destination))
+		destination = position.add(-2, -1)
+		if (isWithinBoard(destination) && board[destination]?.player != player)
+			actions.add(ChessAction(position, destination))
+		return actions
 	}
 
 	private fun possibleRookMoves(board: SquareGrid<ChessPiece?>, position: Position): List<ChessAction> {
-		return possibleKingMoves(board, position) // TODO
+		val actions = mutableListOf<ChessAction>()
+		for (i in 1..7) {
+			val pos = Position(position.x + i, position.y)
+			if (pos.x < 8 && board[pos]?.player != player)
+				actions.add(ChessAction(position, pos))
+			else break
+		}
+		for (i in 1..7) {
+			val pos = Position(position.x - i, position.y)
+			if (pos.x >= 0 && board[pos]?.player != player)
+				actions.add(ChessAction(position, pos))
+			else break
+		}
+		for (i in 1..7) {
+			val pos = Position(position.x, position.y + i)
+			if (pos.y < 8 && board[pos]?.player != player)
+				actions.add(ChessAction(position, pos))
+			else break
+		}
+		for (i in 1..7) {
+			val pos = Position(position.x, position.y - i)
+			if (pos.y >= 0 && board[pos]?.player != player)
+				actions.add(ChessAction(position, pos))
+			else break
+		}
+		return actions
 	}
 
 	private fun possiblePawnMoves(board: SquareGrid<ChessPiece?>, position: Position): List<ChessAction> {
-		return possibleKingMoves(board, position) // TODO
+		val actions = mutableListOf<ChessAction>()
+		val direction = if (player == ChessPlayer.Black) -1 else 1
+		if (board[position.x, position.y + direction] == null)
+			actions.add(ChessAction(position, Position(position.x, position.y + direction)))
+		if (!hasMoved &&
+				board[position.x, position.y + direction] == null &&
+				board[position.x, position.y + direction * 2] == null)
+			actions.add(ChessAction(position, Position(position.x, position.y + direction * 2)))
+		if (position.x > 0 &&
+				board[position.x - 1, position.y + direction] != null &&
+				board[position.x - 1, position.y + direction]?.player != player)
+			actions.add(ChessAction(position, Position(position.x - 1, position.y + direction)))
+		if (position.x < 7 &&
+				board[position.x + 1, position.y + direction] != null &&
+				board[position.x + 1, position.y + direction]?.player != player)
+			actions.add(ChessAction(position, Position(position.x + 1, position.y + direction)))
+		return actions
+	}
+
+	private fun isWithinBoard(position: Position): Boolean {
+		return position.x in 0..7 && position.y in 0..7
 	}
 }
