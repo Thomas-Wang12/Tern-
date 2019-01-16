@@ -17,6 +17,15 @@ data class TicTacToeState(
         return true
     }
 
+    override fun possibleActions(): List<TicTacToeAction> {
+        val actions = mutableListOf<TicTacToeAction>()
+        for(i in 0..2)
+            for(j in 0..2)
+                if(board[i,j] == TicTacToeField.Empty)
+                    actions.add(TicTacToeAction(currentPlayer, i, j))
+        return actions.toList()
+    }
+
     override fun nextState(action: TicTacToeAction): BoardGameState<TicTacToeField, TicTacToeAction, TicTacToeField> {
         val newBoard = board.copy()
         newBoard[action.x, action.y] = action.piece

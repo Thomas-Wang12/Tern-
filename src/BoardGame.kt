@@ -27,6 +27,8 @@ interface BoardGameState <T, A, P> {
     val players: List<P>
 
     fun isLegal(action: A): Boolean
+    fun possibleActions(): List<A>
     fun nextState(action: A): BoardGameState <T, A, P>
     fun findWinner(): P?
 }
+
