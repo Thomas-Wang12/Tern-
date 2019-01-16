@@ -3,25 +3,62 @@ if (typeof kotlin === 'undefined') {
 }
 var Tern = function (_, Kotlin) {
   'use strict';
+  var throwCCE = Kotlin.throwCCE;
   var Kind_CLASS = Kotlin.Kind.CLASS;
+  var Kind_INTERFACE = Kotlin.Kind.INTERFACE;
+  var abs = Kotlin.kotlin.math.abs_za3lpa$;
   var Enum = Kotlin.kotlin.Enum;
   var throwISE = Kotlin.throwISE;
   var equals = Kotlin.equals;
   var Unit = Kotlin.kotlin.Unit;
   var toString = Kotlin.toString;
   var println = Kotlin.kotlin.io.println_s8jyv4$;
-  var abs = Kotlin.kotlin.math.abs_za3lpa$;
-  var throwCCE = Kotlin.throwCCE;
   var ensureNotNull = Kotlin.ensureNotNull;
-  var Kind_INTERFACE = Kotlin.Kind.INTERFACE;
   var numberToInt = Kotlin.numberToInt;
+  var toList = Kotlin.kotlin.collections.toList_7wnvza$;
+  var listOf = Kotlin.kotlin.collections.listOf_i5x0yv$;
+  var until = Kotlin.kotlin.ranges.until_dqglrj$;
   var mutableListOf = Kotlin.kotlin.collections.mutableListOf_i5x0yv$;
   ChessPieceType.prototype = Object.create(Enum.prototype);
   ChessPieceType.prototype.constructor = ChessPieceType;
   ChessPlayer.prototype = Object.create(Enum.prototype);
   ChessPlayer.prototype.constructor = ChessPlayer;
-  TicTacToeField.prototype = Object.create(Enum.prototype);
-  TicTacToeField.prototype.constructor = TicTacToeField;
+  TicTacToe.prototype = Object.create(BoardGame.prototype);
+  TicTacToe.prototype.constructor = TicTacToe;
+  TicTacToePiece.prototype = Object.create(Enum.prototype);
+  TicTacToePiece.prototype.constructor = TicTacToePiece;
+  var LinkedHashMap_init = Kotlin.kotlin.collections.LinkedHashMap_init_q3lmfv$;
+  function BoardGame() {
+    this.players = LinkedHashMap_init();
+    this.winner = null;
+  }
+  var Map = Kotlin.kotlin.collections.Map;
+  BoardGame.prototype.performAction_11rd$ = function (action) {
+    var tmp$;
+    if (!this.state.isLegal_11rc$(action))
+      return false;
+    this.state = Kotlin.isType(tmp$ = this.state.nextState_11rc$(action), BoardGameState) ? tmp$ : throwCCE();
+    var $receiver = this.players;
+    var key = this.state.findWinner();
+    var tmp$_0;
+    this.winner = (Kotlin.isType(tmp$_0 = $receiver, Map) ? tmp$_0 : throwCCE()).get_11rb$(key);
+    return true;
+  };
+  BoardGame.prototype.currentPlayer = function () {
+    return this.players.get_11rb$(this.state.currentPlayer);
+  };
+  BoardGame.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'BoardGame',
+    interfaces: []
+  };
+  function BoardGameState() {
+  }
+  BoardGameState.$metadata$ = {
+    kind: Kind_INTERFACE,
+    simpleName: 'BoardGameState',
+    interfaces: []
+  };
   function ChessState(board, currentPlayer) {
     if (board === void 0)
       board = new SquareGrid(8, 8, ChessState_init$lambda);
@@ -44,17 +81,35 @@ var Tern = function (_, Kotlin) {
   ChessState.prototype.nextState_sg5dg1$ = function (action, skipLegalCheck) {
     if (skipLegalCheck === void 0)
       skipLegalCheck = false;
-    var tmp$;
+    var tmp$, tmp$_0;
     if (!skipLegalCheck)
       if (!this.isLegal_t6cjbe$(action))
         return null;
     var newBoard = this.board.copy_urw29u$();
-    newBoard.set_39d550$(action.destination, (tmp$ = this.board.get_dfplqh$(action.source)) != null ? tmp$.copy_9wx23a$(void 0, void 0, true) : null);
+    var newPiece = Kotlin.isType(tmp$_0 = (tmp$ = this.board.get_dfplqh$(action.source)) != null ? tmp$.copy_9wx23a$(void 0, void 0, true) : null, ChessPiece) ? tmp$_0 : throwCCE();
+    if (newPiece.type === ChessPieceType$Pawn_getInstance()) {
+      if (action.destination.y === 0 && newPiece.player === ChessPlayer$Black_getInstance() || (action.destination.y === (this.board.height - 1 | 0) && newPiece.player === ChessPlayer$White_getInstance()))
+        newPiece = newPiece.copy_9wx23a$(ChessPieceType$Queen_getInstance());
+    }
+    if (newPiece.type === ChessPieceType$King_getInstance() && abs(action.source.x - action.destination.x | 0) === 2) {
+      this.moveCastlingRook_0(action);
+    }
+    newBoard.set_39d550$(action.destination, newPiece);
     newBoard.set_39d550$(action.source, null);
     return new ChessState(newBoard, this.currentPlayer === ChessPlayer$White_getInstance() ? ChessPlayer$Black_getInstance() : ChessPlayer$White_getInstance());
   };
   ChessState.prototype.findWinner = function () {
     return null;
+  };
+  ChessState.prototype.moveCastlingRook_0 = function (action) {
+    if (action.destination.x < 4) {
+      this.board.set_vq7693$(action.destination.x + 1 | 0, action.source.y, this.board.get_vux9f0$(0, action.source.y));
+      this.board.set_vq7693$(0, action.source.y, null);
+    }
+     else {
+      this.board.set_vq7693$(action.destination.x - 1 | 0, action.source.y, this.board.get_vux9f0$(this.board.width - 1 | 0, action.source.y));
+      this.board.set_vq7693$(this.board.width - 1 | 0, action.source.y, null);
+    }
   };
   function ChessState_init$lambda(x, y) {
     switch (y) {
@@ -507,14 +562,14 @@ var Tern = function (_, Kotlin) {
         if (board.get_vux9f0$(i_0, action.source.y) != null)
           return false;
     }
-     else if ((action.source.x - action.destination.x | 0) < 0) {
+     else if ((action.source.y - action.destination.y | 0) < 0) {
       tmp$_3 = action.source.y + 1 | 0;
       tmp$_4 = action.destination.y;
       for (var i_1 = tmp$_3; i_1 < tmp$_4; i_1++)
         if (board.get_vux9f0$(action.source.x, i_1) != null)
           return false;
     }
-     else if ((action.source.x - action.destination.x | 0) > 0) {
+     else if ((action.source.y - action.destination.y | 0) > 0) {
       tmp$_5 = action.source.y - 1 | 0;
       tmp$_6 = action.destination.y + 1 | 0;
       for (var i_2 = tmp$_5; i_2 >= tmp$_6; i_2--)
@@ -807,54 +862,96 @@ var Tern = function (_, Kotlin) {
     simpleName: 'SquareGridDisplay',
     interfaces: []
   };
-  function TicTacToeState(board, currentPlayer) {
+  function TicTacToe(state) {
+    if (state === void 0)
+      state = new TicTacToeState();
+    BoardGame.call(this);
+    this.state_lbl02z$_0 = state;
+  }
+  Object.defineProperty(TicTacToe.prototype, 'state', {
+    get: function () {
+      return this.state_lbl02z$_0;
+    },
+    set: function (state) {
+      this.state_lbl02z$_0 = state;
+    }
+  });
+  TicTacToe.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'TicTacToe',
+    interfaces: [BoardGame]
+  };
+  function TicTacToeState(board, currentPlayer, players) {
     if (board === void 0)
       board = new SquareGrid(3, 3, TicTacToeState_init$lambda);
     if (currentPlayer === void 0)
-      currentPlayer = TicTacToeField$Cross_getInstance();
-    this.board = board;
-    this.currentPlayer = currentPlayer;
+      currentPlayer = TicTacToePiece$Cross_getInstance();
+    if (players === void 0)
+      players = listOf([TicTacToePiece$Cross_getInstance(), TicTacToePiece$Circle_getInstance()]);
+    this.board_pqdyqb$_0 = board;
+    this.currentPlayer_itk6nz$_0 = currentPlayer;
+    this.players_f3gykn$_0 = players;
   }
-  TicTacToeState.prototype.isLegal_eukm6g$ = function (action) {
+  Object.defineProperty(TicTacToeState.prototype, 'board', {
+    get: function () {
+      return this.board_pqdyqb$_0;
+    }
+  });
+  Object.defineProperty(TicTacToeState.prototype, 'currentPlayer', {
+    get: function () {
+      return this.currentPlayer_itk6nz$_0;
+    }
+  });
+  Object.defineProperty(TicTacToeState.prototype, 'players', {
+    get: function () {
+      return this.players_f3gykn$_0;
+    }
+  });
+  TicTacToeState.prototype.isLegal_11rc$ = function (action) {
     if (action.piece !== this.currentPlayer)
       return false;
-    if (this.board.get_vux9f0$(action.x, action.y) !== TicTacToeField$Empty_getInstance())
+    if (this.board.get_vux9f0$(action.x, action.y) != null)
       return false;
     return true;
   };
-  TicTacToeState.prototype.nextState_84fgc1$ = function (action, skipLegalCheck) {
-    if (skipLegalCheck === void 0)
-      skipLegalCheck = false;
-    if (!skipLegalCheck)
-      if (!this.isLegal_eukm6g$(action))
-        return null;
+  var ArrayList_init_0 = Kotlin.kotlin.collections.ArrayList_init_287e2$;
+  TicTacToeState.prototype.possibleActions = function () {
+    var actions = ArrayList_init_0();
+    for (var i = 0; i <= 2; i++) {
+      for (var j = 0; j <= 2; j++)
+        if (this.board.get_vux9f0$(i, j) == null)
+          actions.add_11rb$(new TicTacToeAction(this.currentPlayer, i, j));
+    }
+    return toList(actions);
+  };
+  TicTacToeState.prototype.nextState_11rc$ = function (action) {
     var newBoard = this.board.copy_urw29u$();
     newBoard.set_vq7693$(action.x, action.y, action.piece);
-    return new TicTacToeState(newBoard, this.currentPlayer === TicTacToeField$Cross_getInstance() ? TicTacToeField$Circle_getInstance() : TicTacToeField$Cross_getInstance());
+    return new TicTacToeState(newBoard, this.currentPlayer === TicTacToePiece$Cross_getInstance() ? TicTacToePiece$Circle_getInstance() : TicTacToePiece$Cross_getInstance());
   };
   TicTacToeState.prototype.findWinner = function () {
-    if (this.hasPieceWon_0(TicTacToeField$Cross_getInstance()))
-      return TicTacToeField$Cross_getInstance();
-    else if (this.hasPieceWon_0(TicTacToeField$Circle_getInstance()))
-      return TicTacToeField$Circle_getInstance();
+    if (this.hasPieceWon_0(TicTacToePiece$Cross_getInstance()))
+      return TicTacToePiece$Cross_getInstance();
+    else if (this.hasPieceWon_0(TicTacToePiece$Circle_getInstance()))
+      return TicTacToePiece$Circle_getInstance();
     return null;
   };
   TicTacToeState.prototype.hasPieceWon_0 = function (piece) {
-    if (this.board.get_vux9f0$(0, 0) === piece && this.board.get_vux9f0$(0, 1) === piece && this.board.get_vux9f0$(0, 2) === piece || (this.board.get_vux9f0$(1, 0) === piece && this.board.get_vux9f0$(1, 1) === piece && this.board.get_vux9f0$(1, 2) === piece) || (this.board.get_vux9f0$(2, 0) === piece && this.board.get_vux9f0$(2, 1) === piece && this.board.get_vux9f0$(2, 2) === piece))
+    if (equals(this.board.get_vux9f0$(0, 0), piece) && equals(this.board.get_vux9f0$(0, 1), piece) && equals(this.board.get_vux9f0$(0, 2), piece) || (equals(this.board.get_vux9f0$(1, 0), piece) && equals(this.board.get_vux9f0$(1, 1), piece) && equals(this.board.get_vux9f0$(1, 2), piece)) || (equals(this.board.get_vux9f0$(2, 0), piece) && equals(this.board.get_vux9f0$(2, 1), piece) && equals(this.board.get_vux9f0$(2, 2), piece)))
       return true;
-    if (this.board.get_vux9f0$(0, 0) === piece && this.board.get_vux9f0$(1, 0) === piece && this.board.get_vux9f0$(2, 0) === piece || (this.board.get_vux9f0$(0, 1) === piece && this.board.get_vux9f0$(1, 1) === piece && this.board.get_vux9f0$(2, 1) === piece) || (this.board.get_vux9f0$(0, 2) === piece && this.board.get_vux9f0$(1, 2) === piece && this.board.get_vux9f0$(2, 2) === piece))
+    if (equals(this.board.get_vux9f0$(0, 0), piece) && equals(this.board.get_vux9f0$(1, 0), piece) && equals(this.board.get_vux9f0$(2, 0), piece) || (equals(this.board.get_vux9f0$(0, 1), piece) && equals(this.board.get_vux9f0$(1, 1), piece) && equals(this.board.get_vux9f0$(2, 1), piece)) || (equals(this.board.get_vux9f0$(0, 2), piece) && equals(this.board.get_vux9f0$(1, 2), piece) && equals(this.board.get_vux9f0$(2, 2), piece)))
       return true;
-    if (this.board.get_vux9f0$(0, 0) === piece && this.board.get_vux9f0$(1, 1) === piece && this.board.get_vux9f0$(2, 2) === piece || (this.board.get_vux9f0$(0, 2) === piece && this.board.get_vux9f0$(1, 1) === piece && this.board.get_vux9f0$(2, 0) === piece))
+    if (equals(this.board.get_vux9f0$(0, 0), piece) && equals(this.board.get_vux9f0$(1, 1), piece) && equals(this.board.get_vux9f0$(2, 2), piece) || (equals(this.board.get_vux9f0$(0, 2), piece) && equals(this.board.get_vux9f0$(1, 1), piece) && equals(this.board.get_vux9f0$(2, 0), piece)))
       return true;
     return false;
   };
   function TicTacToeState_init$lambda(f, f_0) {
-    return TicTacToeField$Empty_getInstance();
+    return null;
   }
   TicTacToeState.$metadata$ = {
     kind: Kind_CLASS,
     simpleName: 'TicTacToeState',
-    interfaces: []
+    interfaces: [BoardGameState]
   };
   TicTacToeState.prototype.component1 = function () {
     return this.board;
@@ -862,20 +959,24 @@ var Tern = function (_, Kotlin) {
   TicTacToeState.prototype.component2 = function () {
     return this.currentPlayer;
   };
-  TicTacToeState.prototype.copy_e9e4pj$ = function (board, currentPlayer) {
-    return new TicTacToeState(board === void 0 ? this.board : board, currentPlayer === void 0 ? this.currentPlayer : currentPlayer);
+  TicTacToeState.prototype.component3 = function () {
+    return this.players;
+  };
+  TicTacToeState.prototype.copy_lnjj55$ = function (board, currentPlayer, players) {
+    return new TicTacToeState(board === void 0 ? this.board : board, currentPlayer === void 0 ? this.currentPlayer : currentPlayer, players === void 0 ? this.players : players);
   };
   TicTacToeState.prototype.toString = function () {
-    return 'TicTacToeState(board=' + Kotlin.toString(this.board) + (', currentPlayer=' + Kotlin.toString(this.currentPlayer)) + ')';
+    return 'TicTacToeState(board=' + Kotlin.toString(this.board) + (', currentPlayer=' + Kotlin.toString(this.currentPlayer)) + (', players=' + Kotlin.toString(this.players)) + ')';
   };
   TicTacToeState.prototype.hashCode = function () {
     var result = 0;
     result = result * 31 + Kotlin.hashCode(this.board) | 0;
     result = result * 31 + Kotlin.hashCode(this.currentPlayer) | 0;
+    result = result * 31 + Kotlin.hashCode(this.players) | 0;
     return result;
   };
   TicTacToeState.prototype.equals = function (other) {
-    return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.board, other.board) && Kotlin.equals(this.currentPlayer, other.currentPlayer)))));
+    return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.board, other.board) && Kotlin.equals(this.currentPlayer, other.currentPlayer) && Kotlin.equals(this.players, other.players)))));
   };
   function TicTacToeAction(piece, x, y) {
     this.piece = piece;
@@ -896,7 +997,7 @@ var Tern = function (_, Kotlin) {
   TicTacToeAction.prototype.component3 = function () {
     return this.y;
   };
-  TicTacToeAction.prototype.copy_wqtaiw$ = function (piece, x, y) {
+  TicTacToeAction.prototype.copy_esb5v0$ = function (piece, x, y) {
     return new TicTacToeAction(piece === void 0 ? this.piece : piece, x === void 0 ? this.x : x, y === void 0 ? this.y : y);
   };
   TicTacToeAction.prototype.toString = function () {
@@ -912,98 +1013,111 @@ var Tern = function (_, Kotlin) {
   TicTacToeAction.prototype.equals = function (other) {
     return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.piece, other.piece) && Kotlin.equals(this.x, other.x) && Kotlin.equals(this.y, other.y)))));
   };
-  function TicTacToeField(name, ordinal) {
+  function TicTacToePiece(name, ordinal) {
     Enum.call(this);
     this.name$ = name;
     this.ordinal$ = ordinal;
   }
-  function TicTacToeField_initFields() {
-    TicTacToeField_initFields = function () {
+  function TicTacToePiece_initFields() {
+    TicTacToePiece_initFields = function () {
     };
-    TicTacToeField$Cross_instance = new TicTacToeField('Cross', 0);
-    TicTacToeField$Circle_instance = new TicTacToeField('Circle', 1);
-    TicTacToeField$Empty_instance = new TicTacToeField('Empty', 2);
+    TicTacToePiece$Cross_instance = new TicTacToePiece('Cross', 0);
+    TicTacToePiece$Circle_instance = new TicTacToePiece('Circle', 1);
   }
-  var TicTacToeField$Cross_instance;
-  function TicTacToeField$Cross_getInstance() {
-    TicTacToeField_initFields();
-    return TicTacToeField$Cross_instance;
+  var TicTacToePiece$Cross_instance;
+  function TicTacToePiece$Cross_getInstance() {
+    TicTacToePiece_initFields();
+    return TicTacToePiece$Cross_instance;
   }
-  var TicTacToeField$Circle_instance;
-  function TicTacToeField$Circle_getInstance() {
-    TicTacToeField_initFields();
-    return TicTacToeField$Circle_instance;
+  var TicTacToePiece$Circle_instance;
+  function TicTacToePiece$Circle_getInstance() {
+    TicTacToePiece_initFields();
+    return TicTacToePiece$Circle_instance;
   }
-  var TicTacToeField$Empty_instance;
-  function TicTacToeField$Empty_getInstance() {
-    TicTacToeField_initFields();
-    return TicTacToeField$Empty_instance;
-  }
-  TicTacToeField.$metadata$ = {
+  TicTacToePiece.$metadata$ = {
     kind: Kind_CLASS,
-    simpleName: 'TicTacToeField',
+    simpleName: 'TicTacToePiece',
     interfaces: [Enum]
   };
-  function TicTacToeField$values() {
-    return [TicTacToeField$Cross_getInstance(), TicTacToeField$Circle_getInstance(), TicTacToeField$Empty_getInstance()];
+  function TicTacToePiece$values() {
+    return [TicTacToePiece$Cross_getInstance(), TicTacToePiece$Circle_getInstance()];
   }
-  TicTacToeField.values = TicTacToeField$values;
-  function TicTacToeField$valueOf(name) {
+  TicTacToePiece.values = TicTacToePiece$values;
+  function TicTacToePiece$valueOf(name) {
     switch (name) {
       case 'Cross':
-        return TicTacToeField$Cross_getInstance();
+        return TicTacToePiece$Cross_getInstance();
       case 'Circle':
-        return TicTacToeField$Circle_getInstance();
-      case 'Empty':
-        return TicTacToeField$Empty_getInstance();
-      default:throwISE('No enum constant TicTacToeField.' + name);
+        return TicTacToePiece$Circle_getInstance();
+      default:throwISE('No enum constant TicTacToePiece.' + name);
     }
   }
-  TicTacToeField.valueOf_61zpoe$ = TicTacToeField$valueOf;
+  TicTacToePiece.valueOf_61zpoe$ = TicTacToePiece$valueOf;
   function TicTacToeDisplay(canvas, infoArea) {
     this.canvas = canvas;
     this.infoArea = infoArea;
-    this.game = new TicTacToeState();
+    this.game = new TicTacToe();
     this.squareDisplay = new SquareGridDisplay(this.canvas);
-    var getColor = TicTacToeDisplay_init$lambda;
-    var draw = TicTacToeDisplay_init$lambda_0;
-    this.squareDisplay.display_macai1$(this.game.board, getColor, draw);
-    this.infoArea.textContent = 'Current player: ' + this.game.currentPlayer.toString();
-    this.squareDisplay.onClick = TicTacToeDisplay_init$lambda_1(this, getColor, draw);
+    this.aiDelay = 10;
+    this.players = LinkedHashMap_init();
+    this.getColor = TicTacToeDisplay$getColor$lambda;
+    this.draw = TicTacToeDisplay$draw$lambda;
+    var $receiver = this.game.players;
+    var key = TicTacToePiece$Cross_getInstance();
+    $receiver.put_xwzc9p$(key, 'Cross');
+    var $receiver_0 = this.players;
+    var value = new Player();
+    $receiver_0.put_xwzc9p$('Cross', value);
+    var $receiver_1 = this.game.players;
+    var key_0 = TicTacToePiece$Circle_getInstance();
+    $receiver_1.put_xwzc9p$(key_0, 'Circle');
+    var $receiver_2 = this.players;
+    var value_0 = new TicTacToeAIRandom('Circle');
+    $receiver_2.put_xwzc9p$('Circle', value_0);
+    this.updateDisplay_pdl1vj$(null);
+    this.squareDisplay.onClick = TicTacToeDisplay_init$lambda(this);
   }
+  TicTacToeDisplay.prototype.performAction_eukm6g$ = function (action) {
+    this.game.performAction_11rd$(action);
+    this.updateDisplay_pdl1vj$(this.game.winner);
+    if (this.game.winner != null)
+      return;
+    var $receiver = this.players;
+    var key = this.game.currentPlayer();
+    var tmp$;
+    this.awaitActionFrom_s8jyv4$((Kotlin.isType(tmp$ = $receiver, Map) ? tmp$ : throwCCE()).get_11rb$(key));
+  };
+  TicTacToeDisplay.prototype.updateDisplay_pdl1vj$ = function (winner) {
+    if (winner != null)
+      this.infoArea.textContent = winner + ' has won!';
+    else
+      this.infoArea.textContent = 'Current player: ' + this.game.currentPlayer();
+    this.squareDisplay.display_macai1$(this.game.state.board, this.getColor, this.draw);
+  };
+  TicTacToeDisplay.prototype.awaitActionFrom_s8jyv4$ = function (player) {
+    if (Kotlin.isType(player, TicTacToeAI))
+      this.performAction_eukm6g$(player.requestAction_11rb$(this.game.state));
+  };
   TicTacToeDisplay.prototype.end = function () {
     this.squareDisplay.end();
   };
-  function TicTacToeDisplay_init$lambda(f, f_0, f_1) {
+  function TicTacToeDisplay$getColor$lambda(f, f_0, f_1) {
     return 'white';
   }
-  function TicTacToeDisplay_init$lambda_0(context, fieldSize, field, x, y) {
+  function TicTacToeDisplay$draw$lambda(context, fieldSize, piece, x, y) {
     context.fillStyle = 'black';
     context.font = fieldSize.toString() + 'px arial';
     context.textBaseline = 'top';
-    switch (field.name) {
-      case 'Cross':
-        context.fillText('X', 0.0, 0.0);
-        break;
-      case 'Circle':
-        context.fillText('O', 0.0, 0.0);
-        break;
-    }
+    if (equals(piece, TicTacToePiece$Cross_getInstance()))
+      context.fillText('X', 0.0, 0.0);
+    else if (equals(piece, TicTacToePiece$Circle_getInstance()))
+      context.fillText('O', 0.0, 0.0);
     return Unit;
   }
-  function TicTacToeDisplay_init$lambda_1(this$TicTacToeDisplay, closure$getColor, closure$draw) {
+  function TicTacToeDisplay_init$lambda(this$TicTacToeDisplay) {
     return function (it) {
       if (it.x >= 0 && it.y >= 0 && it.x < 3 && it.y < 3) {
-        var action = new TicTacToeAction(this$TicTacToeDisplay.game.currentPlayer, it.x, it.y);
-        var newTicTacToe = this$TicTacToeDisplay.game.nextState_84fgc1$(action);
-        if (newTicTacToe != null)
-          this$TicTacToeDisplay.game = newTicTacToe;
-        this$TicTacToeDisplay.squareDisplay.display_macai1$(this$TicTacToeDisplay.game.board, closure$getColor, closure$draw);
-        var winner = this$TicTacToeDisplay.game.findWinner();
-        if (winner != null)
-          this$TicTacToeDisplay.infoArea.textContent = winner.toString() + ' has won!';
-        else
-          this$TicTacToeDisplay.infoArea.textContent = 'Current player: ' + this$TicTacToeDisplay.game.currentPlayer.toString();
+        this$TicTacToeDisplay.performAction_eukm6g$(new TicTacToeAction(this$TicTacToeDisplay.game.state.currentPlayer, it.x, it.y));
       }
       return Unit;
     };
@@ -1012,6 +1126,48 @@ var Tern = function (_, Kotlin) {
     kind: Kind_CLASS,
     simpleName: 'TicTacToeDisplay',
     interfaces: [GameDisplay]
+  };
+  function Player() {
+  }
+  Player.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'Player',
+    interfaces: []
+  };
+  function AIPlayer() {
+  }
+  AIPlayer.$metadata$ = {
+    kind: Kind_INTERFACE,
+    simpleName: 'AIPlayer',
+    interfaces: []
+  };
+  function TicTacToeAI() {
+  }
+  TicTacToeAI.$metadata$ = {
+    kind: Kind_INTERFACE,
+    simpleName: 'TicTacToeAI',
+    interfaces: [AIPlayer]
+  };
+  function TicTacToeAIRandom(name) {
+    this.name_6bxo0e$_0 = name;
+  }
+  Object.defineProperty(TicTacToeAIRandom.prototype, 'name', {
+    get: function () {
+      return this.name_6bxo0e$_0;
+    }
+  });
+  var Random = Kotlin.kotlin.random.Random;
+  var random = Kotlin.kotlin.ranges.random_xmiyix$;
+  TicTacToeAIRandom.prototype.requestAction_11rb$ = function (state) {
+    var actions = state.possibleActions();
+    return actions.get_za3lpa$(random(until(0, actions.size), Random.Default));
+  };
+  TicTacToeAIRandom.prototype.endGame_iuyhfk$ = function (state, won) {
+  };
+  TicTacToeAIRandom.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'TicTacToeAIRandom',
+    interfaces: [TicTacToeAI]
   };
   function VirusState(width, height, playerCount, board, currentPlayer) {
     if (width === void 0)
@@ -1041,7 +1197,6 @@ var Tern = function (_, Kotlin) {
       return false;
     return true;
   };
-  var ArrayList_init_0 = Kotlin.kotlin.collections.ArrayList_init_287e2$;
   VirusState.prototype.nextState_ulwrck$ = function (action, skipLegalCheck) {
     if (skipLegalCheck === void 0)
       skipLegalCheck = false;
@@ -1373,6 +1528,8 @@ var Tern = function (_, Kotlin) {
     simpleName: 'VirusDisplay',
     interfaces: [GameDisplay]
   };
+  _.BoardGame = BoardGame;
+  _.BoardGameState = BoardGameState;
   _.ChessState = ChessState;
   _.ChessAction = ChessAction;
   Object.defineProperty(ChessPieceType, 'King', {
@@ -1408,19 +1565,21 @@ var Tern = function (_, Kotlin) {
   _.Position = Position;
   _.SquareGrid = SquareGrid;
   _.SquareGridDisplay = SquareGridDisplay;
+  _.TicTacToe = TicTacToe;
   _.TicTacToeState = TicTacToeState;
   _.TicTacToeAction = TicTacToeAction;
-  Object.defineProperty(TicTacToeField, 'Cross', {
-    get: TicTacToeField$Cross_getInstance
+  Object.defineProperty(TicTacToePiece, 'Cross', {
+    get: TicTacToePiece$Cross_getInstance
   });
-  Object.defineProperty(TicTacToeField, 'Circle', {
-    get: TicTacToeField$Circle_getInstance
+  Object.defineProperty(TicTacToePiece, 'Circle', {
+    get: TicTacToePiece$Circle_getInstance
   });
-  Object.defineProperty(TicTacToeField, 'Empty', {
-    get: TicTacToeField$Empty_getInstance
-  });
-  _.TicTacToeField = TicTacToeField;
+  _.TicTacToePiece = TicTacToePiece;
   _.TicTacToeDisplay = TicTacToeDisplay;
+  _.Player = Player;
+  _.AIPlayer = AIPlayer;
+  _.TicTacToeAI = TicTacToeAI;
+  _.TicTacToeAIRandom = TicTacToeAIRandom;
   _.VirusState = VirusState;
   _.VirusAction = VirusAction;
   _.VirusDisplay = VirusDisplay;

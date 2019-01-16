@@ -5,15 +5,17 @@ import kotlin.math.min
 abstract class BoardGame <S : BoardGameState<T, A, P>, T, A, P> {
     abstract var state: S
     val players: MutableMap<P, String> = mutableMapOf()
-    var winner: P? = null
+    var winner: String? = null
 
     fun performAction(action: A): Boolean {
         if(!state.isLegal(action))
             return false
         state = state.nextState(action) as S
-        winner = state.findWinner()
+        winner = players[state.findWinner()]
         return true
     }
+
+    fun currentPlayer(): String? = players[state.currentPlayer]
 
 /*    fun initializeGame()
     fun isLegal(action: A): Boolean
