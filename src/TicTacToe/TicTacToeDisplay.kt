@@ -19,7 +19,7 @@ class TicTacToeDisplay(canvas: HTMLCanvasElement, infoArea: HTMLDivElement)
 		game.players[TicTacToePiece.Cross] = "Cross"
 		players["Cross"] = Player()
 		game.players[TicTacToePiece.Circle] = "Circle"
-		players["Circle"] = TicTacToeAIRandom("Circle")
+		players["Circle"] = RandomAIPlayer<TicTacToeState, TicTacToeAction>()
 
 		updateDisplay(null)
 
@@ -27,16 +27,5 @@ class TicTacToeDisplay(canvas: HTMLCanvasElement, infoArea: HTMLDivElement)
 			if (players[game.currentPlayer()] is Player && it.x >= 0 && it.y >= 0 && it.x < 3 && it.y < 3)
 				performAction(TicTacToeAction(game.state.currentPlayer, it.x, it.y))
 		}
-	}
-}
-
-class TicTacToeAIRandom(override val name: String) : AIPlayer<TicTacToeState, TicTacToeAction> {
-	override fun requestAction(state: TicTacToeState): TicTacToeAction {
-		val actions = state.possibleActions()
-		return actions[(0 until actions.size).random()]
-	}
-
-	override fun endGame(state: TicTacToeState, won: Boolean) {
-
 	}
 }

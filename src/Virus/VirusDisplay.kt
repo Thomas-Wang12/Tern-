@@ -18,14 +18,14 @@ class VirusDisplay(canvas: HTMLCanvasElement, infoArea: HTMLDivElement)
 		game.players[1] = "Player 1"
 		players["Player 1"] = Player()
 		game.players[2] = "Player 2"
-		players["Player 2"] = Player()
+		players["Player 2"] = RandomAIPlayer<VirusState, VirusAction>()
 
 		updateDisplay(null)
 
 		var sourcePosition: Position? = null
 
 		squareDisplay.onClick = {
-			if (it.x >= 0 && it.y >= 0 && it.x < game.state.width && it.y < game.state.height) {
+			if (players[game.currentPlayer()] is Player && it.x >= 0 && it.y >= 0 && it.x < game.state.width && it.y < game.state.height) {
 				val source = sourcePosition
 				if (source == null) {
 					sourcePosition = Position(it.x, it.y)

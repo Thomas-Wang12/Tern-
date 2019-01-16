@@ -21,10 +21,10 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   var CoroutineImpl = Kotlin.kotlin.coroutines.CoroutineImpl;
   var launch = $module$kotlinx_coroutines_core.kotlinx.coroutines.launch_s496o7$;
   var L500 = Kotlin.Long.fromInt(500);
+  var until = Kotlin.kotlin.ranges.until_dqglrj$;
   var ensureNotNull = Kotlin.ensureNotNull;
   var numberToInt = Kotlin.numberToInt;
   var toList = Kotlin.kotlin.collections.toList_7wnvza$;
-  var until = Kotlin.kotlin.ranges.until_dqglrj$;
   var IntRange = Kotlin.kotlin.ranges.IntRange;
   Chess.prototype = Object.create(BoardGame.prototype);
   Chess.prototype.constructor = Chess;
@@ -402,11 +402,11 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     var key_0 = ChessPlayer$Black_getInstance();
     $receiver_1.put_xwzc9p$(key_0, 'Black');
     var $receiver_2 = this.players;
-    var value_0 = new Player();
+    var value_0 = new RandomAIPlayer();
     $receiver_2.put_xwzc9p$('Black', value_0);
     this.updateDisplay_pdl1vj$(null);
     var sourcePosition = {v: null};
-    this.squareDisplay.onClick = ChessDisplay_init$lambda(sourcePosition, this);
+    this.squareDisplay.onClick = ChessDisplay_init$lambda(this, sourcePosition);
   }
   Object.defineProperty(ChessDisplay.prototype, 'game', {
     get: function () {
@@ -450,9 +450,12 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
       context.fillText(isBlack ? '\u265F' : '\u2659', 0.0, 0.0);
     return Unit;
   }
-  function ChessDisplay_init$lambda(closure$sourcePosition, this$ChessDisplay) {
+  function ChessDisplay_init$lambda(this$ChessDisplay, closure$sourcePosition) {
     return function (it) {
-      if (it.x >= 0 && it.y >= 0 && it.x < 8 && it.y < 8) {
+      var $receiver = this$ChessDisplay.players;
+      var key = this$ChessDisplay.game.currentPlayer();
+      var tmp$;
+      if (Kotlin.isType((Kotlin.isType(tmp$ = $receiver, Map) ? tmp$ : throwCCE()).get_11rb$(key), Player) && it.x >= 0 && it.y >= 0 && it.x < 8 && it.y < 8) {
         var source = closure$sourcePosition.v;
         if (source == null) {
           closure$sourcePosition.v = new Position(it.x, it.y);
@@ -830,6 +833,21 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     kind: Kind_INTERFACE,
     simpleName: 'AIPlayer',
     interfaces: []
+  };
+  function RandomAIPlayer() {
+  }
+  var Random = Kotlin.kotlin.random.Random;
+  var random = Kotlin.kotlin.ranges.random_xmiyix$;
+  RandomAIPlayer.prototype.requestAction_11rb$ = function (state) {
+    var actions = state.possibleActions();
+    return actions.get_za3lpa$(random(until(0, actions.size), Random.Default));
+  };
+  RandomAIPlayer.prototype.endGame_iuyhfk$ = function (state, won) {
+  };
+  RandomAIPlayer.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'RandomAIPlayer',
+    interfaces: [AIPlayer]
   };
   function main$lambda(closure$game, closure$canvas, closure$infoArea) {
     return function (it) {
@@ -1239,7 +1257,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     var key_0 = TicTacToePiece$Circle_getInstance();
     $receiver_1.put_xwzc9p$(key_0, 'Circle');
     var $receiver_2 = this.players;
-    var value_0 = new TicTacToeAIRandom('Circle');
+    var value_0 = new RandomAIPlayer();
     $receiver_2.put_xwzc9p$('Circle', value_0);
     this.updateDisplay_pdl1vj$(null);
     this.squareDisplay.onClick = TicTacToeDisplay_init$lambda(this);
@@ -1286,27 +1304,6 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     kind: Kind_CLASS,
     simpleName: 'TicTacToeDisplay',
     interfaces: [GameDisplay]
-  };
-  function TicTacToeAIRandom(name) {
-    this.name_6bxo0e$_0 = name;
-  }
-  Object.defineProperty(TicTacToeAIRandom.prototype, 'name', {
-    get: function () {
-      return this.name_6bxo0e$_0;
-    }
-  });
-  var Random = Kotlin.kotlin.random.Random;
-  var random = Kotlin.kotlin.ranges.random_xmiyix$;
-  TicTacToeAIRandom.prototype.requestAction_11rb$ = function (state) {
-    var actions = state.possibleActions();
-    return actions.get_za3lpa$(random(until(0, actions.size), Random.Default));
-  };
-  TicTacToeAIRandom.prototype.endGame_iuyhfk$ = function (state, won) {
-  };
-  TicTacToeAIRandom.$metadata$ = {
-    kind: Kind_CLASS,
-    simpleName: 'TicTacToeAIRandom',
-    interfaces: [AIPlayer]
   };
   function Virus(state) {
     if (state === void 0)
@@ -1701,7 +1698,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     $receiver_1.put_xwzc9p$(2, value_1);
     var $receiver_2 = this.players;
     var key_0 = 'Player 2';
-    var value_2 = new Player();
+    var value_2 = new RandomAIPlayer();
     $receiver_2.put_xwzc9p$(key_0, value_2);
     this.updateDisplay_pdl1vj$(null);
     var sourcePosition = {v: null};
@@ -1738,7 +1735,10 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   }
   function VirusDisplay_init$lambda(this$VirusDisplay, closure$sourcePosition) {
     return function (it) {
-      if (it.x >= 0 && it.y >= 0 && it.x < this$VirusDisplay.game.state.width && it.y < this$VirusDisplay.game.state.height) {
+      var $receiver = this$VirusDisplay.players;
+      var key = this$VirusDisplay.game.currentPlayer();
+      var tmp$;
+      if (Kotlin.isType((Kotlin.isType(tmp$ = $receiver, Map) ? tmp$ : throwCCE()).get_11rb$(key), Player) && it.x >= 0 && it.y >= 0 && it.x < this$VirusDisplay.game.state.width && it.y < this$VirusDisplay.game.state.height) {
         var source = closure$sourcePosition.v;
         if (source == null) {
           closure$sourcePosition.v = new Position(it.x, it.y);
@@ -1792,6 +1792,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   _.GameDisplay = GameDisplay;
   _.Player = Player;
   _.AIPlayer = AIPlayer;
+  _.RandomAIPlayer = RandomAIPlayer;
   _.main_kand9s$ = main;
   _.Position = Position;
   _.SquareGrid = SquareGrid;
@@ -1807,7 +1808,6 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   });
   _.TicTacToePiece = TicTacToePiece;
   _.TicTacToeDisplay = TicTacToeDisplay;
-  _.TicTacToeAIRandom = TicTacToeAIRandom;
   _.Virus = Virus;
   _.VirusState = VirusState;
   _.VirusAction = VirusAction;

@@ -30,14 +30,14 @@ class ChessDisplay(canvas: HTMLCanvasElement, infoArea: HTMLDivElement)
 		game.players[ChessPlayer.White] = "White"
 		players["White"] = Player()
 		game.players[ChessPlayer.Black] = "Black"
-		players["Black"] = Player()
+		players["Black"] = RandomAIPlayer<ChessState, ChessAction>()
 
 		updateDisplay(null)
 
 		var sourcePosition: Position? = null
 
 		squareDisplay.onClick = {
-			if (it.x >= 0 && it.y >= 0 && it.x < 8 && it.y < 8) {
+			if (players[game.currentPlayer()] is Player && it.x >= 0 && it.y >= 0 && it.x < 8 && it.y < 8) {
 				val source = sourcePosition
 				if (source == null) {
 					sourcePosition = Position(it.x, it.y)

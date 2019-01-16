@@ -48,8 +48,15 @@ class Player {
 }
 
 interface AIPlayer<S, A> {
-	val name: String
-
 	fun requestAction(state: S): A
 	fun endGame(state: S, won: Boolean)
+}
+
+class RandomAIPlayer<S: BoardGameState<*, A, *>, A>() : AIPlayer<S, A> {
+	override fun requestAction(state: S): A {
+		val actions = state.possibleActions()
+		return actions[(0 until actions.size).random()]
+	}
+
+	override fun endGame(state: S, won: Boolean) { }
 }
