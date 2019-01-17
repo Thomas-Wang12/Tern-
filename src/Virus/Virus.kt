@@ -10,7 +10,7 @@ class Virus(override var state: VirusState = VirusState())
 data class VirusState(
 		val width: Int = 5, val height: Int = 5,
 		val playerCount: Int = 2,
-		override val board: SquareGrid<Int> = SquareGrid(width, height, { x, y ->
+		override val board: Grid<Int> = Grid(width, height, { x, y ->
 			if (x == 0 && y == 0) {
 				when (playerCount) {
 					2 -> 1
@@ -130,7 +130,7 @@ data class VirusState(
 		return winner
 	}
 
-	private fun findMovablePlayers(board: SquareGrid<Int>): List<Boolean> {
+	private fun findMovablePlayers(board: Grid<Int>): List<Boolean> {
 		val movablePlayers = MutableList(playerCount + 1) { false }
 		loop@ for (i in 0 until width) {
 			for (j in 0 until height) {
@@ -157,7 +157,7 @@ data class VirusState(
 		return true
 	}
 
-	private fun switchSurroundings(position: Position, board: SquareGrid<Int>) {
+	private fun switchSurroundings(position: Position, board: Grid<Int>) {
 		for (n in max(0, position.x - 1)..min(width - 1, position.x + 1)) {
 			for (m in max(0, position.y - 1)..min(height - 1, position.y + 1)) {
 				if (board[n, m] != 0)

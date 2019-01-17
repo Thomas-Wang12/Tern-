@@ -6,7 +6,7 @@ class Chess(override var state: ChessState = ChessState())
 }
 
 data class ChessState(
-		override val board: SquareGrid<ChessPiece?> = SquareGrid(8, 8, { x, y ->
+		override val board: Grid<ChessPiece?> = Grid(8, 8, { x, y ->
 			when (y) {
 				0 -> when (x) {
 					0 -> ChessPiece(ChessPieceType.Rook, ChessPlayer.White)

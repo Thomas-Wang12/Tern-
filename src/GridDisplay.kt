@@ -5,7 +5,7 @@ import org.w3c.dom.events.Event
 import org.w3c.dom.events.MouseEvent
 import kotlin.math.sqrt
 
-class SquareGridDisplay(val canvas: HTMLCanvasElement) {
+class GridDisplay(val canvas: HTMLCanvasElement) {
 	val context: CanvasRenderingContext2D = canvas.getContext("2d") as CanvasRenderingContext2D
 	private var hexagonal = false
 	var fieldSize = 40.0
@@ -16,7 +16,7 @@ class SquareGridDisplay(val canvas: HTMLCanvasElement) {
 	var hexDeltaY = 0.0
 	var onClick: ((Position) -> Unit)? = null
 
-	fun <T> display(grid: SquareGrid<T>,
+	fun <T> display(grid: Grid<T>,
 									fillStyle: ((T, x: Int, y: Int) -> String)? = null,
 									draw: ((context: CanvasRenderingContext2D, fieldSize: Double, field: T, x: Int, y: Int) -> Unit)? = null) {
 		val deltaX = if(hexagonal) hexDeltaX else fieldSize + gridThickness
@@ -100,6 +100,33 @@ class SquareGridDisplay(val canvas: HTMLCanvasElement) {
 	}
 
 	fun gridCoordsAt(canvasX: Int, canvasY: Int): Position? {
+		if(hexagonal)
+			return hexCoords(canvasX, canvasY)
+		return squareCoords(canvasX, canvasY)
+	}
+
+	private fun hexCoords(canvasX: Int, canvasY: Int): Position? {
+		val gridX = (canvasX / hexDeltaX).toInt()
+		val gridY = (canvasY / hexDeltaY).toInt()
+		var nearestPosition = Position(gridX, gridY)
+		var smallestDistance = distanceToHex(canvasX, canvasY, nearestPosition)
+		for(hex in nearestPosition.adjacentHexes()){
+			val distance = distanceToHex(canvasX, canvasY, hex)
+			if(distance < smallestDistance){
+				smallestDistance = distance
+				nearestPosition = hex
+			}
+		}
+		return nearestPosition
+	}
+
+	private fun distanceToHex(canvasX: Int, canvasY: Int, hex: Position): Double {
+		val baseX = hex.x * hexDeltaX + hexDeltaX/2 + if (hex.y%2==0) hexDeltaX / 2 else 0.0
+		val baseY = hex.y * hexDeltaY + hexDeltaY*2/3
+		return (canvasX - baseX) * (canvasX - baseX) + (canvasY - baseY) * (canvasY - baseY)
+	}
+
+	private fun squareCoords(canvasX: Int, canvasY: Int): Position? {
 		val localX = canvasX % (fieldSize + gridThickness)
 		val localY = canvasY % (fieldSize + gridThickness)
 		if (localX < gridThickness || localY < gridThickness)

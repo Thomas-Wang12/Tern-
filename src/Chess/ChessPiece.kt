@@ -6,7 +6,7 @@ import kotlin.math.min
 /// Ported from Java by Kristjan
 
 data class ChessPiece(val type: ChessPieceType, val player: ChessPlayer, val hasMoved: Boolean = false) {
-	fun isLegal(board: SquareGrid<ChessPiece?>, action: ChessAction): Boolean {
+	fun isLegal(board: Grid<ChessPiece?>, action: ChessAction): Boolean {
 		return when (type) {
 			ChessPieceType.King -> isKingMoveLegal(board, action)
 			ChessPieceType.Queen -> isQueenMoveLegal(board, action)
@@ -17,7 +17,7 @@ data class ChessPiece(val type: ChessPieceType, val player: ChessPlayer, val has
 		}
 	}
 
-	private fun isKingMoveLegal(board: SquareGrid<ChessPiece?>, action: ChessAction): Boolean {
+	private fun isKingMoveLegal(board: Grid<ChessPiece?>, action: ChessAction): Boolean {
 		//Checks if the step size is exactly one
 		if (abs(action.source.x - action.destination.x) <= 1 && abs(action.source.y - action.destination.y) <= 1)
 			return true
@@ -98,13 +98,13 @@ data class ChessPiece(val type: ChessPieceType, val player: ChessPlayer, val has
 		return false
 	}
 
-	private fun isQueenMoveLegal(board: SquareGrid<ChessPiece?>, action: ChessAction): Boolean {
+	private fun isQueenMoveLegal(board: Grid<ChessPiece?>, action: ChessAction): Boolean {
 		if (isBishopMoveLegal(board, action) || isRookMoveLegal(board, action))
 			return true
 		return false
 	}
 
-	private fun isBishopMoveLegal(board: SquareGrid<ChessPiece?>, action: ChessAction): Boolean {
+	private fun isBishopMoveLegal(board: Grid<ChessPiece?>, action: ChessAction): Boolean {
 		//Checks if the destination is on any of the same diagonally lines this piece
 		if (abs(action.source.x - action.destination.x) != abs(action.source.y - action.destination.y))
 			return false
@@ -141,7 +141,7 @@ data class ChessPiece(val type: ChessPieceType, val player: ChessPlayer, val has
 		return true
 	}
 
-	private fun isKnightMoveLegal(board: SquareGrid<ChessPiece?>, action: ChessAction): Boolean {
+	private fun isKnightMoveLegal(board: Grid<ChessPiece?>, action: ChessAction): Boolean {
 		if ((abs(action.source.x - action.destination.x) == 2 &&
 						abs(action.source.y - action.destination.y) == 1) ||
 				(abs(action.source.x - action.destination.x) == 1 &&
@@ -150,7 +150,7 @@ data class ChessPiece(val type: ChessPieceType, val player: ChessPlayer, val has
 		return false
 	}
 
-	private fun isRookMoveLegal(board: SquareGrid<ChessPiece?>, action: ChessAction): Boolean {
+	private fun isRookMoveLegal(board: Grid<ChessPiece?>, action: ChessAction): Boolean {
 		//Checks if the destination is on the same horisontal or vertical axis
 		if (!(action.source.x == action.destination.x || action.source.y == action.destination.y))
 			return false
@@ -175,7 +175,7 @@ data class ChessPiece(val type: ChessPieceType, val player: ChessPlayer, val has
 		return true
 	}
 
-	private fun isPawnMoveLegal(board: SquareGrid<ChessPiece?>, action: ChessAction): Boolean {
+	private fun isPawnMoveLegal(board: Grid<ChessPiece?>, action: ChessAction): Boolean {
 		//Checks whether the pawn should move upward or downward
 		val stepDirection = if (player == ChessPlayer.White) 1 else -1
 		//Checks if it can move one step forward
@@ -198,7 +198,7 @@ data class ChessPiece(val type: ChessPieceType, val player: ChessPlayer, val has
 		return false
 	}
 
-	private fun isIntermediatePositionSafe(board: SquareGrid<ChessPiece?>, intermediatePosition: Position, originalPosition: Position): Boolean {
+	private fun isIntermediatePositionSafe(board: Grid<ChessPiece?>, intermediatePosition: Position, originalPosition: Position): Boolean {
 		board[intermediatePosition] = this
 		board[originalPosition] = null
 		if (isInCheck(board, intermediatePosition)) {
@@ -211,7 +211,7 @@ data class ChessPiece(val type: ChessPieceType, val player: ChessPlayer, val has
 		return true
 	}
 
-	fun isInCheck(board: SquareGrid<ChessPiece?>, position: Position): Boolean {
+	fun isInCheck(board: Grid<ChessPiece?>, position: Position): Boolean {
 		//Checks if any enemy piece (except the king) can move to this kings position
 		for (i in 0 until board.height) {
 			for (j in 0 until board.width) {
@@ -224,7 +224,7 @@ data class ChessPiece(val type: ChessPieceType, val player: ChessPlayer, val has
 		return false
 	}
 
-	fun possibleMoves(board: SquareGrid<ChessPiece?>, position: Position): List<ChessAction> {
+	fun possibleMoves(board: Grid<ChessPiece?>, position: Position): List<ChessAction> {
 		return when (type) {
 			ChessPieceType.King -> possibleKingMoves(board, position)
 			ChessPieceType.Queen -> possibleQueenMoves(board, position)
@@ -235,7 +235,7 @@ data class ChessPiece(val type: ChessPieceType, val player: ChessPlayer, val has
 		}
 	}
 
-	private fun possibleKingMoves(board: SquareGrid<ChessPiece?>, position: Position): List<ChessAction> {
+	private fun possibleKingMoves(board: Grid<ChessPiece?>, position: Position): List<ChessAction> {
 		val actions = mutableListOf<ChessAction>()
 		for (i in max(0, position.x - 1)..min(7, position.x + 1)) {
 			for (j in max(0, position.y - 1)..min(7, position.y + 1)) {
@@ -247,14 +247,14 @@ data class ChessPiece(val type: ChessPieceType, val player: ChessPlayer, val has
 		return actions
 	}
 
-	private fun possibleQueenMoves(board: SquareGrid<ChessPiece?>, position: Position): List<ChessAction> {
+	private fun possibleQueenMoves(board: Grid<ChessPiece?>, position: Position): List<ChessAction> {
 		var actions = mutableListOf<ChessAction>()
 		actions.addAll(possibleBishopMoves(board, position))
 		actions.addAll(possibleRookMoves(board, position))
 		return actions
 	}
 
-	private fun possibleBishopMoves(board: SquareGrid<ChessPiece?>, position: Position): List<ChessAction> {
+	private fun possibleBishopMoves(board: Grid<ChessPiece?>, position: Position): List<ChessAction> {
 		val actions = mutableListOf<ChessAction>()
 		for (i in 1..7) {
 			val pos = Position(position.x + i, position.y + i)
@@ -283,7 +283,7 @@ data class ChessPiece(val type: ChessPieceType, val player: ChessPlayer, val has
 		return actions
 	}
 
-	private fun possibleKnightMoves(board: SquareGrid<ChessPiece?>, position: Position): List<ChessAction> {
+	private fun possibleKnightMoves(board: Grid<ChessPiece?>, position: Position): List<ChessAction> {
 		val actions = mutableListOf<ChessAction>()
 		var destination = position.add(1, 2)
 		if (isWithinBoard(destination) && board[destination]?.player != player)
@@ -312,7 +312,7 @@ data class ChessPiece(val type: ChessPieceType, val player: ChessPlayer, val has
 		return actions
 	}
 
-	private fun possibleRookMoves(board: SquareGrid<ChessPiece?>, position: Position): List<ChessAction> {
+	private fun possibleRookMoves(board: Grid<ChessPiece?>, position: Position): List<ChessAction> {
 		val actions = mutableListOf<ChessAction>()
 		for (i in 1..7) {
 			val pos = Position(position.x + i, position.y)
@@ -341,7 +341,7 @@ data class ChessPiece(val type: ChessPieceType, val player: ChessPlayer, val has
 		return actions
 	}
 
-	private fun possiblePawnMoves(board: SquareGrid<ChessPiece?>, position: Position): List<ChessAction> {
+	private fun possiblePawnMoves(board: Grid<ChessPiece?>, position: Position): List<ChessAction> {
 		val actions = mutableListOf<ChessAction>()
 		val direction = if (player == ChessPlayer.Black) -1 else 1
 		if (board[position.x, position.y + direction] == null)

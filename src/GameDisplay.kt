@@ -3,7 +3,7 @@ import org.w3c.dom.*
 
 abstract class GameDisplay<G : BoardGame<S, T, A, P>, S : BoardGameState<T, A, P>, T, A, P>(val canvas: HTMLCanvasElement, val infoArea: HTMLDivElement) {
 	abstract var game: G
-	val squareDisplay = SquareGridDisplay(canvas)
+	val squareDisplay = GridDisplay(canvas)
 	var aiDelay = 500L
 	val players: MutableMap<String, Any> = mutableMapOf()
 

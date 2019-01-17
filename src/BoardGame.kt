@@ -1,7 +1,3 @@
-import kotlin.math.abs
-import kotlin.math.max
-import kotlin.math.min
-
 abstract class BoardGame<S : BoardGameState<T, A, P>, T, A, P> {
 	abstract var state: S
 	val players: MutableMap<P, String> = mutableMapOf()
@@ -19,7 +15,7 @@ abstract class BoardGame<S : BoardGameState<T, A, P>, T, A, P> {
 }
 
 interface BoardGameState<T, A, P> {
-	val board: SquareGrid<T>
+	val board: Grid<T>
 	val currentPlayer: P
 	val players: List<P>
 

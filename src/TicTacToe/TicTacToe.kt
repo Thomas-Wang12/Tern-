@@ -4,7 +4,7 @@ class TicTacToe(override var state: TicTacToeState = TicTacToeState())
 }
 
 data class TicTacToeState(
-		override val board: SquareGrid<TicTacToePiece?> = SquareGrid(3, 3, { _, _ -> null }),
+		override val board: Grid<TicTacToePiece?> = Grid(3, 3, { _, _ -> null }),
 		override val currentPlayer: TicTacToePiece = TicTacToePiece.Cross,
 		override val players: List<TicTacToePiece> = listOf(TicTacToePiece.Cross, TicTacToePiece.Circle)
 ) : BoardGameState<TicTacToePiece?, TicTacToeAction, TicTacToePiece> {

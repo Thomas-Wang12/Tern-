@@ -6,10 +6,6 @@ class ChessDisplay(canvas: HTMLCanvasElement, infoArea: HTMLDivElement)
 
 	var sourcePosition: Position? = null
 
-	init {
-		squareDisplay.showHexagons()
-	}
-
 	override val getColor = getColor@ { _: ChessPiece?, x: Int, y: Int ->
 		val source = sourcePosition
 		if(source != null && source.x == x && source.y == y){

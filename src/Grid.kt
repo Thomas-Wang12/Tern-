@@ -1,4 +1,4 @@
-class SquareGrid<T>(
+class Grid<T>(
 		val width: Int,
 		val height: Int,
 		val init: (x: Int, y: Int) -> T,
@@ -20,7 +20,7 @@ class SquareGrid<T>(
 			height: Int  = this.height,
 			init: (x: Int, y: Int) -> T = this.init,
 			fields: MutableList<T> = this.fields.toMutableList()
-	) : SquareGrid<T> {
-		return SquareGrid(width, height, init, fields)
+	) : Grid<T> {
+		return Grid(width, height, init, fields)
 	}
 }
