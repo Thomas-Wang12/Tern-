@@ -65,7 +65,7 @@ data class ChessState(
 				actions.addAll(piece.possibleMoves(board, Position(i, j)))
 			}
 		}
-		return actions.toList()
+		return actions.filter { isLegal(it) }
 	}
 
 	override fun nextState(action: ChessAction): BoardGameState<ChessPiece?, ChessAction, ChessPlayer> {
@@ -85,8 +85,16 @@ data class ChessState(
 	}
 
 	override fun findWinner(): ChessPlayer? {
-
-		return null // TODO
+		for (i in 0 until 8) {
+			for (j in 0 until 8) {
+				val piece = board[i,j]
+				if(piece?.player != currentPlayer)
+					continue
+				if(piece.possibleMoves(board, Position(i, j)).filter { isLegal(it) }.isNotEmpty())
+					return null
+			}
+		}
+		return if(currentPlayer == ChessPlayer.Black) ChessPlayer.White else ChessPlayer.Black
 	}
 
 	private fun moveCastlingRook(action: ChessAction) {

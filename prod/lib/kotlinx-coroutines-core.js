@@ -16,47 +16,50 @@
   'use strict';
   var $$importsForInline$$ = _.$$importsForInline$$ || (_.$$importsForInline$$ = {});
   var Unit = Kotlin.kotlin.Unit;
-  var COROUTINE_SUSPENDED = Kotlin.kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED;
-  var toString = Kotlin.toString;
-  var wrapFunction = Kotlin.wrapFunction;
-  var Throwable = Error;
-
-
-  var Kind_CLASS = Kotlin.Kind.CLASS;
-  var Continuation = Kotlin.kotlin.coroutines.Continuation;
-  var Kind_INTERFACE = Kotlin.Kind.INTERFACE;
   var Any = Object;
   var throwCCE = Kotlin.throwCCE;
+  var Kind_CLASS = Kotlin.Kind.CLASS;
+  var Continuation = Kotlin.kotlin.coroutines.Continuation;
   var Annotation = Kotlin.kotlin.Annotation;
+  var COROUTINE_SUSPENDED = Kotlin.kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED;
   var CoroutineImpl = Kotlin.kotlin.coroutines.CoroutineImpl;
   var emptyList = Kotlin.kotlin.collections.emptyList_287e2$;
   var throwUPAE = Kotlin.throwUPAE;
+
   var coroutines = Kotlin.kotlin.coroutines;
   var ContinuationInterceptor = Kotlin.kotlin.coroutines.ContinuationInterceptor;
   var equals = Kotlin.equals;
+  var Kind_INTERFACE = Kotlin.Kind.INTERFACE;
   var intercepted = Kotlin.kotlin.coroutines.intrinsics.intercepted_f9mg25$;
   var defineInlineFunction = Kotlin.defineInlineFunction;
+  var wrapFunction = Kotlin.wrapFunction;
+  var Throwable = Error;
+  var toString = Kotlin.toString;
+
+  var Kind_OBJECT = Kotlin.Kind.OBJECT;
   var ensureNotNull = Kotlin.ensureNotNull;
+
   var AbstractCoroutineContextElement = Kotlin.kotlin.coroutines.AbstractCoroutineContextElement;
   var RuntimeException = Kotlin.kotlin.RuntimeException;
-  var Kind_OBJECT = Kotlin.Kind.OBJECT;
   var CoroutineContext$Key = Kotlin.kotlin.coroutines.CoroutineContext.Key;
   var CoroutineContext$Element = Kotlin.kotlin.coroutines.CoroutineContext.Element;
   var startCoroutine = Kotlin.kotlin.coroutines.startCoroutine_x18nsh$;
   var startCoroutine_0 = Kotlin.kotlin.coroutines.startCoroutine_3a617i$;
   var Enum = Kotlin.kotlin.Enum;
   var throwISE = Kotlin.throwISE;
+  var Long$Companion$MAX_VALUE = Kotlin.Long.MAX_VALUE;
+  var L0 = Kotlin.Long.ZERO;
+  var L4294967296 = new Kotlin.Long(0, 1);
+  var L1 = Kotlin.Long.ONE;
   var sequence = Kotlin.kotlin.sequences.sequence_o0x0bg$;
   var ArrayList = Kotlin.kotlin.collections.ArrayList;
   var ArrayList_init = Kotlin.kotlin.collections.ArrayList_init_ww73n8$;
   var UnsupportedOperationException_init = Kotlin.kotlin.UnsupportedOperationException_init_pdl1vj$;
   var IllegalStateException_init = Kotlin.kotlin.IllegalStateException_init_pdl1vj$;
   var emptySequence = Kotlin.kotlin.sequences.emptySequence_287e2$;
-  var L0 = Kotlin.Long.ZERO;
   var UnsupportedOperationException_init_0 = Kotlin.kotlin.UnsupportedOperationException_init;
   var SuspendFunction1 = Function;
   var coerceAtMost = Kotlin.kotlin.ranges.coerceAtMost_2p08ub$;
-  var Long$Companion$MAX_VALUE = Kotlin.Long.MAX_VALUE;
   var IllegalArgumentException_init = Kotlin.kotlin.IllegalArgumentException_init_pdl1vj$;
   var NoSuchElementException = Kotlin.kotlin.NoSuchElementException;
   var IndexedValue = Kotlin.kotlin.collections.IndexedValue;
@@ -80,16 +83,10 @@
   var NoSuchElementException_init = Kotlin.kotlin.NoSuchElementException_init;
   var MutableIterator = Kotlin.kotlin.collections.MutableIterator;
   var AbstractMutableList = Kotlin.kotlin.collections.AbstractMutableList;
-  DispatchedTask.prototype = Object.create(SchedulerTask.prototype);
-  DispatchedTask.prototype.constructor = DispatchedTask;
-  AbstractContinuation.prototype = Object.create(DispatchedTask.prototype);
-  AbstractContinuation.prototype.constructor = AbstractContinuation;
-  CancelHandler.prototype = Object.create(CancelHandlerBase.prototype);
-  CancelHandler.prototype.constructor = CancelHandler;
-  InvokeOnCancel.prototype = Object.create(CancelHandler.prototype);
-  InvokeOnCancel.prototype.constructor = InvokeOnCancel;
   AbstractCoroutine.prototype = Object.create(JobSupport.prototype);
   AbstractCoroutine.prototype.constructor = AbstractCoroutine;
+  CancelHandler.prototype = Object.create(CancelHandlerBase.prototype);
+  CancelHandler.prototype.constructor = CancelHandler;
   AwaitAll$DisposeHandlersOnCancel.prototype = Object.create(CancelHandler.prototype);
   AwaitAll$DisposeHandlersOnCancel.prototype.constructor = AwaitAll$DisposeHandlersOnCancel;
   CompletionHandlerBase.prototype = Object.create(LinkedListNode.prototype);
@@ -116,8 +113,12 @@
   RemoveOnCancel.prototype.constructor = RemoveOnCancel;
   DisposeOnCancel.prototype = Object.create(CancelHandler.prototype);
   DisposeOnCancel.prototype.constructor = DisposeOnCancel;
-  CancellableContinuationImpl.prototype = Object.create(AbstractContinuation.prototype);
+  DispatchedTask.prototype = Object.create(SchedulerTask.prototype);
+  DispatchedTask.prototype.constructor = DispatchedTask;
+  CancellableContinuationImpl.prototype = Object.create(DispatchedTask.prototype);
   CancellableContinuationImpl.prototype.constructor = CancellableContinuationImpl;
+  InvokeOnCancel.prototype = Object.create(CancelHandler.prototype);
+  InvokeOnCancel.prototype.constructor = InvokeOnCancel;
   CompletableDeferredImpl.prototype = Object.create(JobSupport.prototype);
   CompletableDeferredImpl.prototype.constructor = CompletableDeferredImpl;
   CancelledContinuation.prototype = Object.create(CompletedExceptionally.prototype);
@@ -130,6 +131,8 @@
   CoroutineStart.prototype.constructor = CoroutineStart;
   DispatchedContinuation.prototype = Object.create(DispatchedTask.prototype);
   DispatchedContinuation.prototype.constructor = DispatchedContinuation;
+  EventLoop.prototype = Object.create(CoroutineDispatcher.prototype);
+  EventLoop.prototype.constructor = EventLoop;
   JobSupport$ChildCompletion.prototype = Object.create(JobNode.prototype);
   JobSupport$ChildCompletion.prototype.constructor = JobSupport$ChildCompletion;
   JobSupport$AwaitContinuation.prototype = Object.create(CancellableContinuationImpl.prototype);
@@ -268,6 +271,8 @@
   MutexImpl$UnlockOp.prototype.constructor = MutexImpl$UnlockOp;
   JsMainDispatcher.prototype = Object.create(MainCoroutineDispatcher.prototype);
   JsMainDispatcher.prototype.constructor = JsMainDispatcher;
+  UnconfinedEventLoop.prototype = Object.create(EventLoop.prototype);
+  UnconfinedEventLoop.prototype.constructor = UnconfinedEventLoop;
   CompletionHandlerException.prototype = Object.create(RuntimeException.prototype);
   CompletionHandlerException.prototype.constructor = CompletionHandlerException;
   JobCancellationException.prototype = Object.create(CancellationException.prototype);
@@ -278,7 +283,7 @@
   NodeDispatcher$ClearTimeout.prototype.constructor = NodeDispatcher$ClearTimeout;
   NodeDispatcher.prototype = Object.create(CoroutineDispatcher.prototype);
   NodeDispatcher.prototype.constructor = NodeDispatcher;
-  MessageQueue.prototype = Object.create(Queue.prototype);
+  MessageQueue.prototype = Object.create(ArrayQueue.prototype);
   MessageQueue.prototype.constructor = MessageQueue;
   WindowDispatcher$queue$ObjectLiteral.prototype = Object.create(MessageQueue.prototype);
   WindowDispatcher$queue$ObjectLiteral.prototype.constructor = WindowDispatcher$queue$ObjectLiteral;
@@ -286,269 +291,6 @@
   WindowDispatcher.prototype.constructor = WindowDispatcher;
   CopyOnWriteList.prototype = Object.create(AbstractMutableList.prototype);
   CopyOnWriteList.prototype.constructor = CopyOnWriteList;
-  var UNDECIDED;
-  var SUSPENDED;
-  var RESUMED;
-  function AbstractContinuation(delegate, resumeMode) {
-    DispatchedTask.call(this, resumeMode);
-    this.delegate_6vb3h8$_0 = delegate;
-    this._decision_0 = 0;
-    this._state_0 = ACTIVE;
-    this.parentHandle_0 = null;
-  }
-  Object.defineProperty(AbstractContinuation.prototype, 'delegate', {
-  get: function() {
-  return this.delegate_6vb3h8$_0;
-}});
-  Object.defineProperty(AbstractContinuation.prototype, 'state_8be2vx$', {
-  get: function() {
-  return this._state_0;
-}});
-  Object.defineProperty(AbstractContinuation.prototype, 'isActive', {
-  get: function() {
-  return Kotlin.isType(this.state_8be2vx$, NotCompleted);
-}});
-  Object.defineProperty(AbstractContinuation.prototype, 'isCompleted', {
-  get: function() {
-  return !Kotlin.isType(this.state_8be2vx$, NotCompleted);
-}});
-  Object.defineProperty(AbstractContinuation.prototype, 'isCancelled', {
-  get: function() {
-  return Kotlin.isType(this.state_8be2vx$, CancelledContinuation);
-}});
-  AbstractContinuation.prototype.initParentJobInternal_8vd9i7$ = function(parent) {
-  if (!(this.parentHandle_0 == null)) {
-    var message = 'Check failed.';
-    throw IllegalStateException_init(message.toString());
-  }
-  if (parent == null) {
-    this.parentHandle_0 = NonDisposableHandle_getInstance();
-    return;
-  }
-  parent.start();
-  var handle = parent.invokeOnCompletion_ct2b2z$(true, void 0, new ChildContinuation(parent, this));
-  this.parentHandle_0 = handle;
-  if (this.isCompleted) {
-    handle.dispose();
-    this.parentHandle_0 = NonDisposableHandle_getInstance();
-  }
-};
-  AbstractContinuation.prototype.takeState = function() {
-  return this.state_8be2vx$;
-};
-  AbstractContinuation.prototype.cancel_dbl4no$ = function(cause) {
-  return this.cancelImpl_dbl4no$(cause);
-};
-  AbstractContinuation.prototype.cancelImpl_dbl4no$ = function(cause) {
-  while (true) {
-    var state = this.state_8be2vx$;
-    if (!Kotlin.isType(state, NotCompleted)) 
-      return false;
-    var update = new CancelledContinuation(this, cause);
-    if (this.updateStateToFinal_0(state, update, 0)) 
-      return true;
-  }
-};
-  AbstractContinuation.prototype.getContinuationCancellationCause_dqr1mp$ = function(parent) {
-  return parent.getCancellationException();
-};
-  AbstractContinuation.prototype.trySuspend_0 = function() {
-  var $receiver = this._decision_0;
-  while (true) {
-    switch (this._decision_0) {
-      case 0:
-        if ((function(scope) {return scope._decision_0 === 0 ? function() {scope._decision_0 = 1;return true;}() : false})(this)) 
-          return true;
-        break;
-      case 2:
-        return false;
-      default:
-        throw IllegalStateException_init('Already suspended'.toString());
-    }
-  }
-};
-  AbstractContinuation.prototype.tryResume_0 = function() {
-  var $receiver = this._decision_0;
-  while (true) {
-    switch (this._decision_0) {
-      case 0:
-        if ((function(scope) {return scope._decision_0 === 0 ? function() {scope._decision_0 = 2;return true;}() : false})(this)) 
-          return true;
-        break;
-      case 1:
-        return false;
-      default:
-        throw IllegalStateException_init('Already resumed'.toString());
-    }
-  }
-};
-  AbstractContinuation.prototype.getResult = function() {
-  if (this.trySuspend_0()) 
-    return COROUTINE_SUSPENDED;
-  var state = this.state_8be2vx$;
-  if (Kotlin.isType(state, CompletedExceptionally)) 
-    throw state.cause;
-  return this.getSuccessfulResult_tpy1pm$(state);
-};
-  AbstractContinuation.prototype.resumeWith_tl1gpc$ = function(result) {
-  this.resumeImpl_0(toState(result), this.resumeMode);
-};
-  AbstractContinuation.prototype.resumeWithExceptionMode_i32via$ = function(exception, mode) {
-  this.resumeImpl_0(new CompletedExceptionally(exception), mode);
-};
-  AbstractContinuation.prototype.invokeOnCancellation_f05bi3$ = function(handler) {
-  var handleCache = {
-  v: null};
-  while (true) {
-    var state = this.state_8be2vx$;
-    var tmp$, tmp$_0, tmp$_1;
-    if (Kotlin.isType(state, Active)) {
-      var tmp$_2;
-      if ((tmp$ = handleCache.v) != null) 
-        tmp$_2 = tmp$;
-      else {
-        var $receiver = this.makeHandler_0(handler);
-        handleCache.v = $receiver;
-        tmp$_2 = $receiver;
-      }
-      var node = tmp$_2;
-      if ((function(scope) {return scope._state_0 === state ? function() {scope._state_0 = node;return true;}() : false})(this)) {
-        return;
-      }
-    } else if (Kotlin.isType(state, CancelHandler)) {
-      throw IllegalStateException_init(("It's prohibited to register multiple handlers, tried to register " + handler + ', already has ' + toString(state)).toString());
-    } else if (Kotlin.isType(state, CancelledContinuation)) {
-      invokeIt(handler, (tmp$_1 = Kotlin.isType(tmp$_0 = state, CompletedExceptionally) ? tmp$_0 : null) != null ? tmp$_1.cause : null);
-      return;
-    } else 
-      return;
-  }
-};
-  AbstractContinuation.prototype.makeHandler_0 = function(handler) {
-  return Kotlin.isType(handler, CancelHandler) ? handler : new InvokeOnCancel(handler);
-};
-  AbstractContinuation.prototype.dispatchResume_0 = function(mode) {
-  if (this.tryResume_0()) 
-    return;
-  dispatch(this, mode);
-};
-  AbstractContinuation.prototype.loopOnState_0 = function(block) {
-  while (true) {
-    block(this.state_8be2vx$);
-  }
-};
-  AbstractContinuation.prototype.resumeImpl_0 = function(proposedUpdate, resumeMode) {
-  while (true) {
-    var state = this.state_8be2vx$;
-    if (Kotlin.isType(state, NotCompleted)) {
-      if (this.updateStateToFinal_0(state, proposedUpdate, resumeMode)) 
-        return;
-    } else if (Kotlin.isType(state, CancelledContinuation)) {
-      if (Kotlin.isType(proposedUpdate, CompletedExceptionally)) {
-        this.handleException_0(proposedUpdate.cause);
-      }
-      return;
-    } else {
-      throw IllegalStateException_init(('Already resumed, but proposed with update ' + toString(proposedUpdate)).toString());
-    }
-  }
-};
-  AbstractContinuation.prototype.updateStateToFinal_0 = function(expect, proposedUpdate, mode) {
-  if (!this.tryUpdateStateToFinal_0(expect, proposedUpdate)) {
-    return false;
-  }
-  this.completeStateUpdate_0(expect, proposedUpdate, mode);
-  return true;
-};
-  AbstractContinuation.prototype.tryUpdateStateToFinal_0 = function(expect, update) {
-  var tmp$;
-  if (!!Kotlin.isType(update, NotCompleted)) {
-    var message = 'Failed requirement.';
-    throw IllegalArgumentException_init(message.toString());
-  }
-  if (!(function(scope) {return scope._state_0 === expect ? function() {scope._state_0 = update;return true;}() : false})(this)) 
-    return false;
-  if ((tmp$ = this.parentHandle_0) != null) {
-    tmp$.dispose();
-    this.parentHandle_0 = NonDisposableHandle_getInstance();
-  }
-  return true;
-};
-  AbstractContinuation.prototype.completeStateUpdate_0 = function(expect, update, mode) {
-  var tmp$;
-  var exceptionally = Kotlin.isType(tmp$ = update, CompletedExceptionally) ? tmp$ : null;
-  if (Kotlin.isType(update, CancelledContinuation) && Kotlin.isType(expect, CancelHandler)) {
-    try {
-      expect.invoke(exceptionally != null ? exceptionally.cause : null);
-    }    catch (ex) {
-  if (Kotlin.isType(ex, Throwable)) {
-    this.handleException_0(new CompletionHandlerException('Exception in completion handler ' + expect + ' for ' + this, ex));
-  } else 
-    throw ex;
-}
-  }
-  this.dispatchResume_0(mode);
-};
-  AbstractContinuation.prototype.handleException_0 = function(exception) {
-  handleCoroutineException(this.context, exception);
-};
-  AbstractContinuation.prototype.toString = function() {
-  return this.nameString() + '{' + this.stateString_0() + '}@' + get_hexAddress(this);
-};
-  AbstractContinuation.prototype.nameString = function() {
-  return get_classSimpleName(this);
-};
-  AbstractContinuation.prototype.stateString_0 = function() {
-  var tmp$;
-  var state = this.state_8be2vx$;
-  if (Kotlin.isType(state, NotCompleted)) 
-    tmp$ = 'Active';
-  else if (Kotlin.isType(state, CancelledContinuation)) 
-    tmp$ = 'Cancelled';
-  else if (Kotlin.isType(state, CompletedExceptionally)) 
-    tmp$ = 'CompletedExceptionally';
-  else 
-    tmp$ = 'Completed';
-  return tmp$;
-};
-  AbstractContinuation.$metadata$ = {
-  kind: Kind_CLASS, 
-  simpleName: 'AbstractContinuation', 
-  interfaces: [Continuation, DispatchedTask]};
-  function NotCompleted() {
-  }
-  NotCompleted.$metadata$ = {
-  kind: Kind_INTERFACE, 
-  simpleName: 'NotCompleted', 
-  interfaces: []};
-  function Active() {
-  }
-  Active.$metadata$ = {
-  kind: Kind_CLASS, 
-  simpleName: 'Active', 
-  interfaces: [NotCompleted]};
-  var ACTIVE;
-  function CancelHandler() {
-    CancelHandlerBase.call(this);
-  }
-  CancelHandler.$metadata$ = {
-  kind: Kind_CLASS, 
-  simpleName: 'CancelHandler', 
-  interfaces: [NotCompleted, CancelHandlerBase]};
-  function InvokeOnCancel(handler) {
-    CancelHandler.call(this);
-    this.handler_0 = handler;
-  }
-  InvokeOnCancel.prototype.invoke = function(cause) {
-  this.handler_0(cause);
-};
-  InvokeOnCancel.prototype.toString = function() {
-  return 'InvokeOnCancel[' + get_classSimpleName(this.handler_0) + '@' + get_hexAddress(this) + ']';
-};
-  InvokeOnCancel.$metadata$ = {
-  kind: Kind_CLASS, 
-  simpleName: 'InvokeOnCancel', 
-  interfaces: [CancelHandler]};
   function AbstractCoroutine(parentContext, active) {
     if (active === void 0) 
       active = true;
@@ -901,7 +643,6 @@
   function suspendCancellableCoroutine$lambda(closure$block) {
     return function(uCont) {
   var cancellable = new CancellableContinuationImpl(intercepted(uCont), 1);
-  cancellable.initCancellability();
   closure$block(cancellable);
   return cancellable.getResult();
 };
@@ -1071,7 +812,17 @@
     this.block_0 = block;
   }
   LazyDeferredCoroutine.prototype.onStart = function() {
-  startCoroutineCancellable_0(this.block_0, this, this);
+  var value = this.block_0;
+  var checkNotNull$result;
+  if (value == null) {
+    var message = 'Already started';
+    throw IllegalStateException_init(message.toString());
+  } else {
+    checkNotNull$result = value;
+  }
+  var block = checkNotNull$result;
+  this.block_0 = null;
+  startCoroutineCancellable_0(block, this, this);
 };
   LazyDeferredCoroutine.$metadata$ = {
   kind: Kind_CLASS, 
@@ -1117,7 +868,17 @@
     this.block_0 = block;
   }
   LazyStandaloneCoroutine.prototype.onStart = function() {
-  startCoroutineCancellable_0(this.block_0, this, this);
+  var value = this.block_0;
+  var checkNotNull$result;
+  if (value == null) {
+    var message = 'Already started';
+    throw IllegalStateException_init(message.toString());
+  } else {
+    checkNotNull$result = value;
+  }
+  var block = checkNotNull$result;
+  this.block_0 = null;
+  startCoroutineCancellable_0(block, this, this);
 };
   LazyStandaloneCoroutine.$metadata$ = {
   kind: Kind_CLASS, 
@@ -1134,9 +895,9 @@
   kind: Kind_CLASS, 
   simpleName: 'UndispatchedCoroutine', 
   interfaces: [ScopeCoroutine]};
-  var UNDECIDED_0;
-  var SUSPENDED_0;
-  var RESUMED_0;
+  var UNDECIDED;
+  var SUSPENDED;
+  var RESUMED;
   function DispatchedCoroutine(context, uCont) {
     ScopeCoroutine.call(this, context, uCont);
     this._decision_0 = 0;
@@ -1184,7 +945,7 @@
   var tmp$;
   if (this.trySuspend_0()) 
     return COROUTINE_SUSPENDED;
-  var state = this.state_8be2vx$;
+  var state = unboxState(this.state_8be2vx$);
   if (Kotlin.isType(state, CompletedExceptionally)) 
     throw state.cause;
   return (tmp$ = state) == null || Kotlin.isType(tmp$, Any) ? tmp$ : throwCCE();
@@ -1213,14 +974,11 @@
     return suspendCancellableCoroutine$lambda(block_0)(continuation);
   }
   defineInlineFunction('kotlinx-coroutines-core.kotlinx.coroutines.suspendCancellableCoroutine_o6sdx9$', wrapFunction(function() {
-  var COROUTINE_SUSPENDED = Kotlin.kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED;
-  var CoroutineImpl = Kotlin.kotlin.coroutines.CoroutineImpl;
   var intercepted = Kotlin.kotlin.coroutines.intrinsics.intercepted_f9mg25$;
   var CancellableContinuationImpl_init = _.kotlinx.coroutines.CancellableContinuationImpl;
   function suspendCancellableCoroutine$lambda(closure$block) {
     return function(uCont) {
   var cancellable = new CancellableContinuationImpl_init(intercepted(uCont), 1);
-  cancellable.initCancellability();
   closure$block(cancellable);
   return cancellable.getResult();
 };
@@ -1230,21 +988,42 @@
   return Kotlin.coroutineResult(Kotlin.coroutineReceiver());
 };
 }));
-  function suspendAtomicCancellableCoroutine(holdCancellability_0, block_0, continuation) {
-    if (holdCancellability_0 === void 0) 
-      holdCancellability_0 = false;
-    return suspendAtomicCancellableCoroutine$lambda(holdCancellability_0, block_0)(continuation);
+  function suspendAtomicCancellableCoroutine(block_0, continuation) {
+    return suspendAtomicCancellableCoroutine$lambda(block_0)(continuation);
   }
-  defineInlineFunction('kotlinx-coroutines-core.kotlinx.coroutines.suspendAtomicCancellableCoroutine_i8nyj0$', wrapFunction(function() {
-  var COROUTINE_SUSPENDED = Kotlin.kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED;
-  var CoroutineImpl = Kotlin.kotlin.coroutines.CoroutineImpl;
+  defineInlineFunction('kotlinx-coroutines-core.kotlinx.coroutines.suspendAtomicCancellableCoroutine_o6sdx9$', wrapFunction(function() {
   var intercepted = Kotlin.kotlin.coroutines.intrinsics.intercepted_f9mg25$;
   var CancellableContinuationImpl_init = _.kotlinx.coroutines.CancellableContinuationImpl;
-  function suspendAtomicCancellableCoroutine$lambda(closure$holdCancellability, closure$block) {
+  function suspendAtomicCancellableCoroutine$lambda(closure$block) {
     return function(uCont) {
   var cancellable = new CancellableContinuationImpl_init(intercepted(uCont), 0);
-  if (!closure$holdCancellability) 
-    cancellable.initCancellability();
+  closure$block(cancellable);
+  return cancellable.getResult();
+};
+  }
+  return function(block_0, continuation) {
+  Kotlin.suspendCall(suspendAtomicCancellableCoroutine$lambda(block_0)(Kotlin.coroutineReceiver()));
+  return Kotlin.coroutineResult(Kotlin.coroutineReceiver());
+};
+}));
+  function suspendAtomicCancellableCoroutine$lambda(closure$block) {
+    return function(uCont) {
+  var cancellable = new CancellableContinuationImpl(intercepted(uCont), 0);
+  closure$block(cancellable);
+  return cancellable.getResult();
+};
+  }
+  function suspendAtomicCancellableCoroutine_0(holdCancellability_0, block_0, continuation) {
+    if (holdCancellability_0 === void 0) 
+      holdCancellability_0 = false;
+    return suspendAtomicCancellableCoroutine$lambda(block_0)(continuation);
+  }
+  defineInlineFunction('kotlinx-coroutines-core.kotlinx.coroutines.suspendAtomicCancellableCoroutine_i8nyj0$', wrapFunction(function() {
+  var intercepted = Kotlin.kotlin.coroutines.intrinsics.intercepted_f9mg25$;
+  var CancellableContinuationImpl_init = _.kotlinx.coroutines.CancellableContinuationImpl;
+  function suspendAtomicCancellableCoroutine$lambda(closure$block) {
+    return function(uCont) {
+  var cancellable = new CancellableContinuationImpl_init(intercepted(uCont), 0);
   closure$block(cancellable);
   return cancellable.getResult();
 };
@@ -1252,7 +1031,7 @@
   return function(holdCancellability_0, block_0, continuation) {
   if (holdCancellability_0 === void 0) 
     holdCancellability_0 = false;
-  Kotlin.suspendCall(suspendAtomicCancellableCoroutine$lambda(holdCancellability_0, block_0)(Kotlin.coroutineReceiver()));
+  Kotlin.suspendCall(suspendAtomicCancellableCoroutine$lambda(block_0)(Kotlin.coroutineReceiver()));
   return Kotlin.coroutineResult(Kotlin.coroutineReceiver());
 };
 }));
@@ -1290,50 +1069,287 @@
   kind: Kind_CLASS, 
   simpleName: 'DisposeOnCancel', 
   interfaces: [CancelHandler]};
+  var UNDECIDED_0;
+  var SUSPENDED_0;
+  var RESUMED_0;
   function CancellableContinuationImpl(delegate, resumeMode) {
-    AbstractContinuation.call(this, delegate, resumeMode);
-    this.context_xycjfy$_0 = delegate.context;
+    DispatchedTask.call(this, resumeMode);
+    this.delegate_dhbmku$_0 = delegate;
+    this.context_xycjfy$_0 = this.delegate.context;
+    this._decision_0 = 0;
+    this._state_0 = Active_getInstance();
+    this.parentHandle_0 = null;
   }
+  Object.defineProperty(CancellableContinuationImpl.prototype, 'delegate', {
+  get: function() {
+  return this.delegate_dhbmku$_0;
+}});
   Object.defineProperty(CancellableContinuationImpl.prototype, 'context', {
   get: function() {
   return this.context_xycjfy$_0;
 }});
+  Object.defineProperty(CancellableContinuationImpl.prototype, 'state_8be2vx$', {
+  get: function() {
+  return this._state_0;
+}});
+  Object.defineProperty(CancellableContinuationImpl.prototype, 'isActive', {
+  get: function() {
+  return Kotlin.isType(this.state_8be2vx$, NotCompleted);
+}});
+  Object.defineProperty(CancellableContinuationImpl.prototype, 'isCompleted', {
+  get: function() {
+  return !Kotlin.isType(this.state_8be2vx$, NotCompleted);
+}});
+  Object.defineProperty(CancellableContinuationImpl.prototype, 'isCancelled', {
+  get: function() {
+  return Kotlin.isType(this.state_8be2vx$, CancelledContinuation);
+}});
   CancellableContinuationImpl.prototype.initCancellability = function() {
-  this.initParentJobInternal_8vd9i7$(this.delegate.context.get_j3r2sn$(Job$Key_getInstance()));
+};
+  CancellableContinuationImpl.prototype.installParentCancellationHandler_0 = function() {
+  var tmp$;
+  if (this.isCompleted) 
+    return;
+  tmp$ = this.delegate.context.get_j3r2sn$(Job$Key_getInstance());
+  if (tmp$ == null) {
+    return;
+  }
+  var parent = tmp$;
+  parent.start();
+  var handle = parent.invokeOnCompletion_ct2b2z$(true, void 0, new ChildContinuation(parent, this));
+  this.parentHandle_0 = handle;
+  if (this.isCompleted) {
+    handle.dispose();
+    this.parentHandle_0 = NonDisposableHandle_getInstance();
+  }
+};
+  Object.defineProperty(CancellableContinuationImpl.prototype, 'callerFrame', {
+  get: function() {
+  var tmp$;
+  return Kotlin.isType(tmp$ = this.delegate, CoroutineStackFrame) ? tmp$ : null;
+}});
+  CancellableContinuationImpl.prototype.getStackTraceElement = function() {
+  return null;
+};
+  CancellableContinuationImpl.prototype.takeState = function() {
+  return this.state_8be2vx$;
+};
+  CancellableContinuationImpl.prototype.cancel_dbl4no$$default = function(cause) {
+  var $receiver = this._state_0;
+  loop_label:
+    while (true) {
+      var state = this._state_0;
+      action$break:
+        do {
+          if (!Kotlin.isType(state, NotCompleted)) 
+            return false;
+          var update = new CancelledContinuation(this, cause, Kotlin.isType(state, CancelHandler));
+          if (!(function(scope) {return scope._state_0 === state ? function() {scope._state_0 = update;return true;}() : false})(this)) 
+            break action$break;
+          if (Kotlin.isType(state, CancelHandler)) {
+            try {
+              state.invoke(cause);
+            }            catch (ex) {
+  if (Kotlin.isType(ex, Throwable)) {
+    handleCoroutineException(this.context, new CompletionHandlerException('Exception in cancellation handler for ' + this, ex));
+  } else 
+    throw ex;
+}
+          }
+          this.disposeParentHandle_0();
+          this.dispatchResume_0(0);
+          return true;
+        } while (false);
+    }
+};
+  CancellableContinuationImpl.prototype.invokeHandlerSafely_0 = function(block) {
+  try {
+    block();
+  }  catch (ex) {
+  if (Kotlin.isType(ex, Throwable)) {
+    handleCoroutineException(this.context, new CompletionHandlerException('Exception in cancellation handler for ' + this, ex));
+  } else 
+    throw ex;
+}
+};
+  CancellableContinuationImpl.prototype.getContinuationCancellationCause_dqr1mp$ = function(parent) {
+  return parent.getCancellationException();
+};
+  CancellableContinuationImpl.prototype.trySuspend_0 = function() {
+  var $receiver = this._decision_0;
+  while (true) {
+    switch (this._decision_0) {
+      case 0:
+        if ((function(scope) {return scope._decision_0 === 0 ? function() {scope._decision_0 = 1;return true;}() : false})(this)) 
+          return true;
+        break;
+      case 2:
+        return false;
+      default:
+        throw IllegalStateException_init('Already suspended'.toString());
+    }
+  }
+};
+  CancellableContinuationImpl.prototype.tryResume_0 = function() {
+  var $receiver = this._decision_0;
+  while (true) {
+    switch (this._decision_0) {
+      case 0:
+        if ((function(scope) {return scope._decision_0 === 0 ? function() {scope._decision_0 = 2;return true;}() : false})(this)) 
+          return true;
+        break;
+      case 1:
+        return false;
+      default:
+        throw IllegalStateException_init('Already resumed'.toString());
+    }
+  }
+};
+  CancellableContinuationImpl.prototype.getResult = function() {
+  this.installParentCancellationHandler_0();
+  if (this.trySuspend_0()) 
+    return COROUTINE_SUSPENDED;
+  var state = this.state_8be2vx$;
+  if (Kotlin.isType(state, CompletedExceptionally)) 
+    throw recoverStackTrace(state.cause, this);
+  return this.getSuccessfulResult_tpy1pm$(state);
+};
+  CancellableContinuationImpl.prototype.resumeWith_tl1gpc$ = function(result) {
+  this.resumeImpl_0(toState(result), this.resumeMode);
+};
+  CancellableContinuationImpl.prototype.resumeWithExceptionMode_i32via$ = function(exception, mode) {
+  this.resumeImpl_0(new CompletedExceptionally(exception), mode);
+};
+  CancellableContinuationImpl.prototype.invokeOnCancellation_f05bi3$ = function(handler) {
+  var handleCache = {
+  v: null};
+  var $receiver = this._state_0;
+  while (true) {
+    var state = this._state_0;
+    var tmp$;
+    if (Kotlin.isType(state, Active)) {
+      var tmp$_0;
+      if ((tmp$ = handleCache.v) != null) 
+        tmp$_0 = tmp$;
+      else {
+        var $receiver_0 = this.makeHandler_0(handler);
+        handleCache.v = $receiver_0;
+        tmp$_0 = $receiver_0;
+      }
+      var node = tmp$_0;
+      if ((function(scope) {return scope._state_0 === state ? function() {scope._state_0 = node;return true;}() : false})(this)) 
+        return;
+    } else if (Kotlin.isType(state, CancelHandler)) 
+      this.multipleHandlersError_0(handler, state);
+    else if (Kotlin.isType(state, CancelledContinuation)) {
+      if (!state.makeHandled()) 
+        this.multipleHandlersError_0(handler, state);
+      try {
+        var tmp$_1, tmp$_2;
+        invokeIt(handler, (tmp$_2 = Kotlin.isType(tmp$_1 = state, CompletedExceptionally) ? tmp$_1 : null) != null ? tmp$_2.cause : null);
+      }      catch (ex) {
+  if (Kotlin.isType(ex, Throwable)) {
+    handleCoroutineException(this.context, new CompletionHandlerException('Exception in cancellation handler for ' + this, ex));
+  } else 
+    throw ex;
+}
+      return;
+    } else {
+      return;
+    }
+  }
+};
+  CancellableContinuationImpl.prototype.multipleHandlersError_0 = function(handler, state) {
+  throw IllegalStateException_init(("It's prohibited to register multiple handlers, tried to register " + handler + ', already has ' + toString(state)).toString());
+};
+  CancellableContinuationImpl.prototype.makeHandler_0 = function(handler) {
+  return Kotlin.isType(handler, CancelHandler) ? handler : new InvokeOnCancel(handler);
+};
+  CancellableContinuationImpl.prototype.dispatchResume_0 = function(mode) {
+  if (this.tryResume_0()) 
+    return;
+  dispatch(this, mode);
+};
+  CancellableContinuationImpl.prototype.resumeImpl_0 = function(proposedUpdate, resumeMode) {
+  var $receiver = this._state_0;
+  loop_label:
+    while (true) {
+      var state = this._state_0;
+      action$break:
+        do {
+          if (Kotlin.isType(state, NotCompleted)) {
+            if (!(function(scope) {return scope._state_0 === state ? function() {scope._state_0 = proposedUpdate;return true;}() : false})(this)) 
+              break action$break;
+            this.disposeParentHandle_0();
+            this.dispatchResume_0(resumeMode);
+            return;
+          } else if (Kotlin.isType(state, CancelledContinuation)) 
+            if (state.makeResumed()) 
+            return;
+          this.alreadyResumedError_0(proposedUpdate);
+        } while (false);
+    }
+};
+  CancellableContinuationImpl.prototype.alreadyResumedError_0 = function(proposedUpdate) {
+  throw IllegalStateException_init(('Already resumed, but proposed with update ' + toString(proposedUpdate)).toString());
+};
+  CancellableContinuationImpl.prototype.disposeParentHandle_0 = function() {
+  var tmp$;
+  if ((tmp$ = this.parentHandle_0) != null) {
+    tmp$.dispose();
+    this.parentHandle_0 = NonDisposableHandle_getInstance();
+  }
 };
   CancellableContinuationImpl.prototype.tryResume_19pj23$$default = function(value, idempotent) {
-  while (true) {
-    var state = this.state_8be2vx$;
-    if (Kotlin.isType(state, NotCompleted)) {
-      var update = idempotent == null ? value : new CompletedIdempotentResult(idempotent, value, state);
-      if (this.tryUpdateStateToFinal_0(state, update)) 
-        return state;
-    } else if (Kotlin.isType(state, CompletedIdempotentResult)) 
-      if (state.idempotentResume === idempotent) {
-      if (!(state.result === value)) {
-        var message = 'Non-idempotent resume';
-        throw IllegalStateException_init(message.toString());
-      }
-      return state.token;
-    } else 
-      return null;
-    else 
-      return null;
-  }
+  var $receiver = this._state_0;
+  loop_label:
+    while (true) {
+      var state = this._state_0;
+      action$break:
+        do {
+          var tmp$;
+          if (Kotlin.isType(state, NotCompleted)) {
+            var update = idempotent == null ? value : new CompletedIdempotentResult(idempotent, value, state);
+            if (!(function(scope) {return scope._state_0 === state ? function() {scope._state_0 = update;return true;}() : false})(this)) 
+              break action$break;
+            this.disposeParentHandle_0();
+            return state;
+          } else if (Kotlin.isType(state, CompletedIdempotentResult)) {
+            if (state.idempotentResume === idempotent) {
+              if (!(state.result === value)) {
+                var message = 'Non-idempotent resume';
+                throw IllegalStateException_init(message.toString());
+              }
+              tmp$ = state.token;
+            } else {
+              tmp$ = null;
+            }
+            return tmp$;
+          } else 
+            return null;
+        } while (false);
+    }
 };
   CancellableContinuationImpl.prototype.tryResumeWithException_tcv7n7$ = function(exception) {
-  while (true) {
-    var state = this.state_8be2vx$;
-    if (Kotlin.isType(state, NotCompleted)) {
-      if (this.tryUpdateStateToFinal_0(state, new CompletedExceptionally(exception))) 
-        return state;
-    } else 
-      return null;
-  }
+  var $receiver = this._state_0;
+  loop_label:
+    while (true) {
+      var state = this._state_0;
+      action$break:
+        do {
+          if (Kotlin.isType(state, NotCompleted)) {
+            var update = new CompletedExceptionally(exception);
+            if (!(function(scope) {return scope._state_0 === state ? function() {scope._state_0 = update;return true;}() : false})(this)) 
+              break action$break;
+            this.disposeParentHandle_0();
+            return state;
+          } else 
+            return null;
+        } while (false);
+    }
 };
   CancellableContinuationImpl.prototype.completeResume_za3rmp$ = function(token) {
-  var tmp$;
-  this.completeStateUpdate_0(Kotlin.isType(tmp$ = token, NotCompleted) ? tmp$ : throwCCE(), this.state_8be2vx$, this.resumeMode);
+  this.dispatchResume_0(this.resumeMode);
 };
   CancellableContinuationImpl.prototype.resumeUndispatched_hyuxa3$ = function($receiver, value) {
   var tmp$;
@@ -1349,13 +1365,60 @@
   var tmp$, tmp$_0;
   return Kotlin.isType(state, CompletedIdempotentResult) ? (tmp$ = state.result) == null || Kotlin.isType(tmp$, Any) ? tmp$ : throwCCE() : (tmp$_0 = state) == null || Kotlin.isType(tmp$_0, Any) ? tmp$_0 : throwCCE();
 };
+  CancellableContinuationImpl.prototype.toString = function() {
+  return this.nameString() + '(' + toDebugString(this.delegate) + '){' + toString(this.state_8be2vx$) + '}@' + get_hexAddress(this);
+};
   CancellableContinuationImpl.prototype.nameString = function() {
-  return 'CancellableContinuation(' + toDebugString(this.delegate) + ')';
+  return 'CancellableContinuation';
 };
   CancellableContinuationImpl.$metadata$ = {
   kind: Kind_CLASS, 
   simpleName: 'CancellableContinuationImpl', 
-  interfaces: [CancellableContinuation, AbstractContinuation, Runnable]};
+  interfaces: [CoroutineStackFrame, CancellableContinuation, DispatchedTask]};
+  function NotCompleted() {
+  }
+  NotCompleted.$metadata$ = {
+  kind: Kind_INTERFACE, 
+  simpleName: 'NotCompleted', 
+  interfaces: []};
+  function Active() {
+    Active_instance = this;
+  }
+  Active.prototype.toString = function() {
+  return 'Active';
+};
+  Active.$metadata$ = {
+  kind: Kind_OBJECT, 
+  simpleName: 'Active', 
+  interfaces: [NotCompleted]};
+  var Active_instance = null;
+  function Active_getInstance() {
+    if (Active_instance === null) {
+      new Active();
+    }
+    return Active_instance;
+  }
+  function CancelHandler() {
+    CancelHandlerBase.call(this);
+  }
+  CancelHandler.$metadata$ = {
+  kind: Kind_CLASS, 
+  simpleName: 'CancelHandler', 
+  interfaces: [NotCompleted, CancelHandlerBase]};
+  function InvokeOnCancel(handler) {
+    CancelHandler.call(this);
+    this.handler_0 = handler;
+  }
+  InvokeOnCancel.prototype.invoke = function(cause) {
+  this.handler_0(cause);
+};
+  InvokeOnCancel.prototype.toString = function() {
+  return 'InvokeOnCancel[' + get_classSimpleName(this.handler_0) + '@' + get_hexAddress(this) + ']';
+};
+  InvokeOnCancel.$metadata$ = {
+  kind: Kind_CLASS, 
+  simpleName: 'InvokeOnCancel', 
+  interfaces: [CancelHandler]};
   function CompletedIdempotentResult(idempotentResume, result, token) {
     this.idempotentResume = idempotentResume;
     this.result = result;
@@ -1484,9 +1547,17 @@
   kind: Kind_CLASS, 
   simpleName: 'CompletedExceptionally', 
   interfaces: []};
-  function CancelledContinuation(continuation, cause) {
+  function CancelledContinuation(continuation, cause, handled) {
     CompletedExceptionally.call(this, cause != null ? cause : new CancellationException('Continuation ' + continuation + ' was cancelled normally'));
+    this.resumed_0 = false;
+    this.handled_0 = handled;
   }
+  CancelledContinuation.prototype.makeResumed = function() {
+  return (function(scope) {return scope.resumed_0 === false ? function() {scope.resumed_0 = true;return true;}() : false})(this);
+};
+  CancelledContinuation.prototype.makeHandled = function() {
+  return (function(scope) {return scope.handled_0 === false ? function() {scope.handled_0 = true;return true;}() : false})(this);
+};
   CancelledContinuation.$metadata$ = {
   kind: Kind_CLASS, 
   simpleName: 'CancelledContinuation', 
@@ -1637,6 +1708,9 @@
   function plus($receiver, context) {
     return new ContextScope($receiver.coroutineContext.plus_1fupul$(context));
   }
+  function MainScope() {
+    return new ContextScope(SupervisorJob().plus_1fupul$(Dispatchers_getInstance().Main));
+  }
   function get_isActive($receiver) {
     var tmp$, tmp$_0;
     return (tmp$_0 = (tmp$ = $receiver.coroutineContext.get_j3r2sn$(Job$Key_getInstance())) != null ? tmp$.isActive : null) != null ? tmp$_0 : true;
@@ -1671,6 +1745,21 @@
   function CoroutineScope_0(context) {
     return new ContextScope(context.get_j3r2sn$(Job$Key_getInstance()) != null ? context : context.plus_1fupul$(Job_0()));
   }
+  var cancel = defineInlineFunction('kotlinx-coroutines-core.kotlinx.coroutines.cancel_e9pf1l$', wrapFunction(function() {
+  var Job = _.kotlinx.coroutines.Job;
+  var IllegalStateException_init = Kotlin.kotlin.IllegalStateException_init_pdl1vj$;
+  return function($receiver) {
+  var tmp$;
+  var tmp$_0;
+  if ((tmp$ = $receiver.coroutineContext.get_j3r2sn$(Job.Key)) != null) 
+    tmp$_0 = tmp$;
+  else {
+    throw IllegalStateException_init(('Scope cannot be cancelled because it does not have a job: ' + $receiver).toString());
+  }
+  var job = tmp$_0;
+  job.cancel();
+};
+}));
   function CoroutineStart(name, ordinal) {
     Enum.call(this);
     this.name$ = name;
@@ -1784,7 +1873,6 @@
   function suspendCancellableCoroutine$lambda_0(closure$block) {
     return function(uCont) {
   var cancellable = new CancellableContinuationImpl(intercepted(uCont), 1);
-  cancellable.initCancellability();
   closure$block(cancellable);
   return cancellable.getResult();
 };
@@ -1817,169 +1905,90 @@
     return (tmp$_0 = Kotlin.isType(tmp$ = $receiver.get_j3r2sn$(ContinuationInterceptor.Key), Delay) ? tmp$ : null) != null ? tmp$_0 : get_DefaultDelay();
   }
   var UNDEFINED;
-  function UndispatchedEventLoop() {
-    UndispatchedEventLoop_instance = this;
-    this.threadLocalEventLoop_8be2vx$ = new CommonThreadLocal(UndispatchedEventLoop$threadLocalEventLoop$lambda);
-  }
-  function UndispatchedEventLoop$EventLoop(isActive, queue) {
-    if (isActive === void 0) 
-      isActive = false;
-    if (queue === void 0) 
-      queue = new ArrayQueue();
-    this.isActive = isActive;
-    this.queue = queue;
-  }
-  UndispatchedEventLoop$EventLoop.$metadata$ = {
-  kind: Kind_CLASS, 
-  simpleName: 'EventLoop', 
-  interfaces: []};
-  UndispatchedEventLoop$EventLoop.prototype.component1 = function() {
-  return this.isActive;
-};
-  UndispatchedEventLoop$EventLoop.prototype.component2 = function() {
-  return this.queue;
-};
-  UndispatchedEventLoop$EventLoop.prototype.copy_8f748t$ = function(isActive, queue) {
-  return new UndispatchedEventLoop$EventLoop(isActive === void 0 ? this.isActive : isActive, queue === void 0 ? this.queue : queue);
-};
-  UndispatchedEventLoop$EventLoop.prototype.toString = function() {
-  return 'EventLoop(isActive=' + Kotlin.toString(this.isActive) + (', queue=' + Kotlin.toString(this.queue)) + ')';
-};
-  UndispatchedEventLoop$EventLoop.prototype.hashCode = function() {
-  var result = 0;
-  result = result * 31 + Kotlin.hashCode(this.isActive) | 0;
-  result = result * 31 + Kotlin.hashCode(this.queue) | 0;
-  return result;
-};
-  UndispatchedEventLoop$EventLoop.prototype.equals = function(other) {
-  return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.isActive, other.isActive) && Kotlin.equals(this.queue, other.queue)))));
-};
-  UndispatchedEventLoop.prototype.execute_7gc2iq$ = defineInlineFunction('kotlinx-coroutines-core.kotlinx.coroutines.UndispatchedEventLoop.execute_7gc2iq$', wrapFunction(function() {
-  var DispatchException_init = _.kotlinx.coroutines.DispatchException;
-  var Throwable = Error;
-  return function(continuation, contState, mode, doYield, block) {
-  if (doYield === void 0) 
-    doYield = false;
-  var eventLoop = this.threadLocalEventLoop_8be2vx$.get();
-  if (eventLoop.isActive) {
-    if (doYield && eventLoop.queue.isEmpty) {
+  function executeUnconfined($receiver, contState, mode, doYield, block) {
+    if (doYield === void 0) 
+      doYield = false;
+    var tmp$;
+    var eventLoop = ThreadLocalEventLoop_getInstance().eventLoop_8be2vx$;
+    if (doYield && eventLoop.isUnconfinedQueueEmpty) 
       return false;
-    }
-    continuation._state_8be2vx$ = contState;
-    continuation.resumeMode = mode;
-    eventLoop.queue.addLast_trkh7z$(continuation);
-    return true;
-  }
-  runEventLoop_ht3o0d$break:
-    do {
-      var tmp$;
+    if (eventLoop.isUnconfinedLoopActive) {
+      $receiver._state_8be2vx$ = contState;
+      $receiver.resumeMode = mode;
+      eventLoop.dispatchUnconfined_4avnfa$($receiver);
+      tmp$ = true;
+    } else {
+      eventLoop.incrementUseCount_6taknv$(true);
       try {
-        eventLoop.isActive = true;
         block();
-        while (true) {
-          tmp$ = eventLoop.queue.removeFirstOrNull();
-          if (tmp$ == null) {
-            break runEventLoop_ht3o0d$break;
-          }
-          var nextEvent = tmp$;
-          nextEvent.run();
+        while (eventLoop.processUnconfinedEvent()) {
         }
       }      catch (e) {
   if (Kotlin.isType(e, Throwable)) {
-    eventLoop.queue.clear();
-    throw new DispatchException_init('Unexpected exception in undispatched event loop, clearing pending tasks', e);
+    throw new DispatchException('Unexpected exception in unconfined event loop', e);
   } else 
     throw e;
 }
  finally       {
-        eventLoop.isActive = false;
+        eventLoop.decrementUseCount_6taknv$(true);
       }
-    } while (false);
-  return false;
-};
-}));
-  UndispatchedEventLoop.prototype.resumeUndispatched_4avnfa$ = function(task) {
-  var eventLoop = this.threadLocalEventLoop_8be2vx$.get();
-  if (eventLoop.isActive) {
-    eventLoop.queue.addLast_trkh7z$(task);
-    return true;
+      tmp$ = false;
+    }
+    return tmp$;
   }
-  runEventLoop_ht3o0d$break:
-    do {
-      var tmp$;
+  function resumeUnconfined($receiver) {
+    var eventLoop = ThreadLocalEventLoop_getInstance().eventLoop_8be2vx$;
+    if (eventLoop.isUnconfinedLoopActive) {
+      eventLoop.dispatchUnconfined_4avnfa$($receiver);
+    } else {
+      eventLoop.incrementUseCount_6taknv$(true);
       try {
-        eventLoop.isActive = true;
-        resume(task, task.delegate, 3);
-        while (true) {
-          tmp$ = eventLoop.queue.removeFirstOrNull();
-          if (tmp$ == null) {
-            break runEventLoop_ht3o0d$break;
-          }
-          var nextEvent = tmp$;
-          nextEvent.run();
+        resume($receiver, $receiver.delegate, 3);
+        while (eventLoop.processUnconfinedEvent()) {
         }
       }      catch (e) {
   if (Kotlin.isType(e, Throwable)) {
-    eventLoop.queue.clear();
-    throw new DispatchException('Unexpected exception in undispatched event loop, clearing pending tasks', e);
+    throw new DispatchException('Unexpected exception in unconfined event loop', e);
   } else 
     throw e;
 }
  finally       {
-        eventLoop.isActive = false;
+        eventLoop.decrementUseCount_6taknv$(true);
       }
-    } while (false);
-  return false;
-};
-  UndispatchedEventLoop.prototype.runEventLoop_ht3o0d$ = defineInlineFunction('kotlinx-coroutines-core.kotlinx.coroutines.UndispatchedEventLoop.runEventLoop_ht3o0d$', wrapFunction(function() {
-  var DispatchException_init = _.kotlinx.coroutines.DispatchException;
-  var Throwable = Error;
-  return function(eventLoop, block) {
-  var tmp$;
-  try {
-    eventLoop.isActive = true;
-    block();
-    while (true) {
-      tmp$ = eventLoop.queue.removeFirstOrNull();
-      if (tmp$ == null) {
-        return;
-      }
-      var nextEvent = tmp$;
-      nextEvent.run();
     }
-  }  catch (e) {
+  }
+  function runUnconfinedEventLoop(eventLoop, block) {
+    eventLoop.incrementUseCount_6taknv$(true);
+    try {
+      block();
+      while (eventLoop.processUnconfinedEvent()) {
+      }
+    }    catch (e) {
   if (Kotlin.isType(e, Throwable)) {
-    eventLoop.queue.clear();
-    throw new DispatchException_init('Unexpected exception in undispatched event loop, clearing pending tasks', e);
+    throw new DispatchException('Unexpected exception in unconfined event loop', e);
   } else 
     throw e;
 }
- finally   {
-    eventLoop.isActive = false;
-  }
-};
-}));
-  function UndispatchedEventLoop$threadLocalEventLoop$lambda() {
-    return new UndispatchedEventLoop$EventLoop();
-  }
-  UndispatchedEventLoop.$metadata$ = {
-  kind: Kind_OBJECT, 
-  simpleName: 'UndispatchedEventLoop', 
-  interfaces: []};
-  var UndispatchedEventLoop_instance = null;
-  function UndispatchedEventLoop_getInstance() {
-    if (UndispatchedEventLoop_instance === null) {
-      new UndispatchedEventLoop();
+ finally     {
+      eventLoop.decrementUseCount_6taknv$(true);
     }
-    return UndispatchedEventLoop_instance;
   }
   function DispatchedContinuation(dispatcher, continuation) {
     DispatchedTask.call(this, 0);
     this.dispatcher = dispatcher;
     this.continuation = continuation;
     this._state_8be2vx$ = UNDEFINED;
+    var tmp$;
+    this.callerFrame_w1cgfa$_0 = Kotlin.isType(tmp$ = this.continuation, CoroutineStackFrame) ? tmp$ : null;
     this.countOrElement_8be2vx$ = threadContextElements(this.context);
   }
+  Object.defineProperty(DispatchedContinuation.prototype, 'callerFrame', {
+  get: function() {
+  return this.callerFrame_w1cgfa$_0;
+}});
+  DispatchedContinuation.prototype.getStackTraceElement = function() {
+  return null;
+};
   DispatchedContinuation.prototype.takeState = function() {
   var state = this._state_8be2vx$;
   if (!(state !== UNDEFINED)) {
@@ -2001,53 +2010,38 @@
     this.resumeMode = 0;
     this.dispatcher.dispatch_5bn72i$(context, this);
   } else {
-    var $this = UndispatchedEventLoop_getInstance();
-    execute_7gc2iq$break:
+    executeUnconfined$break:
       do {
-        var eventLoop = $this.threadLocalEventLoop_8be2vx$.get();
-        if (eventLoop.isActive) {
-          if (false && eventLoop.queue.isEmpty) {
-            false;
-            break execute_7gc2iq$break;
-          }
+        var eventLoop = ThreadLocalEventLoop_getInstance().eventLoop_8be2vx$;
+        if (false && eventLoop.isUnconfinedQueueEmpty) {
+          false;
+          break executeUnconfined$break;
+        }
+        if (eventLoop.isUnconfinedLoopActive) {
           this._state_8be2vx$ = state;
           this.resumeMode = 0;
-          eventLoop.queue.addLast_trkh7z$(this);
-          true;
-          break execute_7gc2iq$break;
-        }
-        runEventLoop_ht3o0d$break:
-          do {
-            var tmp$;
-            try {
-              eventLoop.isActive = true;
-              this.context;
-              this.continuation.resumeWith_tl1gpc$(result);
-              while (true) {
-                tmp$ = eventLoop.queue.removeFirstOrNull();
-                if (tmp$ == null) {
-                  break runEventLoop_ht3o0d$break;
-                }
-                var nextEvent = tmp$;
-                nextEvent.run();
-              }
-            }            catch (e) {
+          eventLoop.dispatchUnconfined_4avnfa$(this);
+        } else {
+          eventLoop.incrementUseCount_6taknv$(true);
+          try {
+            this.context;
+            this.continuation.resumeWith_tl1gpc$(result);
+            while (eventLoop.processUnconfinedEvent()) {
+            }
+          }          catch (e) {
   if (Kotlin.isType(e, Throwable)) {
-    eventLoop.queue.clear();
-    throw new DispatchException('Unexpected exception in undispatched event loop, clearing pending tasks', e);
+    throw new DispatchException('Unexpected exception in unconfined event loop', e);
   } else 
     throw e;
 }
- finally             {
-              eventLoop.isActive = false;
-            }
-          } while (false);
-        false;
+ finally           {
+            eventLoop.decrementUseCount_6taknv$(true);
+          }
+        }
       } while (false);
   }
 };
   DispatchedContinuation.prototype.resumeCancellable_11rb$ = defineInlineFunction('kotlinx-coroutines-core.kotlinx.coroutines.DispatchedContinuation.resumeCancellable_11rb$', wrapFunction(function() {
-  var coroutines = _.kotlinx.coroutines;
   var Unit = Kotlin.kotlin.Unit;
   var wrapFunction = Kotlin.wrapFunction;
   var DispatchedContinuation$resumeCancellable$lambda = wrapFunction(function() {
@@ -2092,8 +2086,6 @@
 };
 };
 });
-  var DispatchException_init = _.kotlinx.coroutines.DispatchException;
-  var Throwable = Error;
   var Job = _.kotlinx.coroutines.Job;
   var Result = Kotlin.kotlin.Result;
   var createFailure = Kotlin.kotlin.createFailure_tcv7n7$;
@@ -2114,69 +2106,54 @@
     this.resumeMode = 1;
     this.dispatcher.dispatch_5bn72i$(this.context, this);
   } else {
-    var $this = coroutines.UndispatchedEventLoop;
-    execute_7gc2iq$break:
+    executeUnconfined$break:
       do {
-        var eventLoop = $this.threadLocalEventLoop_8be2vx$.get();
-        if (eventLoop.isActive) {
-          if (false && eventLoop.queue.isEmpty) {
-            false;
-            break execute_7gc2iq$break;
-          }
+        var eventLoop = ThreadLocalEventLoop_getInstance().eventLoop_8be2vx$;
+        if (false && eventLoop.isUnconfinedQueueEmpty) {
+          false;
+          break executeUnconfined$break;
+        }
+        if (eventLoop.isUnconfinedLoopActive) {
           this._state_8be2vx$ = value;
           this.resumeMode = 1;
-          eventLoop.queue.addLast_trkh7z$(this);
-          true;
-          break execute_7gc2iq$break;
-        }
-        runEventLoop_ht3o0d$break:
-          do {
-            var tmp$;
-            try {
-              eventLoop.isActive = true;
-              var resumeCancelled$result;
-              resumeCancelled$break:
-                do {
-                  var job = this.context.get_j3r2sn$(Job.Key);
-                  if (job != null && !job.isActive) {
-                    var exception = job.getCancellationException();
-                    this.resumeWith_tl1gpc$(new Result(createFailure(exception)));
-                    resumeCancelled$result = true;
-                    break resumeCancelled$break;
-                  }
-                  resumeCancelled$result = false;
-                } while (false);
-              if (!resumeCancelled$result) {
-                this.context;
-                this.continuation.resumeWith_tl1gpc$(new Result(value));
-              }
-              while (true) {
-                tmp$ = eventLoop.queue.removeFirstOrNull();
-                if (tmp$ == null) {
-                  break runEventLoop_ht3o0d$break;
+          eventLoop.dispatchUnconfined_4avnfa$(this);
+        } else {
+          eventLoop.incrementUseCount_6taknv$(true);
+          try {
+            var resumeCancelled$result;
+            resumeCancelled$break:
+              do {
+                var job = this.context.get_j3r2sn$(Job.Key);
+                if (job != null && !job.isActive) {
+                  var exception = job.getCancellationException();
+                  this.resumeWith_tl1gpc$(new Result(createFailure(exception)));
+                  resumeCancelled$result = true;
+                  break resumeCancelled$break;
                 }
-                var nextEvent = tmp$;
-                nextEvent.run();
-              }
-            }            catch (e) {
+                resumeCancelled$result = false;
+              } while (false);
+            if (!resumeCancelled$result) {
+              this.context;
+              this.continuation.resumeWith_tl1gpc$(new Result(value));
+            }
+            while (eventLoop.processUnconfinedEvent()) {
+            }
+          }          catch (e) {
   if (Kotlin.isType(e, Throwable)) {
-    eventLoop.queue.clear();
-    throw new DispatchException_init('Unexpected exception in undispatched event loop, clearing pending tasks', e);
+    throw new DispatchException('Unexpected exception in unconfined event loop', e);
   } else 
     throw e;
 }
- finally             {
-              eventLoop.isActive = false;
-            }
-          } while (false);
-        false;
+ finally           {
+            eventLoop.decrementUseCount_6taknv$(true);
+          }
+        }
       } while (false);
   }
 };
 }));
   DispatchedContinuation.prototype.resumeCancellableWithException_tcv7n7$ = defineInlineFunction('kotlinx-coroutines-core.kotlinx.coroutines.DispatchedContinuation.resumeCancellableWithException_tcv7n7$', wrapFunction(function() {
   var CompletedExceptionally_init = _.kotlinx.coroutines.CompletedExceptionally;
-  var coroutines = _.kotlinx.coroutines;
   var Unit = Kotlin.kotlin.Unit;
   var wrapFunction = Kotlin.wrapFunction;
   var DispatchedContinuation$resumeCancellableWithException$lambda = wrapFunction(function() {
@@ -2187,16 +2164,17 @@
   var wrapFunction = Kotlin.wrapFunction;
   var DispatchedContinuation$resumeUndispatchedWithException$lambda = wrapFunction(function() {
   var Result = Kotlin.kotlin.Result;
+  var recoverStackTrace = _.kotlinx.coroutines.internal.recoverStackTrace_ak2v6d$;
   var createFailure = Kotlin.kotlin.createFailure_tcv7n7$;
   return function(this$DispatchedContinuation, closure$exception) {
   return function() {
   var $receiver = this$DispatchedContinuation.continuation;
-  var exception = closure$exception;
-  $receiver.resumeWith_tl1gpc$(new Result(createFailure(exception)));
+  $receiver.resumeWith_tl1gpc$(new Result(createFailure(recoverStackTrace(closure$exception, $receiver))));
   return Unit_0;
 };
 };
 });
+  var recoverStackTrace = _.kotlinx.coroutines.internal.recoverStackTrace_ak2v6d$;
   return function(this$DispatchedContinuation, closure$exception) {
   return function() {
   var $this = this$DispatchedContinuation;
@@ -2216,29 +2194,29 @@
     var $this_0 = this$DispatchedContinuation;
     var exception_0 = closure$exception;
     $this_0.context;
-    $this_0.continuation.resumeWith_tl1gpc$(new Result(createFailure(exception_0)));
+    var $receiver = $this_0.continuation;
+    $receiver.resumeWith_tl1gpc$(new Result(createFailure(recoverStackTrace(exception_0, $receiver))));
   }
   return Unit;
 };
 };
 });
-  var DispatchException_init = _.kotlinx.coroutines.DispatchException;
-  var Throwable = Error;
   var Job = _.kotlinx.coroutines.Job;
   var Result = Kotlin.kotlin.Result;
   var createFailure = Kotlin.kotlin.createFailure_tcv7n7$;
   var DispatchedContinuation$resumeUndispatchedWithException$lambda = wrapFunction(function() {
   var Result = Kotlin.kotlin.Result;
+  var recoverStackTrace = _.kotlinx.coroutines.internal.recoverStackTrace_ak2v6d$;
   var createFailure = Kotlin.kotlin.createFailure_tcv7n7$;
   return function(this$DispatchedContinuation, closure$exception) {
   return function() {
   var $receiver = this$DispatchedContinuation.continuation;
-  var exception = closure$exception;
-  $receiver.resumeWith_tl1gpc$(new Result(createFailure(exception)));
+  $receiver.resumeWith_tl1gpc$(new Result(createFailure(recoverStackTrace(closure$exception, $receiver))));
   return Unit;
 };
 };
 });
+  var recoverStackTrace = _.kotlinx.coroutines.internal.recoverStackTrace_ak2v6d$;
   return function(exception) {
   var context = this.continuation.context;
   var state = new CompletedExceptionally_init(exception);
@@ -2247,62 +2225,49 @@
     this.resumeMode = 1;
     this.dispatcher.dispatch_5bn72i$(context, this);
   } else {
-    var $this = coroutines.UndispatchedEventLoop;
-    execute_7gc2iq$break:
+    executeUnconfined$break:
       do {
-        var eventLoop = $this.threadLocalEventLoop_8be2vx$.get();
-        if (eventLoop.isActive) {
-          if (false && eventLoop.queue.isEmpty) {
-            false;
-            break execute_7gc2iq$break;
-          }
+        var eventLoop = ThreadLocalEventLoop_getInstance().eventLoop_8be2vx$;
+        if (false && eventLoop.isUnconfinedQueueEmpty) {
+          false;
+          break executeUnconfined$break;
+        }
+        if (eventLoop.isUnconfinedLoopActive) {
           this._state_8be2vx$ = state;
           this.resumeMode = 1;
-          eventLoop.queue.addLast_trkh7z$(this);
-          true;
-          break execute_7gc2iq$break;
-        }
-        runEventLoop_ht3o0d$break:
-          do {
-            var tmp$;
-            try {
-              eventLoop.isActive = true;
-              var resumeCancelled$result;
-              resumeCancelled$break:
-                do {
-                  var job = this.context.get_j3r2sn$(Job.Key);
-                  if (job != null && !job.isActive) {
-                    var exception_0 = job.getCancellationException();
-                    this.resumeWith_tl1gpc$(new Result(createFailure(exception_0)));
-                    resumeCancelled$result = true;
-                    break resumeCancelled$break;
-                  }
-                  resumeCancelled$result = false;
-                } while (false);
-              if (!resumeCancelled$result) {
-                this.context;
-                this.continuation.resumeWith_tl1gpc$(new Result(createFailure(exception)));
-              }
-              while (true) {
-                tmp$ = eventLoop.queue.removeFirstOrNull();
-                if (tmp$ == null) {
-                  break runEventLoop_ht3o0d$break;
+          eventLoop.dispatchUnconfined_4avnfa$(this);
+        } else {
+          eventLoop.incrementUseCount_6taknv$(true);
+          try {
+            var resumeCancelled$result;
+            resumeCancelled$break:
+              do {
+                var job = this.context.get_j3r2sn$(Job.Key);
+                if (job != null && !job.isActive) {
+                  var exception_0 = job.getCancellationException();
+                  this.resumeWith_tl1gpc$(new Result(createFailure(exception_0)));
+                  resumeCancelled$result = true;
+                  break resumeCancelled$break;
                 }
-                var nextEvent = tmp$;
-                nextEvent.run();
-              }
-            }            catch (e) {
+                resumeCancelled$result = false;
+              } while (false);
+            if (!resumeCancelled$result) {
+              this.context;
+              var $receiver = this.continuation;
+              $receiver.resumeWith_tl1gpc$(new Result(createFailure(recoverStackTrace(exception, $receiver))));
+            }
+            while (eventLoop.processUnconfinedEvent()) {
+            }
+          }          catch (e) {
   if (Kotlin.isType(e, Throwable)) {
-    eventLoop.queue.clear();
-    throw new DispatchException_init('Unexpected exception in undispatched event loop, clearing pending tasks', e);
+    throw new DispatchException('Unexpected exception in unconfined event loop', e);
   } else 
     throw e;
 }
- finally             {
-              eventLoop.isActive = false;
-            }
-          } while (false);
-        false;
+ finally           {
+            eventLoop.decrementUseCount_6taknv$(true);
+          }
+        }
       } while (false);
   }
 };
@@ -2346,21 +2311,23 @@
   var wrapFunction = Kotlin.wrapFunction;
   var DispatchedContinuation$resumeUndispatchedWithException$lambda = wrapFunction(function() {
   var Result = Kotlin.kotlin.Result;
+  var recoverStackTrace = _.kotlinx.coroutines.internal.recoverStackTrace_ak2v6d$;
   var createFailure = Kotlin.kotlin.createFailure_tcv7n7$;
   return function(this$DispatchedContinuation, closure$exception) {
   return function() {
   var $receiver = this$DispatchedContinuation.continuation;
-  var exception = closure$exception;
-  $receiver.resumeWith_tl1gpc$(new Result(createFailure(exception)));
+  $receiver.resumeWith_tl1gpc$(new Result(createFailure(recoverStackTrace(closure$exception, $receiver))));
   return Unit;
 };
 };
 });
   var Result = Kotlin.kotlin.Result;
+  var recoverStackTrace = _.kotlinx.coroutines.internal.recoverStackTrace_ak2v6d$;
   var createFailure = Kotlin.kotlin.createFailure_tcv7n7$;
   return function(exception) {
   this.context;
-  this.continuation.resumeWith_tl1gpc$(new Result(createFailure(exception)));
+  var $receiver = this.continuation;
+  $receiver.resumeWith_tl1gpc$(new Result(createFailure(recoverStackTrace(exception, $receiver))));
 };
 }));
   DispatchedContinuation.prototype.dispatchYield_1c3m6u$ = function(value) {
@@ -2379,7 +2346,7 @@
   DispatchedContinuation.$metadata$ = {
   kind: Kind_CLASS, 
   simpleName: 'DispatchedContinuation', 
-  interfaces: [Continuation, DispatchedTask]};
+  interfaces: [Continuation, CoroutineStackFrame, DispatchedTask]};
   var DispatchedContinuation$resumeCancellable$lambda = wrapFunction(function() {
   var Job = _.kotlinx.coroutines.Job;
   var Result = Kotlin.kotlin.Result;
@@ -2441,62 +2408,48 @@
         $receiver.resumeMode = 1;
         $receiver.dispatcher.dispatch_5bn72i$($receiver.context, $receiver);
       } else {
-        var $this = package$coroutines.UndispatchedEventLoop;
-        execute_7gc2iq$break:
+        executeUnconfined$break:
           do {
-            var eventLoop = $this.threadLocalEventLoop_8be2vx$.get();
-            if (eventLoop.isActive) {
-              if (false && eventLoop.queue.isEmpty) {
-                false;
-                break execute_7gc2iq$break;
-              }
+            var eventLoop = ThreadLocalEventLoop_getInstance().eventLoop_8be2vx$;
+            if (false && eventLoop.isUnconfinedQueueEmpty) {
+              false;
+              break executeUnconfined$break;
+            }
+            if (eventLoop.isUnconfinedLoopActive) {
               $receiver._state_8be2vx$ = value;
               $receiver.resumeMode = 1;
-              eventLoop.queue.addLast_trkh7z$($receiver);
-              true;
-              break execute_7gc2iq$break;
-            }
-            runEventLoop_ht3o0d$break:
-              do {
-                var tmp$;
-                try {
-                  eventLoop.isActive = true;
-                  var resumeCancelled$result;
-                  resumeCancelled$break:
-                    do {
-                      var job = $receiver.context.get_j3r2sn$(Job.Key);
-                      if (job != null && !job.isActive) {
-                        var exception = job.getCancellationException();
-                        $receiver.resumeWith_tl1gpc$(new Result(createFailure(exception)));
-                        resumeCancelled$result = true;
-                        break resumeCancelled$break;
-                      }
-                      resumeCancelled$result = false;
-                    } while (false);
-                  if (!resumeCancelled$result) {
-                    $receiver.context;
-                    $receiver.continuation.resumeWith_tl1gpc$(new Result(value));
-                  }
-                  while (true) {
-                    tmp$ = eventLoop.queue.removeFirstOrNull();
-                    if (tmp$ == null) {
-                      break runEventLoop_ht3o0d$break;
+              eventLoop.dispatchUnconfined_4avnfa$($receiver);
+            } else {
+              eventLoop.incrementUseCount_6taknv$(true);
+              try {
+                var resumeCancelled$result;
+                resumeCancelled$break:
+                  do {
+                    var job = $receiver.context.get_j3r2sn$(Job.Key);
+                    if (job != null && !job.isActive) {
+                      var exception = job.getCancellationException();
+                      $receiver.resumeWith_tl1gpc$(new Result(createFailure(exception)));
+                      resumeCancelled$result = true;
+                      break resumeCancelled$break;
                     }
-                    var nextEvent = tmp$;
-                    nextEvent.run();
-                  }
-                }                catch (e) {
+                    resumeCancelled$result = false;
+                  } while (false);
+                if (!resumeCancelled$result) {
+                  $receiver.context;
+                  $receiver.continuation.resumeWith_tl1gpc$(new Result(value));
+                }
+                while (eventLoop.processUnconfinedEvent()) {
+                }
+              }              catch (e) {
   if (Kotlin.isType(e, Throwable)) {
-    eventLoop.queue.clear();
-    throw new DispatchException('Unexpected exception in undispatched event loop, clearing pending tasks', e);
+    throw new DispatchException('Unexpected exception in unconfined event loop', e);
   } else 
     throw e;
 }
- finally                 {
-                  eventLoop.isActive = false;
-                }
-              } while (false);
-            false;
+ finally               {
+                eventLoop.decrementUseCount_6taknv$(true);
+              }
+            }
           } while (false);
       }
     } else {
@@ -2511,16 +2464,17 @@
   var wrapFunction = Kotlin.wrapFunction;
   var DispatchedContinuation$resumeUndispatchedWithException$lambda = wrapFunction(function() {
   var Result = Kotlin.kotlin.Result;
+  var recoverStackTrace = _.kotlinx.coroutines.internal.recoverStackTrace_ak2v6d$;
   var createFailure = Kotlin.kotlin.createFailure_tcv7n7$;
   return function(this$DispatchedContinuation, closure$exception) {
   return function() {
   var $receiver = this$DispatchedContinuation.continuation;
-  var exception = closure$exception;
-  $receiver.resumeWith_tl1gpc$(new Result(createFailure(exception)));
+  $receiver.resumeWith_tl1gpc$(new Result(createFailure(recoverStackTrace(closure$exception, $receiver))));
   return Unit_0;
 };
 };
 });
+  var recoverStackTrace = _.kotlinx.coroutines.internal.recoverStackTrace_ak2v6d$;
   return function(this$DispatchedContinuation, closure$exception) {
   return function() {
   var $this = this$DispatchedContinuation;
@@ -2540,7 +2494,8 @@
     var $this_0 = this$DispatchedContinuation;
     var exception_0 = closure$exception;
     $this_0.context;
-    $this_0.continuation.resumeWith_tl1gpc$(new Result(createFailure(exception_0)));
+    var $receiver = $this_0.continuation;
+    $receiver.resumeWith_tl1gpc$(new Result(createFailure(recoverStackTrace(exception_0, $receiver))));
   }
   return Unit;
 };
@@ -2548,12 +2503,12 @@
 });
   var DispatchedContinuation$resumeUndispatchedWithException$lambda = wrapFunction(function() {
   var Result = Kotlin.kotlin.Result;
+  var recoverStackTrace = _.kotlinx.coroutines.internal.recoverStackTrace_ak2v6d$;
   var createFailure = Kotlin.kotlin.createFailure_tcv7n7$;
   return function(this$DispatchedContinuation, closure$exception) {
   return function() {
   var $receiver = this$DispatchedContinuation.continuation;
-  var exception = closure$exception;
-  $receiver.resumeWith_tl1gpc$(new Result(createFailure(exception)));
+  $receiver.resumeWith_tl1gpc$(new Result(createFailure(recoverStackTrace(closure$exception, $receiver))));
   return Unit;
 };
 };
@@ -2567,66 +2522,53 @@
         $receiver.resumeMode = 1;
         $receiver.dispatcher.dispatch_5bn72i$(context, $receiver);
       } else {
-        var $this = package$coroutines.UndispatchedEventLoop;
-        execute_7gc2iq$break:
+        executeUnconfined$break:
           do {
-            var eventLoop = $this.threadLocalEventLoop_8be2vx$.get();
-            if (eventLoop.isActive) {
-              if (false && eventLoop.queue.isEmpty) {
-                false;
-                break execute_7gc2iq$break;
-              }
+            var eventLoop = ThreadLocalEventLoop_getInstance().eventLoop_8be2vx$;
+            if (false && eventLoop.isUnconfinedQueueEmpty) {
+              false;
+              break executeUnconfined$break;
+            }
+            if (eventLoop.isUnconfinedLoopActive) {
               $receiver._state_8be2vx$ = state;
               $receiver.resumeMode = 1;
-              eventLoop.queue.addLast_trkh7z$($receiver);
-              true;
-              break execute_7gc2iq$break;
-            }
-            runEventLoop_ht3o0d$break:
-              do {
-                var tmp$;
-                try {
-                  eventLoop.isActive = true;
-                  var resumeCancelled$result;
-                  resumeCancelled$break:
-                    do {
-                      var job = $receiver.context.get_j3r2sn$(Job.Key);
-                      if (job != null && !job.isActive) {
-                        var exception_0 = job.getCancellationException();
-                        $receiver.resumeWith_tl1gpc$(new Result(createFailure(exception_0)));
-                        resumeCancelled$result = true;
-                        break resumeCancelled$break;
-                      }
-                      resumeCancelled$result = false;
-                    } while (false);
-                  if (!resumeCancelled$result) {
-                    $receiver.context;
-                    $receiver.continuation.resumeWith_tl1gpc$(new Result(createFailure(exception)));
-                  }
-                  while (true) {
-                    tmp$ = eventLoop.queue.removeFirstOrNull();
-                    if (tmp$ == null) {
-                      break runEventLoop_ht3o0d$break;
+              eventLoop.dispatchUnconfined_4avnfa$($receiver);
+            } else {
+              eventLoop.incrementUseCount_6taknv$(true);
+              try {
+                var resumeCancelled$result;
+                resumeCancelled$break:
+                  do {
+                    var job = $receiver.context.get_j3r2sn$(Job.Key);
+                    if (job != null && !job.isActive) {
+                      var exception_0 = job.getCancellationException();
+                      $receiver.resumeWith_tl1gpc$(new Result(createFailure(exception_0)));
+                      resumeCancelled$result = true;
+                      break resumeCancelled$break;
                     }
-                    var nextEvent = tmp$;
-                    nextEvent.run();
-                  }
-                }                catch (e) {
+                    resumeCancelled$result = false;
+                  } while (false);
+                if (!resumeCancelled$result) {
+                  $receiver.context;
+                  var $receiver_0 = $receiver.continuation;
+                  $receiver_0.resumeWith_tl1gpc$(new Result(createFailure(recoverStackTrace(exception, $receiver_0))));
+                }
+                while (eventLoop.processUnconfinedEvent()) {
+                }
+              }              catch (e) {
   if (Kotlin.isType(e, Throwable)) {
-    eventLoop.queue.clear();
-    throw new DispatchException('Unexpected exception in undispatched event loop, clearing pending tasks', e);
+    throw new DispatchException('Unexpected exception in unconfined event loop', e);
   } else 
     throw e;
 }
- finally                 {
-                  eventLoop.isActive = false;
-                }
-              } while (false);
-            false;
+ finally               {
+                eventLoop.decrementUseCount_6taknv$(true);
+              }
+            }
           } while (false);
       }
     } else {
-      $receiver.resumeWith_tl1gpc$(new Result(createFailure(exception)));
+      $receiver.resumeWith_tl1gpc$(new Result(createFailure(recoverStackTrace(exception, $receiver))));
     }
   }
   function resumeDirect($receiver, value) {
@@ -2638,9 +2580,10 @@
   }
   function resumeDirectWithException($receiver, exception) {
     if (Kotlin.isType($receiver, DispatchedContinuation)) {
-      $receiver.continuation.resumeWith_tl1gpc$(new Result(createFailure(exception)));
+      var $receiver_0 = $receiver.continuation;
+      $receiver_0.resumeWith_tl1gpc$(new Result(createFailure(recoverStackTrace(exception, $receiver_0))));
     } else {
-      $receiver.resumeWith_tl1gpc$(new Result(createFailure(exception)));
+      $receiver.resumeWith_tl1gpc$(new Result(createFailure(recoverStackTrace(exception, $receiver))));
     }
   }
   function DispatchedTask(resumeMode) {
@@ -2670,7 +2613,7 @@
     } else {
       var exception_0 = this.getExceptionalResult_s8jyv4$(state);
       if (exception_0 != null) {
-        continuation.resumeWith_tl1gpc$(new Result(createFailure(exception_0)));
+        continuation.resumeWith_tl1gpc$(new Result(createFailure(recoverStackTrace(exception_0, continuation))));
       } else {
         var value = this.getSuccessfulResult_tpy1pm$(state);
         continuation.resumeWith_tl1gpc$(new Result(value));
@@ -2690,50 +2633,40 @@
   simpleName: 'DispatchedTask', 
   interfaces: [SchedulerTask]};
   function yieldUndispatched($receiver) {
-    var $this = UndispatchedEventLoop_getInstance();
-    var execute_7gc2iq$result;
-    execute_7gc2iq$break:
+    var executeUnconfined$result;
+    executeUnconfined$break:
       do {
-        var eventLoop = $this.threadLocalEventLoop_8be2vx$.get();
-        if (eventLoop.isActive) {
-          if (true && eventLoop.queue.isEmpty) {
-            execute_7gc2iq$result = false;
-            break execute_7gc2iq$break;
-          }
+        var tmp$;
+        var eventLoop = ThreadLocalEventLoop_getInstance().eventLoop_8be2vx$;
+        if (true && eventLoop.isUnconfinedQueueEmpty) {
+          executeUnconfined$result = false;
+          break executeUnconfined$break;
+        }
+        if (eventLoop.isUnconfinedLoopActive) {
           $receiver._state_8be2vx$ = Unit;
           $receiver.resumeMode = 1;
-          eventLoop.queue.addLast_trkh7z$($receiver);
-          execute_7gc2iq$result = true;
-          break execute_7gc2iq$break;
-        }
-        runEventLoop_ht3o0d$break:
-          do {
-            var tmp$;
-            try {
-              eventLoop.isActive = true;
-              $receiver.run();
-              while (true) {
-                tmp$ = eventLoop.queue.removeFirstOrNull();
-                if (tmp$ == null) {
-                  break runEventLoop_ht3o0d$break;
-                }
-                var nextEvent = tmp$;
-                nextEvent.run();
-              }
-            }            catch (e) {
+          eventLoop.dispatchUnconfined_4avnfa$($receiver);
+          tmp$ = true;
+        } else {
+          eventLoop.incrementUseCount_6taknv$(true);
+          try {
+            $receiver.run();
+            while (eventLoop.processUnconfinedEvent()) {
+            }
+          }          catch (e) {
   if (Kotlin.isType(e, Throwable)) {
-    eventLoop.queue.clear();
-    throw new DispatchException('Unexpected exception in undispatched event loop, clearing pending tasks', e);
+    throw new DispatchException('Unexpected exception in unconfined event loop', e);
   } else 
     throw e;
 }
- finally             {
-              eventLoop.isActive = false;
-            }
-          } while (false);
-        execute_7gc2iq$result = false;
+ finally           {
+            eventLoop.decrementUseCount_6taknv$(true);
+          }
+          tmp$ = false;
+        }
+        executeUnconfined$result = tmp$;
       } while (false);
-    return execute_7gc2iq$result;
+    return executeUnconfined$result;
   }
   function dispatch($receiver, mode) {
     if (mode === void 0) 
@@ -2745,7 +2678,7 @@
       if (dispatcher.isDispatchNeeded_1fupul$(context)) {
         dispatcher.dispatch_5bn72i$(context, $receiver);
       } else {
-        UndispatchedEventLoop_getInstance().resumeUndispatched_4avnfa$($receiver);
+        resumeUnconfined($receiver);
       }
     } else {
       resume($receiver, delegate, mode);
@@ -2759,6 +2692,150 @@
     } else {
       resumeMode(delegate, $receiver.getSuccessfulResult_tpy1pm$(state), useMode);
     }
+  }
+  var resumeWithStackTrace = defineInlineFunction('kotlinx-coroutines-core.kotlinx.coroutines.resumeWithStackTrace_45st6c$', wrapFunction(function() {
+  var Result = Kotlin.kotlin.Result;
+  var recoverStackTrace = _.kotlinx.coroutines.internal.recoverStackTrace_ak2v6d$;
+  var createFailure = Kotlin.kotlin.createFailure_tcv7n7$;
+  return function($receiver, exception) {
+  $receiver.resumeWith_tl1gpc$(new Result(createFailure(recoverStackTrace(exception, $receiver))));
+};
+}));
+  function EventLoop() {
+    CoroutineDispatcher.call(this);
+    this.useCount_0 = L0;
+    this.shared_0 = false;
+    this.unconfinedQueue_0 = null;
+  }
+  EventLoop.prototype.processNextEvent = function() {
+  if (!this.processUnconfinedEvent()) 
+    return Long$Companion$MAX_VALUE;
+  return this.nextTime;
+};
+  Object.defineProperty(EventLoop.prototype, 'isEmpty', {
+  get: function() {
+  return this.isUnconfinedQueueEmpty;
+}});
+  Object.defineProperty(EventLoop.prototype, 'nextTime', {
+  get: function() {
+  var tmp$;
+  tmp$ = this.unconfinedQueue_0;
+  if (tmp$ == null) {
+    return Long$Companion$MAX_VALUE;
+  }
+  var queue = tmp$;
+  return queue.isEmpty ? Long$Companion$MAX_VALUE : L0;
+}});
+  EventLoop.prototype.processUnconfinedEvent = function() {
+  var tmp$, tmp$_0;
+  tmp$ = this.unconfinedQueue_0;
+  if (tmp$ == null) {
+    return false;
+  }
+  var queue = tmp$;
+  tmp$_0 = queue.removeFirstOrNull();
+  if (tmp$_0 == null) {
+    return false;
+  }
+  var task = tmp$_0;
+  task.run();
+  return true;
+};
+  EventLoop.prototype.shouldBeProcessedFromContext = function() {
+  return false;
+};
+  EventLoop.prototype.dispatchUnconfined_4avnfa$ = function(task) {
+  var tmp$;
+  var tmp$_0;
+  if ((tmp$ = this.unconfinedQueue_0) != null) 
+    tmp$_0 = tmp$;
+  else {
+    var $receiver = new ArrayQueue();
+    this.unconfinedQueue_0 = $receiver;
+    tmp$_0 = $receiver;
+  }
+  var queue = tmp$_0;
+  queue.addLast_trkh7z$(task);
+};
+  Object.defineProperty(EventLoop.prototype, 'isActive', {
+  get: function() {
+  return this.useCount_0.toNumber() > 0;
+}});
+  Object.defineProperty(EventLoop.prototype, 'isUnconfinedLoopActive', {
+  get: function() {
+  return this.useCount_0.compareTo_11rb$(this.delta_0(true)) >= 0;
+}});
+  Object.defineProperty(EventLoop.prototype, 'isUnconfinedQueueEmpty', {
+  get: function() {
+  var tmp$, tmp$_0;
+  return (tmp$_0 = (tmp$ = this.unconfinedQueue_0) != null ? tmp$.isEmpty : null) != null ? tmp$_0 : true;
+}});
+  EventLoop.prototype.delta_0 = function(unconfined) {
+  return unconfined ? L4294967296 : L1;
+};
+  EventLoop.prototype.incrementUseCount_6taknv$ = function(unconfined) {
+  if (unconfined === void 0) 
+    unconfined = false;
+  this.useCount_0 = this.useCount_0.add(this.delta_0(unconfined));
+  if (!unconfined) 
+    this.shared_0 = true;
+};
+  EventLoop.prototype.decrementUseCount_6taknv$ = function(unconfined) {
+  if (unconfined === void 0) 
+    unconfined = false;
+  this.useCount_0 = this.useCount_0.subtract(this.delta_0(unconfined));
+  if (this.useCount_0.toNumber() > 0) 
+    return;
+  if (!equals(this.useCount_0, L0)) {
+    var message = 'Extra decrementUseCount';
+    throw IllegalStateException_init(message.toString());
+  }
+  if (this.shared_0) {
+    this.shutdown();
+  }
+};
+  EventLoop.prototype.shutdown = function() {
+};
+  EventLoop.$metadata$ = {
+  kind: Kind_CLASS, 
+  simpleName: 'EventLoop', 
+  interfaces: [CoroutineDispatcher]};
+  function ThreadLocalEventLoop() {
+    ThreadLocalEventLoop_instance = this;
+    this.ref_0 = new CommonThreadLocal();
+  }
+  Object.defineProperty(ThreadLocalEventLoop.prototype, 'eventLoop_8be2vx$', {
+  get: function() {
+  var tmp$;
+  var tmp$_0;
+  if ((tmp$ = this.ref_0.get()) != null) 
+    tmp$_0 = tmp$;
+  else {
+    var $receiver = createEventLoop();
+    this.ref_0.set_11rb$($receiver);
+    tmp$_0 = $receiver;
+  }
+  return tmp$_0;
+}});
+  ThreadLocalEventLoop.prototype.currentOrNull_8be2vx$ = function() {
+  return this.ref_0.get();
+};
+  ThreadLocalEventLoop.prototype.resetEventLoop_8be2vx$ = function() {
+  this.ref_0.set_11rb$(null);
+};
+  ThreadLocalEventLoop.prototype.setEventLoop_13etkv$ = function(eventLoop) {
+  this.ref_0.set_11rb$(eventLoop);
+};
+  ThreadLocalEventLoop.$metadata$ = {
+  kind: Kind_OBJECT, 
+  simpleName: 'ThreadLocalEventLoop', 
+  interfaces: []};
+  var ThreadLocalEventLoop_instance = null;
+  function ThreadLocalEventLoop_getInstance() {
+    if (ThreadLocalEventLoop_instance === null) {
+      new ThreadLocalEventLoop();
+    }
+    return ThreadLocalEventLoop_instance;
   }
   function Job() {
     Job$Key_getInstance();
@@ -2879,11 +2956,11 @@
         (tmp$ = $receiver.get_j3r2sn$(Job$Key_getInstance())) != null ? (tmp$.cancel() , Unit) : null;
     return true;
   }
-  function cancel($receiver) {
+  function cancel_0($receiver) {
     var tmp$;
         (tmp$ = $receiver.get_j3r2sn$(Job$Key_getInstance())) != null ? (tmp$.cancel() , Unit) : null;
   }
-  function cancel_0($receiver, cause) {
+  function cancel_1($receiver, cause) {
     if (cause === void 0) 
       cause = null;
     var tmp$, tmp$_0;
@@ -2991,21 +3068,17 @@
 }});
   JobSupport.prototype.tryFinalizeFinishingState_ke4xjq$_0 = function(state, proposedUpdate, mode) {
   var tmp$, tmp$_0, tmp$_1;
-  if (!!Kotlin.isType(proposedUpdate, Incomplete)) {
+  if (!(this.state_8be2vx$ === state)) {
     var message = 'Failed requirement.';
     throw IllegalArgumentException_init(message.toString());
   }
-  if (!(this.state_8be2vx$ === state)) {
+  if (!!state.isSealed) {
     var message_0 = 'Failed requirement.';
     throw IllegalArgumentException_init(message_0.toString());
   }
-  if (!!state.isSealed) {
+  if (!state.isCompleting) {
     var message_1 = 'Failed requirement.';
     throw IllegalArgumentException_init(message_1.toString());
-  }
-  if (!state.isCompleting) {
-    var message_2 = 'Failed requirement.';
-    throw IllegalArgumentException_init(message_2.toString());
   }
   var proposedException = (tmp$_0 = Kotlin.isType(tmp$ = proposedUpdate, CompletedExceptionally) ? tmp$ : null) != null ? tmp$_0.cause : null;
   var suppressed = {
@@ -3025,9 +3098,9 @@
   if (finalException != null && !this.cancelParent_7dutpz$_0(finalException)) {
     this.handleJobException_tcv7n7$(finalException);
   }
-  if (!(function(scope) {return scope._state_v70vig$_0 === state ? function() {scope._state_v70vig$_0 = finalState;return true;}() : false})(this)) {
-    var message_3 = 'Unexpected state: ' + toString(this._state_v70vig$_0) + ', expected: ' + state + ', update: ' + toString(finalState);
-    throw IllegalArgumentException_init(message_3.toString());
+  if (!(function(scope) {return scope._state_v70vig$_0 === state ? function() {scope._state_v70vig$_0 = boxIncomplete(finalState);return true;}() : false})(this)) {
+    var message_2 = 'Unexpected state: ' + toString(this._state_v70vig$_0) + ', expected: ' + state + ', update: ' + toString(finalState);
+    throw IllegalArgumentException_init(message_2.toString());
   }
   this.completeStateFinalization_nn37gt$_0(state, finalState, mode, suppressed.v);
   return true;
@@ -3064,7 +3137,8 @@
   tmp$ = exceptions.iterator();
   while (tmp$.hasNext()) {
     var exception = tmp$.next();
-    if (exception !== rootCause && !Kotlin.isType(exception, CancellationException) && seenExceptions.add_11rb$(exception)) {
+    var unwrapped = unwrap(exception);
+    if (unwrapped !== rootCause && !Kotlin.isType(unwrapped, CancellationException) && seenExceptions.add_11rb$(unwrapped)) {
       suppressed = true;
     }
   }
@@ -3079,7 +3153,7 @@
     var message_0 = 'Check failed.';
     throw IllegalStateException_init(message_0.toString());
   }
-  if (!(function(scope) {return scope._state_v70vig$_0 === state ? function() {scope._state_v70vig$_0 = update;return true;}() : false})(this)) 
+  if (!(function(scope) {return scope._state_v70vig$_0 === state ? function() {scope._state_v70vig$_0 = boxIncomplete(update);return true;}() : false})(this)) 
     return false;
   this.completeStateFinalization_nn37gt$_0(state, update, mode, false);
   return true;
@@ -3430,7 +3504,6 @@
   function suspendCancellableCoroutine$lambda_1(closure$block) {
     return function(uCont) {
   var cancellable = new CancellableContinuationImpl(intercepted(uCont), 1);
-  cancellable.initCancellability();
   closure$block(cancellable);
   return cancellable.getResult();
 };
@@ -3925,7 +3998,10 @@
   JobSupport.prototype.onCompletionInternal_5apgvt$ = function(state, mode, suppressed) {
 };
   JobSupport.prototype.toString = function() {
-  return this.nameString() + '{' + this.stateString_u2sjqg$_0(this.state_8be2vx$) + '}@' + get_hexAddress(this);
+  return this.toDebugString() + '@' + get_hexAddress(this);
+};
+  JobSupport.prototype.toDebugString = function() {
+  return this.nameString() + '{' + this.stateString_u2sjqg$_0(this.state_8be2vx$) + '}';
 };
   JobSupport.prototype.nameString = function() {
   return get_classSimpleName(this);
@@ -4063,7 +4139,7 @@
   return parent.getCancellationException();
 };
   JobSupport$AwaitContinuation.prototype.nameString = function() {
-  return 'AwaitContinuation(' + toDebugString(this.delegate) + ')';
+  return 'AwaitContinuation';
 };
   JobSupport$AwaitContinuation.$metadata$ = {
   kind: Kind_CLASS, 
@@ -4089,15 +4165,16 @@
   }
   if (Kotlin.isType(state, CompletedExceptionally)) 
     throw state.cause;
-  return state;
+  return unboxState(state);
 };
   JobSupport.prototype.awaitInternal_8be2vx$ = function(continuation) {
   while (true) {
     var state = this.state_8be2vx$;
     if (!Kotlin.isType(state, Incomplete)) {
-      if (Kotlin.isType(state, CompletedExceptionally)) 
+      if (Kotlin.isType(state, CompletedExceptionally)) {
         throw state.cause;
-      return state;
+      }
+      return unboxState(state);
     }
     if (this.startInternal_tp1bqd$_0(state) >= 0) 
       break;
@@ -4107,8 +4184,7 @@
   function JobSupport$awaitSuspend$lambda(this$JobSupport) {
     return function(uCont) {
   var cont = new JobSupport$AwaitContinuation(intercepted(uCont), this$JobSupport);
-  cont.initCancellability();
-  this$JobSupport.invokeOnCompletion_f05bi3$(new ResumeAwaitOnCompletion(this$JobSupport, cont));
+  disposeOnCancellation(cont, this$JobSupport.invokeOnCompletion_f05bi3$(new ResumeAwaitOnCompletion(this$JobSupport, cont)));
   return cont.getResult();
 };
   }
@@ -4123,10 +4199,10 @@
       return;
     if (!Kotlin.isType(state, Incomplete)) {
       if (select.trySelect_s8jyv4$(null)) {
-        if (Kotlin.isType(state, CompletedExceptionally)) 
+        if (Kotlin.isType(state, CompletedExceptionally)) {
           select.resumeSelectCancellableWithException_tcv7n7$(state.cause);
-        else {
-          startCoroutineUnintercepted_0(block, (tmp$ = state) == null || Kotlin.isType(tmp$, Any) ? tmp$ : throwCCE(), select.completion);
+        } else {
+          startCoroutineUnintercepted_0(block, (tmp$ = unboxState(state)) == null || Kotlin.isType(tmp$, Any) ? tmp$ : throwCCE(), select.completion);
         }
       }
       return;
@@ -4143,13 +4219,27 @@
   if (Kotlin.isType(state, CompletedExceptionally)) 
     select.resumeSelectCancellableWithException_tcv7n7$(state.cause);
   else {
-    startCoroutineCancellable_0(block, (tmp$ = state) == null || Kotlin.isType(tmp$, Any) ? tmp$ : throwCCE(), select.completion);
+    startCoroutineCancellable_0(block, (tmp$ = unboxState(state)) == null || Kotlin.isType(tmp$, Any) ? tmp$ : throwCCE(), select.completion);
   }
 };
   JobSupport.$metadata$ = {
   kind: Kind_CLASS, 
   simpleName: 'JobSupport', 
   interfaces: [SelectClause0, ParentJob, ChildJob, Job]};
+  function IncompleteStateBox(state) {
+    this.state = state;
+  }
+  IncompleteStateBox.$metadata$ = {
+  kind: Kind_CLASS, 
+  simpleName: 'IncompleteStateBox', 
+  interfaces: []};
+  function boxIncomplete($receiver) {
+    return Kotlin.isType($receiver, Incomplete) ? new IncompleteStateBox($receiver) : $receiver;
+  }
+  function unboxState($receiver) {
+    var tmp$, tmp$_0, tmp$_1;
+    return (tmp$_1 = (tmp$_0 = Kotlin.isType(tmp$ = $receiver, IncompleteStateBox) ? tmp$ : null) != null ? tmp$_0.state : null) != null ? tmp$_1 : $receiver;
+  }
   var COMPLETING_ALREADY_COMPLETING;
   var COMPLETING_COMPLETED;
   var COMPLETING_WAITING_CHILDREN;
@@ -4328,7 +4418,7 @@
     this.continuation_0.resumeWithExceptionMode_i32via$(state.cause, 0);
   } else {
     tmp$_0 = this.continuation_0;
-    var value = (tmp$ = state) == null || Kotlin.isType(tmp$, Any) ? tmp$ : throwCCE();
+    var value = (tmp$ = unboxState(state)) == null || Kotlin.isType(tmp$, Any) ? tmp$ : throwCCE();
     tmp$_0.resumeWith_tl1gpc$(new Result(value));
   }
 };
@@ -4430,7 +4520,7 @@
     this.child = child;
   }
   ChildContinuation.prototype.invoke = function(cause) {
-  this.child.cancelImpl_dbl4no$(this.child.getContinuationCancellationCause_dqr1mp$(this.job));
+  this.child.cancel_dbl4no$(this.child.getContinuationCancellationCause_dqr1mp$(this.job));
 };
   ChildContinuation.prototype.toString = function() {
   return 'ChildContinuation[' + this.child + ']';
@@ -4551,12 +4641,12 @@
   }
   var DispatchedContinuation$resumeUndispatchedWithException$lambda_0 = wrapFunction(function() {
   var Result = Kotlin.kotlin.Result;
+  var recoverStackTrace = _.kotlinx.coroutines.internal.recoverStackTrace_ak2v6d$;
   var createFailure = Kotlin.kotlin.createFailure_tcv7n7$;
   return function(this$DispatchedContinuation, closure$exception) {
   return function() {
   var $receiver = this$DispatchedContinuation.continuation;
-  var exception = closure$exception;
-  $receiver.resumeWith_tl1gpc$(new Result(createFailure(exception)));
+  $receiver.resumeWith_tl1gpc$(new Result(createFailure(recoverStackTrace(closure$exception, $receiver))));
   return Unit;
 };
 };
@@ -4576,7 +4666,8 @@
       case 3:
         var $this = Kotlin.isType(tmp$ = $receiver, DispatchedContinuation) ? tmp$ : throwCCE();
         $this.context;
-        $this.continuation.resumeWith_tl1gpc$(new Result(createFailure(exception)));
+        var $receiver_0 = $this.continuation;
+        $receiver_0.resumeWith_tl1gpc$(new Result(createFailure(recoverStackTrace(exception, $receiver_0))));
         break;
       case 4:
         break;
@@ -4693,7 +4784,7 @@
   }
   function withTimeout(timeMillis, block, continuation) {
     if (timeMillis.compareTo_11rb$(L0) <= 0) 
-      throw new CancellationException('Timed out immediately');
+      throw TimeoutCancellationException_init('Timed out immediately');
     return withTimeout$lambda(timeMillis, block)(continuation);
   }
   function withTimeoutOrNull$lambda(closure$timeMillis, closure$coroutine, closure$block) {
@@ -4796,6 +4887,15 @@
   get: function() {
   return 2;
 }});
+  Object.defineProperty(TimeoutCoroutine.prototype, 'callerFrame', {
+  get: function() {
+  var tmp$, tmp$_0;
+  return (tmp$_0 = Kotlin.isType(tmp$ = this.uCont, CoroutineStackFrame) ? tmp$ : null) != null ? tmp$_0.callerFrame : null;
+}});
+  TimeoutCoroutine.prototype.getStackTraceElement = function() {
+  var tmp$, tmp$_0;
+  return (tmp$_0 = Kotlin.isType(tmp$ = this.uCont, CoroutineStackFrame) ? tmp$ : null) != null ? tmp$_0.getStackTraceElement() : null;
+};
   TimeoutCoroutine.prototype.run = function() {
   this.cancel_dbl4no$(TimeoutCancellationException_0(this.time, this));
 };
@@ -4813,7 +4913,7 @@
   TimeoutCoroutine.$metadata$ = {
   kind: Kind_CLASS, 
   simpleName: 'TimeoutCoroutine', 
-  interfaces: [Runnable, AbstractCoroutine, Continuation]};
+  interfaces: [CoroutineStackFrame, Runnable, AbstractCoroutine, Continuation]};
   function TimeoutCancellationException(message, coroutine) {
     CancellationException.call(this, message);
     this.coroutine_8be2vx$ = coroutine;
@@ -4990,9 +5090,13 @@
   return null;
 };
   AbstractSendChannel.prototype.conflatePreviousSendBuffered_0 = function(node) {
-  var tmp$, tmp$_0;
   var prev = node._prev;
-    (tmp$_0 = Kotlin.isType(tmp$ = prev, AbstractSendChannel$SendBuffered) ? tmp$ : null) != null ? tmp$_0.remove() : null;
+  while (Kotlin.isType(prev, AbstractSendChannel$SendBuffered)) {
+    if (!prev.remove()) {
+      prev.helpRemove();
+    }
+    prev = prev._prev;
+  }
 };
   AbstractSendChannel.prototype.describeSendBuffered_0 = function(element) {
   return new AbstractSendChannel$SendBufferedDesc(this.queue_0, element);
@@ -5038,22 +5142,22 @@
   return this.sendSuspend_0(element, continuation);
 };
   AbstractSendChannel.prototype.offer_11rb$ = function(element) {
-  var tmp$, tmp$_0, tmp$_1;
+  var tmp$, tmp$_0, tmp$_1, tmp$_2;
   var result = this.offerInternal_11rb$(element);
   if (result === OFFER_SUCCESS) 
-    tmp$_1 = true;
+    tmp$_2 = true;
   else if (result === OFFER_FAILED) {
-    tmp$_0 = (tmp$ = this.closedForSend_0) != null ? tmp$.sendException : null;
-    if (tmp$_0 == null) {
+    tmp$_1 = (tmp$_0 = (tmp$ = this.closedForSend_0) != null ? tmp$.sendException : null) != null ? recoverStackTrace_0(tmp$_0) : null;
+    if (tmp$_1 == null) {
       return false;
     }
-    throw tmp$_0;
+    throw tmp$_1;
   } else if (Kotlin.isType(result, Closed)) 
-    throw result.sendException;
+    throw recoverStackTrace_0(result.sendException);
   else {
     throw IllegalStateException_init(('offerInternal returned ' + result.toString()).toString());
   }
-  return tmp$_1;
+  return tmp$_2;
 };
   function AbstractSendChannel$sendSuspend$lambda(closure$element, this$AbstractSendChannel) {
     return function(cont) {
@@ -5062,7 +5166,6 @@
     while (true) {
       var enqueueResult = this$AbstractSendChannel.enqueueSend_0(send);
       if (enqueueResult == null) {
-        cont.initCancellability();
         removeOnCancellation(cont, send);
         return;
       } else if (Kotlin.isType(enqueueResult, Closed)) {
@@ -5088,17 +5191,15 @@
     }
 };
   }
-  function suspendAtomicCancellableCoroutine$lambda(closure$holdCancellability, closure$block) {
+  function suspendAtomicCancellableCoroutine$lambda_0(closure$block) {
     return function(uCont) {
   var cancellable = new CancellableContinuationImpl(intercepted(uCont), 0);
-  if (!closure$holdCancellability) 
-    cancellable.initCancellability();
   closure$block(cancellable);
   return cancellable.getResult();
 };
   }
   AbstractSendChannel.prototype.sendSuspend_0 = function(element, continuation) {
-  return suspendAtomicCancellableCoroutine$lambda(true, AbstractSendChannel$sendSuspend$lambda(element, this))(continuation);
+  return suspendAtomicCancellableCoroutine$lambda_0(AbstractSendChannel$sendSuspend$lambda(element, this))(continuation);
 };
   function AbstractSendChannel$enqueueSend$lambda(this$AbstractSendChannel) {
     return function() {
@@ -5160,13 +5261,12 @@
     } while (false);
   var closeAdded = addLastIfPrev_s8xlln$result;
   if (!closeAdded) {
-    this.helpClose_0(Kotlin.isType(tmp$ = this.queue_0._prev, Closed) ? tmp$ : throwCCE());
+    var actualClosed = Kotlin.isType(tmp$ = this.queue_0._prev, Closed) ? tmp$ : throwCCE();
+    this.helpClose_0(actualClosed);
     return false;
   }
   this.helpClose_0(closed);
   this.invokeOnCloseHandler_0(cause);
-  this.onClosed_f7eo8m$(closed);
-  this.afterClose_dbl4no$(cause);
   return true;
 };
   AbstractSendChannel.prototype.invokeOnCloseHandler_0 = function(cause) {
@@ -5177,7 +5277,7 @@
   }
 };
   AbstractSendChannel.prototype.invokeOnClose_f05bi3$ = function(handler) {
-  if (!(function(scope) {return scope.onCloseHandler_0 === null ? function() {scope.onCloseHandler_0 = handler;return true;}() : false})(this)) {
+  if (!(function(scope) {return scope.onCloseHandler_0 == null ? function() {scope.onCloseHandler_0 = handler;return true;}() : false})(this)) {
     var value = this.onCloseHandler_0;
     if (value === HANDLER_INVOKED) {
       throw IllegalStateException_init('Another handler was already registered and successfully invoked');
@@ -5204,10 +5304,9 @@
         Kotlin.isType(tmp$ = previous, Receive) ? tmp$ : throwCCE();
     previous.resumeReceiveClosed_1zqbm$(closed);
   }
+  this.onClosedIdempotent_l2j9rm$(closed);
 };
-  AbstractSendChannel.prototype.onClosed_f7eo8m$ = function(closed) {
-};
-  AbstractSendChannel.prototype.afterClose_dbl4no$ = function(cause) {
+  AbstractSendChannel.prototype.onClosedIdempotent_l2j9rm$ = function(closed) {
 };
   AbstractSendChannel.prototype.takeFirstReceiveOrPeekClosed = function() {
   var $this = this.queue_0;
@@ -5317,7 +5416,7 @@
         return;
       else if (enqueueResult !== ENQUEUE_FAILED) 
         if (Kotlin.isType(enqueueResult, Closed)) 
-        throw enqueueResult.sendException;
+        throw recoverStackTrace_0(enqueueResult.sendException);
       else {
         throw IllegalStateException_init(('performAtomicIfNotSelected(TryEnqueueSendDesc) returned ' + enqueueResult.toString()).toString());
       }
@@ -5330,7 +5429,7 @@
         startCoroutineUnintercepted_0(block, this, select.completion);
         return;
       } else if (Kotlin.isType(offerResult, Closed)) 
-        throw offerResult.sendException;
+        throw recoverStackTrace_0(offerResult.sendException);
       else {
         throw IllegalStateException_init(('offerSelectInternal returned ' + offerResult.toString()).toString());
       }
@@ -5493,7 +5592,7 @@
   AbstractChannel.prototype.receiveResult_0 = function(result) {
   var tmp$;
   if (Kotlin.isType(result, Closed)) 
-    throw result.receiveException;
+    throw recoverStackTrace_0(result.receiveException);
   return (tmp$ = result) == null || Kotlin.isType(tmp$, Any) ? tmp$ : throwCCE();
 };
   function AbstractChannel$receiveSuspend$lambda(this$AbstractChannel) {
@@ -5502,7 +5601,6 @@
   var receive = new AbstractChannel$ReceiveElement(Kotlin.isType(tmp$ = cont, CancellableContinuation) ? tmp$ : throwCCE(), false);
   while (true) {
     if (this$AbstractChannel.enqueueReceive_0(receive)) {
-      cont.initCancellability();
       this$AbstractChannel.removeReceiveOnCancel_0(cont, receive);
       return;
     }
@@ -5522,7 +5620,7 @@
 };
   }
   AbstractChannel.prototype.receiveSuspend_0 = function(continuation) {
-  return suspendAtomicCancellableCoroutine$lambda(true, AbstractChannel$receiveSuspend$lambda(this))(continuation);
+  return suspendAtomicCancellableCoroutine$lambda_0(AbstractChannel$receiveSuspend$lambda(this))(continuation);
 };
   function AbstractChannel$enqueueReceive$lambda(this$AbstractChannel) {
     return function() {
@@ -5577,7 +5675,7 @@
   var tmp$;
   if (Kotlin.isType(result, Closed)) {
     if (result.closeCause != null) 
-      throw result.closeCause;
+      throw recoverStackTrace_0(result.closeCause);
     return null;
   }
   return (tmp$ = result) == null || Kotlin.isType(tmp$, Any) ? tmp$ : throwCCE();
@@ -5588,7 +5686,6 @@
   var receive = new AbstractChannel$ReceiveElement(cont, true);
   while (true) {
     if (this$AbstractChannel.enqueueReceive_0(receive)) {
-      cont.initCancellability();
       this$AbstractChannel.removeReceiveOnCancel_0(cont, receive);
       return;
     }
@@ -5612,7 +5709,7 @@
 };
   }
   AbstractChannel.prototype.receiveOrNullSuspend_0 = function(continuation) {
-  return suspendAtomicCancellableCoroutine$lambda(true, AbstractChannel$receiveOrNullSuspend$lambda(this))(continuation);
+  return suspendAtomicCancellableCoroutine$lambda_0(AbstractChannel$receiveOrNullSuspend$lambda(this))(continuation);
 };
   AbstractChannel.prototype.poll = function() {
   var result = this.pollInternal();
@@ -5745,7 +5842,7 @@
         return;
       else if (pollResult !== POLL_FAILED) 
         if (Kotlin.isType(pollResult, Closed)) 
-        throw pollResult.receiveException;
+        throw recoverStackTrace_0(pollResult.receiveException);
       else {
         startCoroutineUnintercepted_0(block, (tmp$_1 = pollResult) == null || Kotlin.isType(tmp$_1, Any) ? tmp$_1 : throwCCE(), select.completion);
         return;
@@ -5793,8 +5890,9 @@
         if (select.trySelect_s8jyv4$(null)) 
           startCoroutineUnintercepted_0(block, null, select.completion);
         return;
-      } else 
-        throw pollResult.closeCause;
+      } else {
+        throw recoverStackTrace_0(pollResult.closeCause);
+      }
       else {
         startCoroutineUnintercepted_0(block, (tmp$_0 = pollResult) == null || Kotlin.isType(tmp$_0, Any) ? tmp$_0 : throwCCE(), select.completion);
         return;
@@ -5846,7 +5944,7 @@
   AbstractChannel$Itr.prototype.hasNextResult_0 = function(result) {
   if (Kotlin.isType(result, Closed)) {
     if (result.closeCause != null) 
-      throw result.receiveException;
+      throw recoverStackTrace_0(result.receiveException);
     return false;
   }
   return true;
@@ -5856,7 +5954,6 @@
   var receive = new AbstractChannel$ReceiveHasNext(this$Itr, cont);
   while (true) {
     if (this$Itr.channel.enqueueReceive_0(receive)) {
-      cont.initCancellability();
       this$Itr.channel.removeReceiveOnCancel_0(cont, receive);
       return;
     }
@@ -5880,13 +5977,13 @@
 };
   }
   AbstractChannel$Itr.prototype.hasNextSuspend_0 = function(continuation) {
-  return suspendAtomicCancellableCoroutine$lambda(true, AbstractChannel$Itr$hasNextSuspend$lambda(this))(continuation);
+  return suspendAtomicCancellableCoroutine$lambda_0(AbstractChannel$Itr$hasNextSuspend$lambda(this))(continuation);
 };
   AbstractChannel$Itr.prototype.next = function(continuation) {
   var tmp$;
   var result = this.result;
   if (Kotlin.isType(result, Closed)) 
-    throw result.receiveException;
+    throw recoverStackTrace_0(result.receiveException);
   if (result !== POLL_FAILED) {
     this.result = POLL_FAILED;
     return (tmp$ = result) == null || Kotlin.isType(tmp$, Any) ? tmp$ : throwCCE();
@@ -5946,7 +6043,13 @@
     this.cont.completeResume_za3rmp$(token);
 };
   AbstractChannel$ReceiveHasNext.prototype.resumeReceiveClosed_1zqbm$ = function(closed) {
-  var token = closed.closeCause == null ? this.cont.tryResume_19pj23$(false) : this.cont.tryResumeWithException_tcv7n7$(closed.receiveException);
+  var tmp$;
+  if (closed.closeCause == null) {
+    tmp$ = this.cont.tryResume_19pj23$(false);
+  } else {
+    tmp$ = this.cont.tryResumeWithException_tcv7n7$(recoverStackTrace(closed.receiveException, this.cont));
+  }
+  var token = tmp$;
   if (token != null) {
     this.iterator.result = closed;
     this.cont.completeResume_za3rmp$(token);
@@ -6842,7 +6945,17 @@
   return subscription;
 };
   LazyBroadcastCoroutine.prototype.onStart = function() {
-  startCoroutineCancellable_0(this.block_0, this, this);
+  var value = this.block_0;
+  var checkNotNull$result;
+  if (value == null) {
+    var message = 'Already started';
+    throw IllegalStateException_init(message.toString());
+  } else {
+    checkNotNull$result = value;
+  }
+  var block = checkNotNull$result;
+  this.block_0 = null;
+  startCoroutineCancellable_0(block, this, this);
 };
   LazyBroadcastCoroutine.$metadata$ = {
   kind: Kind_CLASS, 
@@ -7132,8 +7245,6 @@
 } while (true);
 };
   defineInlineFunction('kotlinx-coroutines-core.kotlinx.coroutines.channels.consumeEach_ur1qrk$', wrapFunction(function() {
-  var COROUTINE_SUSPENDED = Kotlin.kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED;
-  var CoroutineImpl = Kotlin.kotlin.coroutines.CoroutineImpl;
   var Unit = Kotlin.kotlin.Unit;
   return function($receiver, action, continuation) {
   var channel = $receiver.openSubscription();
@@ -7300,8 +7411,6 @@
 } while (true);
 };
   defineInlineFunction('kotlinx-coroutines-core.kotlinx.coroutines.channels.consumeEach_fsi0yh$', wrapFunction(function() {
-  var COROUTINE_SUSPENDED = Kotlin.kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED;
-  var CoroutineImpl = Kotlin.kotlin.coroutines.CoroutineImpl;
   var Unit = Kotlin.kotlin.Unit;
   var Throwable = Error;
   return function($receiver, action, continuation) {
@@ -7427,8 +7536,6 @@
 } while (true);
 };
   defineInlineFunction('kotlinx-coroutines-core.kotlinx.coroutines.channels.consumeEachIndexed_pji9r4$', wrapFunction(function() {
-  var COROUTINE_SUSPENDED = Kotlin.kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED;
-  var CoroutineImpl = Kotlin.kotlin.coroutines.CoroutineImpl;
   var IndexedValue_init = Kotlin.kotlin.collections.IndexedValue;
   var Unit = Kotlin.kotlin.Unit;
   var Throwable = Error;
@@ -7699,8 +7806,6 @@
 } while (true);
 };
   defineInlineFunction('kotlinx-coroutines-core.kotlinx.coroutines.channels.elementAtOrElse_m7muas$', wrapFunction(function() {
-  var COROUTINE_SUSPENDED = Kotlin.kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED;
-  var CoroutineImpl = Kotlin.kotlin.coroutines.CoroutineImpl;
   var Throwable = Error;
   return function($receiver, index, defaultValue, continuation) {
   var cause = null;
@@ -7968,8 +8073,6 @@
 } while (true);
 };
   defineInlineFunction('kotlinx-coroutines-core.kotlinx.coroutines.channels.find_4c38lx$', wrapFunction(function() {
-  var COROUTINE_SUSPENDED = Kotlin.kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED;
-  var CoroutineImpl = Kotlin.kotlin.coroutines.CoroutineImpl;
   var Unit = Kotlin.kotlin.Unit;
   var Throwable = Error;
   return function($receiver, predicate, continuation) {
@@ -8105,8 +8208,6 @@
 } while (true);
 };
   defineInlineFunction('kotlinx-coroutines-core.kotlinx.coroutines.channels.findLast_4c38lx$', wrapFunction(function() {
-  var COROUTINE_SUSPENDED = Kotlin.kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED;
-  var CoroutineImpl = Kotlin.kotlin.coroutines.CoroutineImpl;
   var Unit = Kotlin.kotlin.Unit;
   var Throwable = Error;
   return function($receiver, predicate, continuation) {
@@ -8325,8 +8426,6 @@
 } while (true);
 };
   defineInlineFunction('kotlinx-coroutines-core.kotlinx.coroutines.channels.first_4c38lx$', wrapFunction(function() {
-  var COROUTINE_SUSPENDED = Kotlin.kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED;
-  var CoroutineImpl = Kotlin.kotlin.coroutines.CoroutineImpl;
   var Unit = Kotlin.kotlin.Unit;
   var NoSuchElementException_init = Kotlin.kotlin.NoSuchElementException;
   var Throwable = Error;
@@ -8553,8 +8652,6 @@
 } while (true);
 };
   defineInlineFunction('kotlinx-coroutines-core.kotlinx.coroutines.channels.firstOrNull_4c38lx$', wrapFunction(function() {
-  var COROUTINE_SUSPENDED = Kotlin.kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED;
-  var CoroutineImpl = Kotlin.kotlin.coroutines.CoroutineImpl;
   var Unit = Kotlin.kotlin.Unit;
   var Throwable = Error;
   return function($receiver, predicate, continuation) {
@@ -8802,8 +8899,6 @@
 } while (true);
 };
   defineInlineFunction('kotlinx-coroutines-core.kotlinx.coroutines.channels.indexOfFirst_4c38lx$', wrapFunction(function() {
-  var COROUTINE_SUSPENDED = Kotlin.kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED;
-  var CoroutineImpl = Kotlin.kotlin.coroutines.CoroutineImpl;
   var Unit = Kotlin.kotlin.Unit;
   var Throwable = Error;
   return function($receiver, predicate, continuation) {
@@ -8938,8 +9033,6 @@
 } while (true);
 };
   defineInlineFunction('kotlinx-coroutines-core.kotlinx.coroutines.channels.indexOfLast_4c38lx$', wrapFunction(function() {
-  var COROUTINE_SUSPENDED = Kotlin.kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED;
-  var CoroutineImpl = Kotlin.kotlin.coroutines.CoroutineImpl;
   var Unit = Kotlin.kotlin.Unit;
   var Throwable = Error;
   return function($receiver, predicate, continuation) {
@@ -9188,8 +9281,6 @@
 } while (true);
 };
   defineInlineFunction('kotlinx-coroutines-core.kotlinx.coroutines.channels.last_4c38lx$', wrapFunction(function() {
-  var COROUTINE_SUSPENDED = Kotlin.kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED;
-  var CoroutineImpl = Kotlin.kotlin.coroutines.CoroutineImpl;
   var Unit = Kotlin.kotlin.Unit;
   var NoSuchElementException_init = Kotlin.kotlin.NoSuchElementException;
   var Any = Object;
@@ -9549,8 +9640,6 @@
 } while (true);
 };
   defineInlineFunction('kotlinx-coroutines-core.kotlinx.coroutines.channels.lastOrNull_4c38lx$', wrapFunction(function() {
-  var COROUTINE_SUSPENDED = Kotlin.kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED;
-  var CoroutineImpl = Kotlin.kotlin.coroutines.CoroutineImpl;
   var Unit = Kotlin.kotlin.Unit;
   var Throwable = Error;
   return function($receiver, predicate, continuation) {
@@ -9780,8 +9869,6 @@
 } while (true);
 };
   defineInlineFunction('kotlinx-coroutines-core.kotlinx.coroutines.channels.single_4c38lx$', wrapFunction(function() {
-  var COROUTINE_SUSPENDED = Kotlin.kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED;
-  var CoroutineImpl = Kotlin.kotlin.coroutines.CoroutineImpl;
   var IllegalArgumentException_init = Kotlin.kotlin.IllegalArgumentException_init_pdl1vj$;
   var Unit = Kotlin.kotlin.Unit;
   var NoSuchElementException_init = Kotlin.kotlin.NoSuchElementException;
@@ -10067,8 +10154,6 @@
 } while (true);
 };
   defineInlineFunction('kotlinx-coroutines-core.kotlinx.coroutines.channels.singleOrNull_4c38lx$', wrapFunction(function() {
-  var COROUTINE_SUSPENDED = Kotlin.kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED;
-  var CoroutineImpl = Kotlin.kotlin.coroutines.CoroutineImpl;
   var Unit = Kotlin.kotlin.Unit;
   var Throwable = Error;
   return function($receiver, predicate, continuation) {
@@ -10681,8 +10766,6 @@
 } while (true);
 };
   defineInlineFunction('kotlinx-coroutines-core.kotlinx.coroutines.channels.filterIndexedTo_4jknp0$', wrapFunction(function() {
-  var COROUTINE_SUSPENDED = Kotlin.kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED;
-  var CoroutineImpl = Kotlin.kotlin.coroutines.CoroutineImpl;
   var Unit = Kotlin.kotlin.Unit;
   var IndexedValue_init = Kotlin.kotlin.collections.IndexedValue;
   var Throwable = Error;
@@ -10832,8 +10915,6 @@
 } while (true);
 };
   defineInlineFunction('kotlinx-coroutines-core.kotlinx.coroutines.channels.filterIndexedTo_170qh7$', wrapFunction(function() {
-  var COROUTINE_SUSPENDED = Kotlin.kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED;
-  var CoroutineImpl = Kotlin.kotlin.coroutines.CoroutineImpl;
   var Unit = Kotlin.kotlin.Unit;
   var IndexedValue_init = Kotlin.kotlin.collections.IndexedValue;
   var Throwable = Error;
@@ -11260,8 +11341,6 @@
 } while (true);
 };
   defineInlineFunction('kotlinx-coroutines-core.kotlinx.coroutines.channels.filterNotTo_ekipu8$', wrapFunction(function() {
-  var COROUTINE_SUSPENDED = Kotlin.kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED;
-  var CoroutineImpl = Kotlin.kotlin.coroutines.CoroutineImpl;
   var Unit = Kotlin.kotlin.Unit;
   var Throwable = Error;
   return function($receiver, destination, predicate, continuation) {
@@ -11399,8 +11478,6 @@
 } while (true);
 };
   defineInlineFunction('kotlinx-coroutines-core.kotlinx.coroutines.channels.filterNotTo_6rlmvt$', wrapFunction(function() {
-  var COROUTINE_SUSPENDED = Kotlin.kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED;
-  var CoroutineImpl = Kotlin.kotlin.coroutines.CoroutineImpl;
   var Unit = Kotlin.kotlin.Unit;
   var Throwable = Error;
   return function($receiver, destination, predicate, continuation) {
@@ -11527,8 +11604,6 @@
 } while (true);
 };
   defineInlineFunction('kotlinx-coroutines-core.kotlinx.coroutines.channels.filterTo_ekipu8$', wrapFunction(function() {
-  var COROUTINE_SUSPENDED = Kotlin.kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED;
-  var CoroutineImpl = Kotlin.kotlin.coroutines.CoroutineImpl;
   var Unit = Kotlin.kotlin.Unit;
   var Throwable = Error;
   return function($receiver, destination, predicate, continuation) {
@@ -11666,8 +11741,6 @@
 } while (true);
 };
   defineInlineFunction('kotlinx-coroutines-core.kotlinx.coroutines.channels.filterTo_6rlmvt$', wrapFunction(function() {
-  var COROUTINE_SUSPENDED = Kotlin.kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED;
-  var CoroutineImpl = Kotlin.kotlin.coroutines.CoroutineImpl;
   var Unit = Kotlin.kotlin.Unit;
   var Throwable = Error;
   return function($receiver, destination, predicate, continuation) {
@@ -11999,8 +12072,6 @@
 } while (true);
 };
   defineInlineFunction('kotlinx-coroutines-core.kotlinx.coroutines.channels.associate_9m65rd$', wrapFunction(function() {
-  var COROUTINE_SUSPENDED = Kotlin.kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED;
-  var CoroutineImpl = Kotlin.kotlin.coroutines.CoroutineImpl;
   var LinkedHashMap_init = Kotlin.kotlin.collections.LinkedHashMap_init_q3lmfv$;
   var Unit = Kotlin.kotlin.Unit;
   var Throwable = Error;
@@ -12130,8 +12201,6 @@
 } while (true);
 };
   defineInlineFunction('kotlinx-coroutines-core.kotlinx.coroutines.channels.associateBy_ku6tnm$', wrapFunction(function() {
-  var COROUTINE_SUSPENDED = Kotlin.kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED;
-  var CoroutineImpl = Kotlin.kotlin.coroutines.CoroutineImpl;
   var LinkedHashMap_init = Kotlin.kotlin.collections.LinkedHashMap_init_q3lmfv$;
   var Unit = Kotlin.kotlin.Unit;
   var Throwable = Error;
@@ -12261,8 +12330,6 @@
 } while (true);
 };
   defineInlineFunction('kotlinx-coroutines-core.kotlinx.coroutines.channels.associateBy_lt7yd0$', wrapFunction(function() {
-  var COROUTINE_SUSPENDED = Kotlin.kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED;
-  var CoroutineImpl = Kotlin.kotlin.coroutines.CoroutineImpl;
   var LinkedHashMap_init = Kotlin.kotlin.collections.LinkedHashMap_init_q3lmfv$;
   var Unit = Kotlin.kotlin.Unit;
   var Throwable = Error;
@@ -12389,8 +12456,6 @@
 } while (true);
 };
   defineInlineFunction('kotlinx-coroutines-core.kotlinx.coroutines.channels.associateByTo_kkd6mf$', wrapFunction(function() {
-  var COROUTINE_SUSPENDED = Kotlin.kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED;
-  var CoroutineImpl = Kotlin.kotlin.coroutines.CoroutineImpl;
   var Unit = Kotlin.kotlin.Unit;
   var Throwable = Error;
   return function($receiver, destination, keySelector, continuation) {
@@ -12515,8 +12580,6 @@
 } while (true);
 };
   defineInlineFunction('kotlinx-coroutines-core.kotlinx.coroutines.channels.associateByTo_pjfcwb$', wrapFunction(function() {
-  var COROUTINE_SUSPENDED = Kotlin.kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED;
-  var CoroutineImpl = Kotlin.kotlin.coroutines.CoroutineImpl;
   var Unit = Kotlin.kotlin.Unit;
   var Throwable = Error;
   return function($receiver, destination, keySelector, valueTransform, continuation) {
@@ -12641,8 +12704,6 @@
 } while (true);
 };
   defineInlineFunction('kotlinx-coroutines-core.kotlinx.coroutines.channels.associateTo_lcmuai$', wrapFunction(function() {
-  var COROUTINE_SUSPENDED = Kotlin.kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED;
-  var CoroutineImpl = Kotlin.kotlin.coroutines.CoroutineImpl;
   var Unit = Kotlin.kotlin.Unit;
   var Throwable = Error;
   return function($receiver, destination, transform, continuation) {
@@ -13163,8 +13224,6 @@
 } while (true);
 };
   defineInlineFunction('kotlinx-coroutines-core.kotlinx.coroutines.channels.groupBy_ku6tnm$', wrapFunction(function() {
-  var COROUTINE_SUSPENDED = Kotlin.kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED;
-  var CoroutineImpl = Kotlin.kotlin.coroutines.CoroutineImpl;
   var LinkedHashMap_init = Kotlin.kotlin.collections.LinkedHashMap_init_q3lmfv$;
   var ArrayList_init = Kotlin.kotlin.collections.ArrayList_init_287e2$;
   var Unit = Kotlin.kotlin.Unit;
@@ -13317,8 +13376,6 @@
 } while (true);
 };
   defineInlineFunction('kotlinx-coroutines-core.kotlinx.coroutines.channels.groupBy_lt7yd0$', wrapFunction(function() {
-  var COROUTINE_SUSPENDED = Kotlin.kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED;
-  var CoroutineImpl = Kotlin.kotlin.coroutines.CoroutineImpl;
   var LinkedHashMap_init = Kotlin.kotlin.collections.LinkedHashMap_init_q3lmfv$;
   var ArrayList_init = Kotlin.kotlin.collections.ArrayList_init_287e2$;
   var Unit = Kotlin.kotlin.Unit;
@@ -13468,8 +13525,6 @@
 } while (true);
 };
   defineInlineFunction('kotlinx-coroutines-core.kotlinx.coroutines.channels.groupByTo_l6oevu$', wrapFunction(function() {
-  var COROUTINE_SUSPENDED = Kotlin.kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED;
-  var CoroutineImpl = Kotlin.kotlin.coroutines.CoroutineImpl;
   var ArrayList_init = Kotlin.kotlin.collections.ArrayList_init_287e2$;
   var Unit = Kotlin.kotlin.Unit;
   var Throwable = Error;
@@ -13617,8 +13672,6 @@
 } while (true);
 };
   defineInlineFunction('kotlinx-coroutines-core.kotlinx.coroutines.channels.groupByTo_z9qy88$', wrapFunction(function() {
-  var COROUTINE_SUSPENDED = Kotlin.kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED;
-  var CoroutineImpl = Kotlin.kotlin.coroutines.CoroutineImpl;
   var ArrayList_init = Kotlin.kotlin.collections.ArrayList_init_287e2$;
   var Unit = Kotlin.kotlin.Unit;
   var Throwable = Error;
@@ -13975,8 +14028,6 @@
 } while (true);
 };
   defineInlineFunction('kotlinx-coroutines-core.kotlinx.coroutines.channels.mapIndexedNotNullTo_dz8aer$', wrapFunction(function() {
-  var COROUTINE_SUSPENDED = Kotlin.kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED;
-  var CoroutineImpl = Kotlin.kotlin.coroutines.CoroutineImpl;
   var Unit = Kotlin.kotlin.Unit;
   var IndexedValue_init = Kotlin.kotlin.collections.IndexedValue;
   var Throwable = Error;
@@ -14129,8 +14180,6 @@
 } while (true);
 };
   defineInlineFunction('kotlinx-coroutines-core.kotlinx.coroutines.channels.mapIndexedNotNullTo_4m0vhw$', wrapFunction(function() {
-  var COROUTINE_SUSPENDED = Kotlin.kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED;
-  var CoroutineImpl = Kotlin.kotlin.coroutines.CoroutineImpl;
   var Unit = Kotlin.kotlin.Unit;
   var IndexedValue_init = Kotlin.kotlin.collections.IndexedValue;
   var Throwable = Error;
@@ -14267,8 +14316,6 @@
 } while (true);
 };
   defineInlineFunction('kotlinx-coroutines-core.kotlinx.coroutines.channels.mapIndexedTo_a7sgbu$', wrapFunction(function() {
-  var COROUTINE_SUSPENDED = Kotlin.kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED;
-  var CoroutineImpl = Kotlin.kotlin.coroutines.CoroutineImpl;
   var Unit = Kotlin.kotlin.Unit;
   var Throwable = Error;
   return function($receiver, destination, transform, continuation) {
@@ -14404,8 +14451,6 @@
 } while (true);
 };
   defineInlineFunction('kotlinx-coroutines-core.kotlinx.coroutines.channels.mapIndexedTo_whewhd$', wrapFunction(function() {
-  var COROUTINE_SUSPENDED = Kotlin.kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED;
-  var CoroutineImpl = Kotlin.kotlin.coroutines.CoroutineImpl;
   var Unit = Kotlin.kotlin.Unit;
   var Throwable = Error;
   return function($receiver, destination, transform, continuation) {
@@ -14540,8 +14585,6 @@
 } while (true);
 };
   defineInlineFunction('kotlinx-coroutines-core.kotlinx.coroutines.channels.mapNotNullTo_fo1is7$', wrapFunction(function() {
-  var COROUTINE_SUSPENDED = Kotlin.kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED;
-  var CoroutineImpl = Kotlin.kotlin.coroutines.CoroutineImpl;
   var Unit = Kotlin.kotlin.Unit;
   var Throwable = Error;
   return function($receiver, destination, transform, continuation) {
@@ -14682,8 +14725,6 @@
 } while (true);
 };
   defineInlineFunction('kotlinx-coroutines-core.kotlinx.coroutines.channels.mapNotNullTo_wo1rcg$', wrapFunction(function() {
-  var COROUTINE_SUSPENDED = Kotlin.kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED;
-  var CoroutineImpl = Kotlin.kotlin.coroutines.CoroutineImpl;
   var Unit = Kotlin.kotlin.Unit;
   var Throwable = Error;
   return function($receiver, destination, transform, continuation) {
@@ -14810,8 +14851,6 @@
 } while (true);
 };
   defineInlineFunction('kotlinx-coroutines-core.kotlinx.coroutines.channels.mapTo_pa4xkq$', wrapFunction(function() {
-  var COROUTINE_SUSPENDED = Kotlin.kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED;
-  var CoroutineImpl = Kotlin.kotlin.coroutines.CoroutineImpl;
   var Unit = Kotlin.kotlin.Unit;
   var Throwable = Error;
   return function($receiver, destination, transform, continuation) {
@@ -14940,8 +14979,6 @@
 } while (true);
 };
   defineInlineFunction('kotlinx-coroutines-core.kotlinx.coroutines.channels.mapTo_q9ku9f$', wrapFunction(function() {
-  var COROUTINE_SUSPENDED = Kotlin.kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED;
-  var CoroutineImpl = Kotlin.kotlin.coroutines.CoroutineImpl;
   var Unit = Kotlin.kotlin.Unit;
   var Throwable = Error;
   return function($receiver, destination, transform, continuation) {
@@ -15311,8 +15348,6 @@
 } while (true);
 };
   defineInlineFunction('kotlinx-coroutines-core.kotlinx.coroutines.channels.all_4c38lx$', wrapFunction(function() {
-  var COROUTINE_SUSPENDED = Kotlin.kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED;
-  var CoroutineImpl = Kotlin.kotlin.coroutines.CoroutineImpl;
   var Unit = Kotlin.kotlin.Unit;
   var Throwable = Error;
   return function($receiver, predicate, continuation) {
@@ -15517,8 +15552,6 @@
 } while (true);
 };
   defineInlineFunction('kotlinx-coroutines-core.kotlinx.coroutines.channels.any_4c38lx$', wrapFunction(function() {
-  var COROUTINE_SUSPENDED = Kotlin.kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED;
-  var CoroutineImpl = Kotlin.kotlin.coroutines.CoroutineImpl;
   var Unit = Kotlin.kotlin.Unit;
   var Throwable = Error;
   return function($receiver, predicate, continuation) {
@@ -15741,8 +15774,6 @@
 } while (true);
 };
   defineInlineFunction('kotlinx-coroutines-core.kotlinx.coroutines.channels.count_4c38lx$', wrapFunction(function() {
-  var COROUTINE_SUSPENDED = Kotlin.kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED;
-  var CoroutineImpl = Kotlin.kotlin.coroutines.CoroutineImpl;
   var Unit = Kotlin.kotlin.Unit;
   var Throwable = Error;
   return function($receiver, predicate, continuation) {
@@ -15873,8 +15904,6 @@
 } while (true);
 };
   defineInlineFunction('kotlinx-coroutines-core.kotlinx.coroutines.channels.fold_kq4l36$', wrapFunction(function() {
-  var COROUTINE_SUSPENDED = Kotlin.kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED;
-  var CoroutineImpl = Kotlin.kotlin.coroutines.CoroutineImpl;
   var Unit = Kotlin.kotlin.Unit;
   var Throwable = Error;
   return function($receiver, initial, operation, continuation) {
@@ -16007,8 +16036,6 @@
 } while (true);
 };
   defineInlineFunction('kotlinx-coroutines-core.kotlinx.coroutines.channels.foldIndexed_wviyg6$', wrapFunction(function() {
-  var COROUTINE_SUSPENDED = Kotlin.kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED;
-  var CoroutineImpl = Kotlin.kotlin.coroutines.CoroutineImpl;
   var Unit = Kotlin.kotlin.Unit;
   var Throwable = Error;
   return function($receiver, initial, operation, continuation) {
@@ -16171,8 +16198,6 @@
 } while (true);
 };
   defineInlineFunction('kotlinx-coroutines-core.kotlinx.coroutines.channels.maxBy_mqfd03$', wrapFunction(function() {
-  var COROUTINE_SUSPENDED = Kotlin.kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED;
-  var CoroutineImpl = Kotlin.kotlin.coroutines.CoroutineImpl;
   var Throwable = Error;
   return function($receiver, selector, continuation) {
   var cause = null;
@@ -16459,8 +16484,6 @@
 } while (true);
 };
   defineInlineFunction('kotlinx-coroutines-core.kotlinx.coroutines.channels.minBy_mqfd03$', wrapFunction(function() {
-  var COROUTINE_SUSPENDED = Kotlin.kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED;
-  var CoroutineImpl = Kotlin.kotlin.coroutines.CoroutineImpl;
   var Throwable = Error;
   return function($receiver, selector, continuation) {
   var cause = null;
@@ -16793,8 +16816,6 @@
 } while (true);
 };
   defineInlineFunction('kotlinx-coroutines-core.kotlinx.coroutines.channels.none_4c38lx$', wrapFunction(function() {
-  var COROUTINE_SUSPENDED = Kotlin.kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED;
-  var CoroutineImpl = Kotlin.kotlin.coroutines.CoroutineImpl;
   var Unit = Kotlin.kotlin.Unit;
   var Throwable = Error;
   return function($receiver, predicate, continuation) {
@@ -16935,8 +16956,6 @@
 } while (true);
 };
   defineInlineFunction('kotlinx-coroutines-core.kotlinx.coroutines.channels.reduce_vk3vfd$', wrapFunction(function() {
-  var COROUTINE_SUSPENDED = Kotlin.kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED;
-  var CoroutineImpl = Kotlin.kotlin.coroutines.CoroutineImpl;
   var UnsupportedOperationException_init = Kotlin.kotlin.UnsupportedOperationException_init_pdl1vj$;
   var Throwable = Error;
   return function($receiver, operation, continuation) {
@@ -17083,8 +17102,6 @@
 } while (true);
 };
   defineInlineFunction('kotlinx-coroutines-core.kotlinx.coroutines.channels.reduceIndexed_a6mkxp$', wrapFunction(function() {
-  var COROUTINE_SUSPENDED = Kotlin.kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED;
-  var CoroutineImpl = Kotlin.kotlin.coroutines.CoroutineImpl;
   var UnsupportedOperationException_init = Kotlin.kotlin.UnsupportedOperationException_init_pdl1vj$;
   var Throwable = Error;
   return function($receiver, operation, continuation) {
@@ -17215,8 +17232,6 @@
 } while (true);
 };
   defineInlineFunction('kotlinx-coroutines-core.kotlinx.coroutines.channels.sumBy_fl2dz0$', wrapFunction(function() {
-  var COROUTINE_SUSPENDED = Kotlin.kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED;
-  var CoroutineImpl = Kotlin.kotlin.coroutines.CoroutineImpl;
   var Unit = Kotlin.kotlin.Unit;
   var Throwable = Error;
   return function($receiver, selector, continuation) {
@@ -17344,8 +17359,6 @@
 } while (true);
 };
   defineInlineFunction('kotlinx-coroutines-core.kotlinx.coroutines.channels.sumByDouble_jy8qhg$', wrapFunction(function() {
-  var COROUTINE_SUSPENDED = Kotlin.kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED;
-  var CoroutineImpl = Kotlin.kotlin.coroutines.CoroutineImpl;
   var Unit = Kotlin.kotlin.Unit;
   var Throwable = Error;
   return function($receiver, selector, continuation) {
@@ -17526,8 +17539,6 @@
 } while (true);
 };
   defineInlineFunction('kotlinx-coroutines-core.kotlinx.coroutines.channels.partition_4c38lx$', wrapFunction(function() {
-  var COROUTINE_SUSPENDED = Kotlin.kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED;
-  var CoroutineImpl = Kotlin.kotlin.coroutines.CoroutineImpl;
   var ArrayList_init = Kotlin.kotlin.collections.ArrayList_init_287e2$;
   var Unit = Kotlin.kotlin.Unit;
   var Pair_init = Kotlin.kotlin.Pair;
@@ -17900,7 +17911,7 @@
   }
 };
   ConflatedBroadcastChannel.prototype.invokeOnClose_f05bi3$ = function(handler) {
-  if (!(function(scope) {return scope.onCloseHandler_0 === null ? function() {scope.onCloseHandler_0 = handler;return true;}() : false})(this)) {
+  if (!(function(scope) {return scope.onCloseHandler_0 == null ? function() {scope.onCloseHandler_0 = handler;return true;}() : false})(this)) {
     var value = this.onCloseHandler_0;
     if (value === HANDLER_INVOKED) {
       throw IllegalStateException_init('Another handler was already registered and successfully invoked');
@@ -18029,7 +18040,7 @@
   get: function() {
   return false;
 }});
-  ConflatedChannel.prototype.onClosed_f7eo8m$ = function(closed) {
+  ConflatedChannel.prototype.onClosedIdempotent_l2j9rm$ = function(closed) {
   this.conflatePreviousSendBuffered_0(closed);
 };
   ConflatedChannel.prototype.offerInternal_11rb$ = function(element) {
@@ -18041,11 +18052,14 @@
       var sendResult = this.sendConflated_0(element);
       if (sendResult == null) 
         return OFFER_SUCCESS;
-      else if (Kotlin.isType(sendResult, Closed)) 
+      else if (Kotlin.isType(sendResult, Closed)) {
+        this.conflatePreviousSendBuffered_0(sendResult);
         return sendResult;
-    } else if (Kotlin.isType(result, Closed)) 
+      }
+    } else if (Kotlin.isType(result, Closed)) {
+      this.conflatePreviousSendBuffered_0(result);
       return result;
-    else {
+    } else {
       throw IllegalStateException_init(('Invalid offerInternal result ' + result.toString()).toString());
     }
   }
@@ -18059,9 +18073,10 @@
     else if (result === OFFER_SUCCESS) 
       return OFFER_SUCCESS;
     else if (result !== OFFER_FAILED) 
-      if (Kotlin.isType(result, Closed)) 
+      if (Kotlin.isType(result, Closed)) {
+      this.conflatePreviousSendBuffered_0(result);
       return result;
-    else {
+    } else {
       throw IllegalStateException_init(('Invalid result ' + result.toString()).toString());
     }
   }
@@ -18290,6 +18305,9 @@
   interfaces: []};
   function MainDispatcherFactory() {
   }
+  MainDispatcherFactory.prototype.hintOnError = function() {
+  return null;
+};
   MainDispatcherFactory.$metadata$ = {
   kind: Kind_INTERFACE, 
   simpleName: 'MainDispatcherFactory', 
@@ -18298,22 +18316,40 @@
     AbstractCoroutine.call(this, context, true);
     this.uCont = uCont;
   }
+  Object.defineProperty(ScopeCoroutine.prototype, 'callerFrame', {
+  get: function() {
+  var tmp$;
+  return (tmp$ = this.uCont) == null || Kotlin.isType(tmp$, CoroutineStackFrame) ? tmp$ : throwCCE();
+}});
+  ScopeCoroutine.prototype.getStackTraceElement = function() {
+  return null;
+};
   Object.defineProperty(ScopeCoroutine.prototype, 'defaultResumeMode', {
   get: function() {
   return 2;
 }});
   ScopeCoroutine.prototype.onCompletionInternal_5apgvt$ = function(state, mode, suppressed) {
   var tmp$;
-  if (Kotlin.isType(state, CompletedExceptionally)) 
-    resumeUninterceptedWithExceptionMode(this.uCont, state.cause, mode);
-  else {
+  if (Kotlin.isType(state, CompletedExceptionally)) {
+    var exception = mode === 4 ? state.cause : recoverStackTrace(state.cause, this.uCont);
+    resumeUninterceptedWithExceptionMode(this.uCont, exception, mode);
+  } else {
     resumeUninterceptedMode(this.uCont, (tmp$ = state) == null || Kotlin.isType(tmp$, Any) ? tmp$ : throwCCE(), mode);
   }
 };
   ScopeCoroutine.$metadata$ = {
   kind: Kind_CLASS, 
   simpleName: 'ScopeCoroutine', 
-  interfaces: [AbstractCoroutine]};
+  interfaces: [CoroutineStackFrame, AbstractCoroutine]};
+  function tryRecover($receiver, exception) {
+    var tmp$, tmp$_0, tmp$_1;
+    tmp$_1 = (tmp$_0 = Kotlin.isType(tmp$ = $receiver, ScopeCoroutine) ? tmp$ : null) != null ? tmp$_0.uCont : null;
+    if (tmp$_1 == null) {
+      return exception;
+    }
+    var cont = tmp$_1;
+    return recoverStackTrace(exception, cont);
+  }
   function ContextScope(context) {
     this.coroutineContext_glfhxt$_0 = context;
   }
@@ -18325,6 +18361,12 @@
   kind: Kind_CLASS, 
   simpleName: 'ContextScope', 
   interfaces: [CoroutineScope]};
+  function NonRecoverableThrowable() {
+  }
+  NonRecoverableThrowable.$metadata$ = {
+  kind: Kind_INTERFACE, 
+  simpleName: 'NonRecoverableThrowable', 
+  interfaces: []};
   function Symbol(symbol) {
     this.symbol = symbol;
   }
@@ -18336,21 +18378,50 @@
   simpleName: 'Symbol', 
   interfaces: []};
   function startCoroutineCancellable($receiver, completion) {
-    resumeCancellable(intercepted(createCoroutineUnintercepted($receiver, completion)), Unit);
+    try {
+      resumeCancellable(intercepted(createCoroutineUnintercepted($receiver, completion)), Unit);
+    }    catch (e) {
+  if (Kotlin.isType(e, Throwable)) {
+    completion.resumeWith_tl1gpc$(new Result(createFailure(e)));
+  } else 
+    throw e;
+}
   }
   function startCoroutineCancellable_0($receiver, receiver, completion) {
-    resumeCancellable(intercepted(createCoroutineUnintercepted_0($receiver, receiver, completion)), Unit);
+    try {
+      resumeCancellable(intercepted(createCoroutineUnintercepted_0($receiver, receiver, completion)), Unit);
+    }    catch (e) {
+  if (Kotlin.isType(e, Throwable)) {
+    completion.resumeWith_tl1gpc$(new Result(createFailure(e)));
+  } else 
+    throw e;
+}
   }
+  var runSafely = wrapFunction(function() {
+  var createFailure = Kotlin.kotlin.createFailure_tcv7n7$;
+  var Result_init = Kotlin.kotlin.Result;
+  return function(completion, block) {
+  try {
+    block();
+  }  catch (e) {
+  if (Kotlin.isType(e, Throwable)) {
+    completion.resumeWith_tl1gpc$(new Result_init(createFailure(e)));
+  } else 
+    throw e;
+}
+};
+});
   function startCoroutineUnintercepted($receiver, completion) {
     startDirect$break:
       do {
         var tmp$, tmp$_0;
+        var actualCompletion = completion;
         try {
-          tmp$ = $receiver(completion, false);
+          tmp$ = $receiver(actualCompletion, false);
         }        catch (e) {
   if (Kotlin.isType(e, Throwable)) {
     var exception = e;
-    completion.resumeWith_tl1gpc$(new Result(createFailure(exception)));
+    actualCompletion.resumeWith_tl1gpc$(new Result(createFailure(exception)));
     break startDirect$break;
   } else 
     throw e;
@@ -18358,7 +18429,7 @@
         var value = tmp$;
         if (value !== COROUTINE_SUSPENDED) {
           var value_0 = (tmp$_0 = value) == null || Kotlin.isType(tmp$_0, Any) ? tmp$_0 : throwCCE();
-          completion.resumeWith_tl1gpc$(new Result(value_0));
+          actualCompletion.resumeWith_tl1gpc$(new Result(value_0));
         }
       } while (false);
   }
@@ -18366,12 +18437,13 @@
     startDirect$break:
       do {
         var tmp$, tmp$_0;
+        var actualCompletion = completion;
         try {
-          tmp$ = $receiver(receiver, completion, false);
+          tmp$ = $receiver(receiver, actualCompletion, false);
         }        catch (e) {
   if (Kotlin.isType(e, Throwable)) {
     var exception = e;
-    completion.resumeWith_tl1gpc$(new Result(createFailure(exception)));
+    actualCompletion.resumeWith_tl1gpc$(new Result(createFailure(exception)));
     break startDirect$break;
   } else 
     throw e;
@@ -18379,7 +18451,7 @@
         var value = tmp$;
         if (value !== COROUTINE_SUSPENDED) {
           var value_0 = (tmp$_0 = value) == null || Kotlin.isType(tmp$_0, Any) ? tmp$_0 : throwCCE();
-          completion.resumeWith_tl1gpc$(new Result(value_0));
+          actualCompletion.resumeWith_tl1gpc$(new Result(value_0));
         }
       } while (false);
   }
@@ -18387,13 +18459,14 @@
     startDirect$break:
       do {
         var tmp$, tmp$_0;
+        var actualCompletion = completion;
         try {
           completion.context;
-          tmp$ = $receiver(completion, false);
+          tmp$ = $receiver(actualCompletion, false);
         }        catch (e) {
   if (Kotlin.isType(e, Throwable)) {
     var exception = e;
-    completion.resumeWith_tl1gpc$(new Result(createFailure(exception)));
+    actualCompletion.resumeWith_tl1gpc$(new Result(createFailure(exception)));
     break startDirect$break;
   } else 
     throw e;
@@ -18401,7 +18474,7 @@
         var value = tmp$;
         if (value !== COROUTINE_SUSPENDED) {
           var value_0 = (tmp$_0 = value) == null || Kotlin.isType(tmp$_0, Any) ? tmp$_0 : throwCCE();
-          completion.resumeWith_tl1gpc$(new Result(value_0));
+          actualCompletion.resumeWith_tl1gpc$(new Result(value_0));
         }
       } while (false);
   }
@@ -18409,13 +18482,14 @@
     startDirect$break:
       do {
         var tmp$, tmp$_0;
+        var actualCompletion = completion;
         try {
           completion.context;
-          tmp$ = $receiver(receiver, completion, false);
+          tmp$ = $receiver(receiver, actualCompletion, false);
         }        catch (e) {
   if (Kotlin.isType(e, Throwable)) {
     var exception = e;
-    completion.resumeWith_tl1gpc$(new Result(createFailure(exception)));
+    actualCompletion.resumeWith_tl1gpc$(new Result(createFailure(exception)));
     break startDirect$break;
   } else 
     throw e;
@@ -18423,7 +18497,7 @@
         var value = tmp$;
         if (value !== COROUTINE_SUSPENDED) {
           var value_0 = (tmp$_0 = value) == null || Kotlin.isType(tmp$_0, Any) ? tmp$_0 : throwCCE();
-          completion.resumeWith_tl1gpc$(new Result(value_0));
+          actualCompletion.resumeWith_tl1gpc$(new Result(value_0));
         }
       } while (false);
   }
@@ -18432,12 +18506,13 @@
   var createFailure = Kotlin.kotlin.createFailure_tcv7n7$;
   return function(completion, block) {
   var tmp$, tmp$_0;
+  var actualCompletion = completion;
   try {
-    tmp$ = block();
+    tmp$ = block(actualCompletion);
   }  catch (e) {
   if (Kotlin.isType(e, Throwable)) {
     var exception = e;
-    completion.resumeWith_tl1gpc$(new Result(createFailure(exception)));
+    actualCompletion.resumeWith_tl1gpc$(new Result(createFailure(exception)));
     return;
   } else 
     throw e;
@@ -18445,7 +18520,7 @@
   var value = tmp$;
   if (value !== COROUTINE_SUSPENDED) {
     var value_0 = (tmp$_0 = value) == null || Kotlin.isType(tmp$_0, Any) ? tmp$_0 : throwCCE();
-    completion.resumeWith_tl1gpc$(new Result(value_0));
+    actualCompletion.resumeWith_tl1gpc$(new Result(value_0));
   }
 };
 });
@@ -18467,13 +18542,13 @@
       var state = $receiver.state_8be2vx$;
       if (Kotlin.isType(state, CompletedExceptionally)) {
         if (true) 
-          throw state.cause;
+          throw tryRecover($receiver, state.cause);
         else if (Kotlin.isType(result, CompletedExceptionally)) 
-          throw result.cause;
+          throw tryRecover($receiver, result.cause);
         else 
           tmp$_0 = result;
       } else {
-        tmp$_0 = state;
+        tmp$_0 = unboxState(state);
       }
     } else 
       tmp$_0 = COROUTINE_SUSPENDED;
@@ -18498,13 +18573,13 @@
       if (Kotlin.isType(state, CompletedExceptionally)) {
         var e_0 = state.cause;
         if (!(Kotlin.isType(e_0, TimeoutCancellationException) && e_0.coroutine_8be2vx$ === $receiver)) 
-          throw state.cause;
+          throw tryRecover($receiver, state.cause);
         else if (Kotlin.isType(result, CompletedExceptionally)) 
-          throw result.cause;
+          throw tryRecover($receiver, result.cause);
         else 
           tmp$_0 = result;
       } else {
-        tmp$_0 = state;
+        tmp$_0 = unboxState(state);
       }
     } else 
       tmp$_0 = COROUTINE_SUSPENDED;
@@ -18527,13 +18602,13 @@
       var state = $receiver.state_8be2vx$;
       if (Kotlin.isType(state, CompletedExceptionally)) {
         if (shouldThrow(state.cause)) 
-          throw state.cause;
+          throw tryRecover($receiver, state.cause);
         else if (Kotlin.isType(result, CompletedExceptionally)) 
-          throw result.cause;
+          throw tryRecover($receiver, result.cause);
         else 
           tmp$_0 = result;
       } else {
-        tmp$_0 = state;
+        tmp$_0 = unboxState(state);
       }
     } else 
       tmp$_0 = COROUTINE_SUSPENDED;
@@ -18576,8 +18651,6 @@
     return select$lambda(builder_0)(continuation);
   }
   defineInlineFunction('kotlinx-coroutines-core.kotlinx.coroutines.selects.select_wd2ujs$', wrapFunction(function() {
-  var COROUTINE_SUSPENDED = Kotlin.kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED;
-  var CoroutineImpl = Kotlin.kotlin.coroutines.CoroutineImpl;
   var SelectBuilderImpl_init = _.kotlinx.coroutines.selects.SelectBuilderImpl;
   var Throwable = Error;
   function select$lambda(closure$builder) {
@@ -18913,8 +18986,6 @@
     return selectUnbiased$lambda(builder_0)(continuation);
   }
   defineInlineFunction('kotlinx-coroutines-core.kotlinx.coroutines.selects.selectUnbiased_wd2ujs$', wrapFunction(function() {
-  var COROUTINE_SUSPENDED = Kotlin.kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED;
-  var CoroutineImpl = Kotlin.kotlin.coroutines.CoroutineImpl;
   var UnbiasedSelectBuilderImpl_init = _.kotlinx.coroutines.selects.UnbiasedSelectBuilderImpl;
   var Throwable = Error;
   function selectUnbiased$lambda(closure$builder) {
@@ -19076,8 +19147,6 @@
 } while (true);
 };
   defineInlineFunction('kotlinx-coroutines-core.kotlinx.coroutines.selects.whileSelect_vmyjlh$', wrapFunction(function() {
-  var COROUTINE_SUSPENDED = Kotlin.kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED;
-  var CoroutineImpl = Kotlin.kotlin.coroutines.CoroutineImpl;
   var SelectBuilderImpl_init = _.kotlinx.coroutines.selects.SelectBuilderImpl;
   var Throwable = Error;
   function select$lambda(closure$builder) {
@@ -19193,10 +19262,7 @@
   }
 } while (true);
 };
-  defineInlineFunction('kotlinx-coroutines-core.kotlinx.coroutines.sync.withLock_8701tb$', wrapFunction(function() {
-  var COROUTINE_SUSPENDED = Kotlin.kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED;
-  var CoroutineImpl = Kotlin.kotlin.coroutines.CoroutineImpl;
-  return function($receiver, owner, action, continuation) {
+  defineInlineFunction('kotlinx-coroutines-core.kotlinx.coroutines.sync.withLock_8701tb$', function($receiver, owner, action, continuation) {
   if (owner === void 0) 
     owner = null;
   Kotlin.suspendCall($receiver.lock_s8jyv4$(owner, Kotlin.coroutineReceiver()));
@@ -19205,16 +19271,15 @@
   } finally   {
     $receiver.unlock_s8jyv4$(owner);
   }
-};
-}));
+});
   var LOCK_FAIL;
   var ENQUEUE_FAIL;
   var UNLOCK_FAIL;
   var SELECT_SUCCESS;
   var LOCKED;
   var UNLOCKED;
-  var EmptyLocked;
-  var EmptyUnlocked;
+  var EMPTY_LOCKED;
+  var EMPTY_UNLOCKED;
   function Empty_0(locked) {
     this.locked = locked;
   }
@@ -19226,7 +19291,7 @@
   simpleName: 'Empty', 
   interfaces: []};
   function MutexImpl(locked) {
-    this._state_0 = locked ? EmptyLocked : EmptyUnlocked;
+    this._state_0 = locked ? EMPTY_LOCKED : EMPTY_UNLOCKED;
   }
   Object.defineProperty(MutexImpl.prototype, 'isLocked', {
   get: function() {
@@ -19256,7 +19321,7 @@
     if (Kotlin.isType(state, Empty_0)) {
       if (state.locked !== UNLOCKED) 
         return false;
-      var update = owner == null ? EmptyLocked : new Empty_0(owner);
+      var update = owner == null ? EMPTY_LOCKED : new Empty_0(owner);
       if ((function(scope) {return scope._state_0 === state ? function() {scope._state_0 = update;return true;}() : false})(this)) 
         return true;
     } else if (Kotlin.isType(state, MutexImpl$LockedQueue)) {
@@ -19295,7 +19360,7 @@
         if (state.locked !== UNLOCKED) {
         (function(scope) {return this$MutexImpl_0._state_0 === state ? function() {this$MutexImpl_0._state_0 = new MutexImpl$LockedQueue(state.locked);return true;}() : false})(this);
       } else {
-        var update = closure$owner_0 == null ? EmptyLocked : new Empty_0(closure$owner_0);
+        var update = closure$owner_0 == null ? EMPTY_LOCKED : new Empty_0(closure$owner_0);
         if ((function(scope) {return this$MutexImpl_0._state_0 === state ? function() {this$MutexImpl_0._state_0 = update;return true;}() : false})(this)) {
           cont.resumeWith_tl1gpc$(new Result(Unit));
           return;
@@ -19319,7 +19384,6 @@
             addLastIf_w327v9$result = true;
           } while (false);
         if (addLastIf_w327v9$result) {
-          cont.initCancellability();
           removeOnCancellation(cont, waiter);
           return;
         }
@@ -19332,17 +19396,15 @@
   return Unit;
 };
   }
-  function suspendAtomicCancellableCoroutine$lambda_0(closure$holdCancellability, closure$block) {
+  function suspendAtomicCancellableCoroutine$lambda_1(closure$block) {
     return function(uCont) {
   var cancellable = new CancellableContinuationImpl(intercepted(uCont), 0);
-  if (!closure$holdCancellability) 
-    cancellable.initCancellability();
   closure$block(cancellable);
   return cancellable.getResult();
 };
   }
   MutexImpl.prototype.lockSuspend_0 = function(owner, continuation) {
-  return suspendAtomicCancellableCoroutine$lambda_0(true, MutexImpl$lockSuspend$lambda(owner, this))(continuation);
+  return suspendAtomicCancellableCoroutine$lambda_1(MutexImpl$lockSuspend$lambda(owner, this))(continuation);
 };
   Object.defineProperty(MutexImpl.prototype, 'onLock', {
   get: function() {
@@ -19401,7 +19463,7 @@
   }
   MutexImpl$TryLockDesc$PrepareOp.prototype.perform_s8jyv4$ = function(affected) {
   var tmp$;
-  var update = this.op_0.isDecided ? EmptyUnlocked : this.op_0;
+  var update = this.op_0.isDecided ? EMPTY_UNLOCKED : this.op_0;
   (function(scope) {return (Kotlin.isType(tmp$ = affected, MutexImpl) ? tmp$ : throwCCE())._state_0 === scope ? function() {(Kotlin.isType(tmp$ = affected, MutexImpl) ? tmp$ : throwCCE())._state_0 = update;return true;}() : false})(this);
   return null;
 };
@@ -19411,16 +19473,16 @@
   interfaces: [OpDescriptor]};
   MutexImpl$TryLockDesc.prototype.prepare_4uxf5b$ = function(op) {
   var prepare = new MutexImpl$TryLockDesc$PrepareOp(this, op);
-  if (!(function(scope) {return scope.mutex._state_0 === EmptyUnlocked ? function() {scope.mutex._state_0 = prepare;return true;}() : false})(this)) 
+  if (!(function(scope) {return scope.mutex._state_0 === EMPTY_UNLOCKED ? function() {scope.mutex._state_0 = prepare;return true;}() : false})(this)) 
     return LOCK_FAIL;
   return prepare.perform_s8jyv4$(this.mutex);
 };
   MutexImpl$TryLockDesc.prototype.complete_ayrq83$ = function(op, failure) {
   var tmp$;
   if (failure != null) 
-    tmp$ = EmptyUnlocked;
+    tmp$ = EMPTY_UNLOCKED;
   else {
-    tmp$ = this.owner == null ? EmptyLocked : new Empty_0(this.owner);
+    tmp$ = this.owner == null ? EMPTY_LOCKED : new Empty_0(this.owner);
   }
   var update = tmp$;
   (function(scope) {return scope.mutex._state_0 === op ? function() {scope.mutex._state_0 = update;return true;}() : false})(this);
@@ -19471,7 +19533,7 @@
           throw IllegalStateException_init(message_0.toString());
         }
       }
-      if ((function(scope) {return scope._state_0 === state ? function() {scope._state_0 = EmptyUnlocked;return true;}() : false})(this)) 
+      if ((function(scope) {return scope._state_0 === state ? function() {scope._state_0 = EMPTY_UNLOCKED;return true;}() : false})(this)) 
         return;
     } else if (Kotlin.isType(state, OpDescriptor)) 
       state.perform_s8jyv4$(this);
@@ -19584,7 +19646,7 @@
   MutexImpl$UnlockOp.prototype.perform_s8jyv4$ = function(affected) {
   var tmp$;
   var success = this.queue.isEmpty;
-  var update = success ? EmptyUnlocked : this.queue;
+  var update = success ? EMPTY_UNLOCKED : this.queue;
   (function(scope) {return (Kotlin.isType(tmp$ = affected, MutexImpl) ? tmp$ : throwCCE())._state_0 === scope ? function() {(Kotlin.isType(tmp$ = affected, MutexImpl) ? tmp$ : throwCCE())._state_0 = update;return true;}() : false})(this);
   return affected._state_0 === this.queue ? UNLOCK_FAIL : null;
 };
@@ -19625,6 +19687,8 @@
   function createDefaultDispatcher() {
     if (!equals(typeof navigator, UNDEFINED_0) && navigator != null && navigator.product == 'ReactNative') 
       return new NodeDispatcher();
+    else if (isJsdom()) 
+      return new NodeDispatcher();
     else {
       var tmp$ = !equals(typeof window, UNDEFINED_0) && window != null;
       if (tmp$) {
@@ -19635,6 +19699,17 @@
       else 
         return new NodeDispatcher();
     }
+  }
+  function isJsdom() {
+    var tmp$ = !equals(typeof navigator, UNDEFINED_0) && navigator != null && navigator.userAgent != null;
+    if (tmp$) {
+      tmp$ = !equals(typeof navigator.userAgent, UNDEFINED_0);
+    }
+    var tmp$_0 = tmp$;
+    if (tmp$_0) {
+      tmp$_0 = !equals(typeof navigator.userAgent.match, UNDEFINED_0);
+    }
+    return tmp$_0 && navigator.userAgent.match('\\bjsdom\\b');
   }
   function get_DefaultDelay() {
     var tmp$;
@@ -19711,6 +19786,19 @@
   kind: Kind_CLASS, 
   simpleName: 'JsMainDispatcher', 
   interfaces: [MainCoroutineDispatcher]};
+  function createEventLoop() {
+    return new UnconfinedEventLoop();
+  }
+  function UnconfinedEventLoop() {
+    EventLoop.call(this);
+  }
+  UnconfinedEventLoop.prototype.dispatch_5bn72i$ = function(context, block) {
+  throw UnsupportedOperationException_init('runBlocking event loop is not supported');
+};
+  UnconfinedEventLoop.$metadata$ = {
+  kind: Kind_CLASS, 
+  simpleName: 'UnconfinedEventLoop', 
+  interfaces: [EventLoop]};
   function CompletionHandlerException(message, cause) {
     RuntimeException_init(withCause(message, cause), this);
     this.cause_vrgn1e$_0 = cause;
@@ -19894,12 +19982,12 @@
   simpleName: 'WindowDispatcher', 
   interfaces: [Delay, CoroutineDispatcher]};
   function MessageQueue() {
-    Queue.call(this);
+    ArrayQueue.call(this);
     this.yieldEvery = 16;
     this.scheduled_0 = false;
   }
   MessageQueue.prototype.enqueue_771g0p$ = function(element) {
-  this.add_trkh7z$(element);
+  this.addLast_trkh7z$(element);
   if (!this.scheduled_0) {
     this.scheduled_0 = true;
     this.schedule();
@@ -19910,7 +19998,7 @@
     var times = this.yieldEvery;
     for (var index = 0; index < times; index++) {
       var tmp$;
-      tmp$ = this.poll();
+      tmp$ = this.removeFirstOrNull();
       if (tmp$ == null) {
         return;
       }
@@ -19928,56 +20016,7 @@
   MessageQueue.$metadata$ = {
   kind: Kind_CLASS, 
   simpleName: 'MessageQueue', 
-  interfaces: [Queue]};
-  function Queue() {
-    this.queue_0 = Kotlin.newArray(8, null);
-    this.head_0 = 0;
-    this.tail_0 = 0;
-  }
-  Object.defineProperty(Queue.prototype, 'isEmpty', {
-  get: function() {
-  return this.head_0 === this.tail_0;
-}});
-  Queue.prototype.poll = function() {
-  var tmp$;
-  if (this.isEmpty) 
-    return null;
-  var result = ensureNotNull(this.queue_0[this.head_0]);
-  this.queue_0[this.head_0] = null;
-  this.head_0 = this.next_0(this.head_0);
-  return Kotlin.isType(tmp$ = result, Any) ? tmp$ : throwCCE();
-};
-  Queue.prototype.add_trkh7z$ = function(element) {
-  var newTail = this.next_0(this.tail_0);
-  if (newTail === this.head_0) {
-    this.resize_0();
-    this.add_trkh7z$(element);
-    return;
-  }
-  this.queue_0[this.tail_0] = element;
-  this.tail_0 = newTail;
-};
-  Queue.prototype.resize_0 = function() {
-  var tmp$;
-  var i = this.head_0;
-  var j = 0;
-  var a = Kotlin.newArray(this.queue_0.length * 2 | 0, null);
-  while (i !== this.tail_0) {
-    a[tmp$ = j , j = tmp$ + 1 | 0 , tmp$] = this.queue_0[i];
-    i = this.next_0(i);
-  }
-  this.queue_0 = a;
-  this.head_0 = 0;
-  this.tail_0 = j;
-};
-  Queue.prototype.next_0 = function($receiver) {
-  var j = $receiver + 1 | 0;
-  return j === this.queue_0.length ? 0 : j;
-};
-  Queue.$metadata$ = {
-  kind: Kind_CLASS, 
-  simpleName: 'Queue', 
-  interfaces: []};
+  interfaces: [ArrayQueue]};
   function promise($receiver, context, start, block) {
     if (context === void 0) 
       context = coroutines.EmptyCoroutineContext;
@@ -20080,7 +20119,6 @@
   function suspendCancellableCoroutine$lambda_2(closure$block) {
     return function(uCont) {
   var cancellable = new CancellableContinuationImpl(intercepted(uCont), 1);
-  cancellable.initCancellability();
   closure$block(cancellable);
   return cancellable.getResult();
 };
@@ -20141,7 +20179,6 @@
   function suspendCancellableCoroutine$lambda_3(closure$block) {
     return function(uCont) {
   var cancellable = new CancellableContinuationImpl(intercepted(uCont), 1);
-  cancellable.initCancellability();
   closure$block(cancellable);
   return cancellable.getResult();
 };
@@ -20165,8 +20202,8 @@
     this.window_0 = window_0;
     this.dispatcher_0 = asCoroutineDispatcher(this.window_0);
     this.scheduled_0 = false;
-    this.current_0 = new Queue();
-    this.next_0 = new Queue();
+    this.current_0 = new ArrayQueue();
+    this.next_0 = new ArrayQueue();
     this.timestamp_0 = 0.0;
   }
   function WindowAnimationQueue$enqueue$lambda(this$WindowAnimationQueue) {
@@ -20181,7 +20218,7 @@
 };
   }
   WindowAnimationQueue.prototype.enqueue_9bzdco$ = function(cont) {
-  this.next_0.add_trkh7z$(cont);
+  this.next_0.addLast_trkh7z$(cont);
   if (!this.scheduled_0) {
     this.scheduled_0 = true;
     this.window_0.requestAnimationFrame(WindowAnimationQueue$enqueue$lambda(this));
@@ -20190,7 +20227,7 @@
   WindowAnimationQueue.prototype.process = function() {
   var tmp$;
   while (true) {
-    tmp$ = this.current_0.poll();
+    tmp$ = this.current_0.removeFirstOrNull();
     if (tmp$ == null) {
       return;
     }
@@ -20529,29 +20566,52 @@
   kind: Kind_CLASS, 
   simpleName: 'LinkedListHead', 
   interfaces: [LinkedListNode]};
+  var probeCoroutineCreated = defineInlineFunction('kotlinx-coroutines-core.kotlinx.coroutines.internal.probeCoroutineCreated_3j0xf1$', function(completion) {
+  return completion;
+});
+  function recoverStackTrace(exception, continuation) {
+    return exception;
+  }
+  function recoverStackTrace_0(exception) {
+    return exception;
+  }
+  function recoverAndThrow(exception_0, continuation) {
+    throw exception_0;
+  }
+  defineInlineFunction('kotlinx-coroutines-core.kotlinx.coroutines.internal.recoverAndThrow_8o0b5c$', function(exception_0, continuation) {
+  throw exception_0;
+});
+  function unwrap(exception) {
+    return exception;
+  }
+  function CoroutineStackFrame() {
+  }
+  CoroutineStackFrame.$metadata$ = {
+  kind: Kind_INTERFACE, 
+  simpleName: 'CoroutineStackFrame', 
+  interfaces: []};
   var synchronized = defineInlineFunction('kotlinx-coroutines-core.kotlinx.coroutines.internal.synchronized_eocq09$', function(lock, block) {
   return block();
 });
   function threadContextElements(context) {
     return 0;
   }
-  function CommonThreadLocal(supplier) {
-    this.value_0 = supplier();
+  function CommonThreadLocal() {
+    this.value_0 = null;
   }
   CommonThreadLocal.prototype.get = function() {
-  return this.value_0;
+  var tmp$;
+  return (tmp$ = this.value_0) == null || Kotlin.isType(tmp$, Any) ? tmp$ : throwCCE();
+};
+  CommonThreadLocal.prototype.set_11rb$ = function(value) {
+  this.value_0 = value;
 };
   CommonThreadLocal.$metadata$ = {
   kind: Kind_CLASS, 
   simpleName: 'CommonThreadLocal', 
   interfaces: []};
-  $$importsForInline$$['kotlinx-coroutines-core'] = _;
-
   var package$kotlinx = _.kotlinx || (_.kotlinx = {});
   var package$coroutines = package$kotlinx.coroutines || (package$kotlinx.coroutines = {});
-  package$coroutines.AbstractContinuation = AbstractContinuation;
-  package$coroutines.NotCompleted = NotCompleted;
-  package$coroutines.CancelHandler = CancelHandler;
   package$coroutines.AbstractCoroutine = AbstractCoroutine;
   package$coroutines.ExperimentalCoroutinesApi = ExperimentalCoroutinesApi;
   package$coroutines.ObsoleteCoroutinesApi = ObsoleteCoroutinesApi;
@@ -20560,13 +20620,17 @@
   package$coroutines.awaitAll_60afti$ = awaitAll_0;
   package$coroutines.joinAll_ub8bc8$ = joinAll;
   package$coroutines.joinAll_k943iz$ = joinAll_0;
+  $$importsForInline$$['kotlinx-coroutines-core'] = _;
   package$coroutines.launch_s496o7$ = launch;
   package$coroutines.async_pda6u4$ = async;
   package$coroutines.withContext_i5cbzn$ = withContext;
+
   package$coroutines.CancellableContinuation = CancellableContinuation;
   package$coroutines.removeOnCancellation_1u31dd$ = removeOnCancellation;
   package$coroutines.disposeOnCancellation_xredcy$ = disposeOnCancellation;
   package$coroutines.CancellableContinuationImpl = CancellableContinuationImpl;
+  package$coroutines.NotCompleted = NotCompleted;
+  package$coroutines.CancelHandler = CancelHandler;
   package$coroutines.CompletableDeferred = CompletableDeferred;
   package$coroutines.CompletableDeferred_xptg6w$ = CompletableDeferred_0;
   package$coroutines.CompletableDeferred_mh5how$ = CompletableDeferred_1;
@@ -20586,11 +20650,14 @@
   package$coroutines.CoroutineName = CoroutineName;
   package$coroutines.CoroutineScope = CoroutineScope;
   package$coroutines.plus_7n4184$ = plus;
+  package$coroutines.MainScope = MainScope;
   package$coroutines.get_isActive_e9pf1l$ = get_isActive;
   Object.defineProperty(package$coroutines, 'GlobalScope', {
   get: GlobalScope_getInstance});
   package$coroutines.coroutineScope_awg8ri$ = coroutineScope;
   package$coroutines.CoroutineScope_1fupul$ = CoroutineScope_0;
+  package$coroutines.Job = Job;
+  package$coroutines.cancel_e9pf1l$ = cancel;
   Object.defineProperty(CoroutineStart, 'DEFAULT', {
   get: CoroutineStart$DEFAULT_getInstance});
   Object.defineProperty(CoroutineStart, 'LAZY', {
@@ -20604,11 +20671,8 @@
   package$coroutines.Delay = Delay;
   package$coroutines.delay_s8cxhz$ = delay;
   package$coroutines.get_delay_tcgsej$ = get_delay;
-  UndispatchedEventLoop.prototype.EventLoop = UndispatchedEventLoop$EventLoop;
-  Object.defineProperty(package$coroutines, 'UndispatchedEventLoop', {
-  get: UndispatchedEventLoop_getInstance});
-  package$coroutines.Job = Job;
   package$coroutines.withCoroutineContext_3ctye2$ = withCoroutineContext;
+  package$coroutines.resumeWithStackTrace_45st6c$ = resumeWithStackTrace;
   package$coroutines.DispatchedContinuation = DispatchedContinuation;
   package$coroutines.resumeCancellable_74ftok$ = resumeCancellable;
   package$coroutines.resumeCancellableWithException_by4i3t$ = resumeCancellableWithException;
@@ -20618,6 +20682,11 @@
   package$coroutines.yieldUndispatched_t90a9u$ = yieldUndispatched;
   package$coroutines.dispatch_h66hf9$ = dispatch;
   package$coroutines.resume_yw0jex$ = resume;
+  var package$internal = package$coroutines.internal || (package$coroutines.internal = {});
+  package$internal.recoverStackTrace_ak2v6d$ = recoverStackTrace;
+  package$coroutines.EventLoop = EventLoop;
+  Object.defineProperty(package$coroutines, 'ThreadLocalEventLoop', {
+  get: ThreadLocalEventLoop_getInstance});
   Object.defineProperty(Job, 'Key', {
   get: Job$Key_getInstance});
   package$coroutines.Job_5dx9e$ = Job_0;
@@ -20632,13 +20701,14 @@
   package$coroutines.cancelChildren_5dx9u$ = cancelChildren_0;
   package$coroutines.get_isActive_qdnslq$ = get_isActive_0;
   package$coroutines.cancel0_qdnslq$ = cancel0;
-  package$coroutines.cancel_qdnslq$ = cancel;
-  package$coroutines.cancel_80ha7u$ = cancel_0;
+  package$coroutines.cancel_qdnslq$ = cancel_0;
+  package$coroutines.cancel_80ha7u$ = cancel_1;
   package$coroutines.cancelChildren_qdnslq$ = cancelChildren_1;
   package$coroutines.cancelChildren_80ha7u$ = cancelChildren_2;
   Object.defineProperty(package$coroutines, 'NonDisposableHandle', {
   get: NonDisposableHandle_getInstance});
   package$coroutines.JobSupport = JobSupport;
+  package$coroutines.unboxState_ntq51o$ = unboxState;
   package$coroutines.JobImpl = JobImpl;
   package$coroutines.Incomplete = Incomplete;
   package$coroutines.JobNode = JobNode;
@@ -20858,14 +20928,15 @@
   package$channels.produce_f6xzli$ = produce;
   package$channels.produce_hfy25i$ = produce_0;
   package$channels.RendezvousChannel = RendezvousChannel;
-  var package$internal = package$coroutines.internal || (package$coroutines.internal = {});
   package$internal.ArrayQueue = ArrayQueue;
   package$internal.OpDescriptor = OpDescriptor;
   package$internal.AtomicOp = AtomicOp;
   package$internal.AtomicDesc = AtomicDesc;
   package$internal.MainDispatcherFactory = MainDispatcherFactory;
   package$internal.ScopeCoroutine = ScopeCoroutine;
+  package$internal.tryRecover_2f0hiv$ = tryRecover;
   package$internal.ContextScope = ContextScope;
+  package$internal.NonRecoverableThrowable = NonRecoverableThrowable;
   package$internal.Symbol = Symbol;
   var package$intrinsics = package$coroutines.intrinsics || (package$coroutines.intrinsics = {});
   package$intrinsics.startCoroutineCancellable_81hn2s$ = startCoroutineCancellable;
@@ -20909,6 +20980,8 @@
   package$coroutines.get_classSimpleName_8ea4r1$ = get_classSimpleName;
   Object.defineProperty(package$coroutines, 'Dispatchers', {
   get: Dispatchers_getInstance});
+  package$coroutines.createEventLoop_8be2vx$ = createEventLoop;
+  package$coroutines.UnconfinedEventLoop = UnconfinedEventLoop;
   package$coroutines.CompletionHandlerException = CompletionHandlerException;
   package$coroutines.CancellationException = CancellationException;
   package$coroutines.JobCancellationException = JobCancellationException;
@@ -20918,7 +20991,6 @@
   package$coroutines.NodeDispatcher = NodeDispatcher;
   package$coroutines.WindowDispatcher = WindowDispatcher;
   package$coroutines.MessageQueue = MessageQueue;
-  package$coroutines.Queue = Queue;
   package$coroutines.promise_pda6u4$ = promise;
   package$coroutines.asPromise_ge6odz$ = asPromise;
   package$coroutines.asDeferred_t11jrl$ = asDeferred;
@@ -20941,6 +21013,11 @@
   package$internal.RemoveFirstDesc = RemoveFirstDesc;
   package$internal.AbstractAtomicDesc = AbstractAtomicDesc;
   package$internal.LinkedListHead = LinkedListHead;
+  package$internal.probeCoroutineCreated_3j0xf1$ = probeCoroutineCreated;
+  package$internal.recoverStackTrace_87698k$ = recoverStackTrace_0;
+  package$internal.recoverAndThrow_8o0b5c$ = recoverAndThrow;
+  package$internal.unwrap_87698k$ = unwrap;
+  package$internal.CoroutineStackFrame = CoroutineStackFrame;
   package$internal.synchronized_eocq09$ = synchronized;
   package$internal.threadContextElements_v4qu62$ = threadContextElements;
   package$internal.CommonThreadLocal = CommonThreadLocal;
@@ -20980,7 +21057,6 @@
   Deferred.prototype.minusKey_yeqjby$ = Job.prototype.minusKey_yeqjby$;
   Deferred.prototype.cancel_dbl4no$ = Job.prototype.cancel_dbl4no$;
   Deferred.prototype.invokeOnCompletion_ct2b2z$ = Job.prototype.invokeOnCompletion_ct2b2z$;
-  CancellableContinuationImpl.prototype.cancel_dbl4no$$default = AbstractContinuation.prototype.cancel_dbl4no$;
   CancellableContinuationImpl.prototype.cancel_dbl4no$ = CancellableContinuation.prototype.cancel_dbl4no$;
   CancellableContinuationImpl.prototype.tryResume_19pj23$ = CancellableContinuation.prototype.tryResume_19pj23$;
   CompletableDeferred.prototype.cancel0 = Deferred.prototype.cancel0;
@@ -21025,7 +21101,6 @@
   UNDECIDED = 0;
   SUSPENDED = 1;
   RESUMED = 2;
-  ACTIVE = new Active();
   UNDECIDED_0 = 0;
   SUSPENDED_0 = 1;
   RESUMED_0 = 2;
@@ -21053,7 +21128,7 @@
   NULL_VALUE = new Symbol('NULL_VALUE');
   CLOSE_RESUMED = new Symbol('CLOSE_RESUMED');
   SEND_RESUMED = new Symbol('SEND_RESUMED');
-  HANDLER_INVOKED = new Any();
+  HANDLER_INVOKED = new Symbol('ON_CLOSE_HANDLER_INVOKED');
   DEFAULT_CLOSE_MESSAGE = 'Channel was closed';
   NO_DECISION = new Symbol('NO_DECISION');
   ALREADY_SELECTED = new Symbol('ALREADY_SELECTED');
@@ -21065,8 +21140,8 @@
   SELECT_SUCCESS = new Symbol('SELECT_SUCCESS');
   LOCKED = new Symbol('LOCKED');
   UNLOCKED = new Symbol('UNLOCKED');
-  EmptyLocked = new Empty_0(LOCKED);
-  EmptyUnlocked = new Empty_0(UNLOCKED);
+  EMPTY_LOCKED = new Empty_0(LOCKED);
+  EMPTY_UNLOCKED = new Empty_0(UNLOCKED);
   UNDEFINED_0 = 'undefined';
   counter = 0;
   MAX_DELAY = L2147483647;

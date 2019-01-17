@@ -10,12 +10,12 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   var Kind_CLASS = Kotlin.Kind.CLASS;
   var Kind_INTERFACE = Kotlin.Kind.INTERFACE;
   var equals = Kotlin.equals;
-  var toList = Kotlin.kotlin.collections.toList_7wnvza$;
   var abs = Kotlin.kotlin.math.abs_za3lpa$;
   var listOf = Kotlin.kotlin.collections.listOf_i5x0yv$;
   var Enum = Kotlin.kotlin.Enum;
   var throwISE = Kotlin.throwISE;
   var Unit = Kotlin.kotlin.Unit;
+  var IntRange = Kotlin.kotlin.ranges.IntRange;
   var coroutines = $module$kotlinx_coroutines_core.kotlinx.coroutines;
   var delay = $module$kotlinx_coroutines_core.kotlinx.coroutines.delay_s8cxhz$;
   var COROUTINE_SUSPENDED = Kotlin.kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED;
@@ -24,8 +24,9 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   var L500 = Kotlin.Long.fromInt(500);
   var until = Kotlin.kotlin.ranges.until_dqglrj$;
   var ensureNotNull = Kotlin.ensureNotNull;
+  var toMutableList = Kotlin.kotlin.collections.toMutableList_4c7yge$;
   var numberToInt = Kotlin.numberToInt;
-  var IntRange = Kotlin.kotlin.ranges.IntRange;
+  var toList = Kotlin.kotlin.collections.toList_7wnvza$;
   Chess.prototype = Object.create(BoardGame.prototype);
   Chess.prototype.constructor = Chess;
   ChessPieceType.prototype = Object.create(Enum.prototype);
@@ -122,7 +123,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     }
   });
   ChessState.prototype.isLegal_11rc$ = function (action) {
-    var tmp$;
+    var tmp$, tmp$_0;
     tmp$ = this.board.get_dfplqh$(action.source);
     if (tmp$ == null) {
       return false;
@@ -133,7 +134,30 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     var enemy = this.board.get_dfplqh$(action.destination);
     if (equals(enemy != null ? enemy.player : null, this.currentPlayer))
       return false;
-    return piece.isLegal_xm7weo$(this.board, action);
+    if (!piece.isLegal_xm7weo$(this.board, action))
+      return false;
+    var newState = this.nextState_11rc$(action);
+    var $receiver = newState.board.fields;
+    var indexOfFirst$result;
+    indexOfFirst$break: do {
+      var tmp$_1;
+      var index = 0;
+      tmp$_1 = $receiver.iterator();
+      while (tmp$_1.hasNext()) {
+        var item = tmp$_1.next();
+        if (equals(item != null ? item.type : null, ChessPieceType$King_getInstance()) && item.player === this.currentPlayer) {
+          indexOfFirst$result = index;
+          break indexOfFirst$break;
+        }
+        index = index + 1 | 0;
+      }
+      indexOfFirst$result = -1;
+    }
+     while (false);
+    var index_0 = indexOfFirst$result;
+    var position = new Position(index_0 % 8, index_0 / 8 | 0);
+    var king = Kotlin.isType(tmp$_0 = newState.board.get_dfplqh$(position), ChessPiece) ? tmp$_0 : throwCCE();
+    return !king.isInCheck_iy0w7l$(newState.board, position);
   };
   var ArrayList_init = Kotlin.kotlin.collections.ArrayList_init_287e2$;
   ChessState.prototype.possibleActions = function () {
@@ -146,7 +170,15 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
         actions.addAll_brywnq$(piece.possibleMoves_iy0w7l$(this.board, new Position(i, j)));
       }
     }
-    return toList(actions);
+    var destination = ArrayList_init();
+    var tmp$;
+    tmp$ = actions.iterator();
+    while (tmp$.hasNext()) {
+      var element = tmp$.next();
+      if (this.isLegal_11rc$(element))
+        destination.add_11rb$(element);
+    }
+    return destination;
   };
   ChessState.prototype.nextState_11rc$ = function (action) {
     var tmp$, tmp$_0;
@@ -164,7 +196,25 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     return new ChessState(newBoard, this.currentPlayer === ChessPlayer$White_getInstance() ? ChessPlayer$Black_getInstance() : ChessPlayer$White_getInstance());
   };
   ChessState.prototype.findWinner = function () {
-    return null;
+    for (var i = 0; i < 8; i++) {
+      for (var j = 0; j < 8; j++) {
+        var piece = this.board.get_vux9f0$(i, j);
+        if (!equals(piece != null ? piece.player : null, this.currentPlayer))
+          continue;
+        var $receiver = piece.possibleMoves_iy0w7l$(this.board, new Position(i, j));
+        var destination = ArrayList_init();
+        var tmp$;
+        tmp$ = $receiver.iterator();
+        while (tmp$.hasNext()) {
+          var element = tmp$.next();
+          if (this.isLegal_11rc$(element))
+            destination.add_11rb$(element);
+        }
+        if (!destination.isEmpty())
+          return null;
+      }
+    }
+    return this.currentPlayer === ChessPlayer$Black_getInstance() ? ChessPlayer$White_getInstance() : ChessPlayer$Black_getInstance();
   };
   ChessState.prototype.moveCastlingRook_0 = function (action) {
     if (action.destination.x < 4) {
@@ -402,7 +452,8 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   function ChessDisplay(canvas, infoArea) {
     GameDisplay.call(this, canvas, infoArea);
     this.game_vohlt0$_0 = new Chess();
-    this.getColor_tn0utd$_0 = ChessDisplay$getColor$lambda;
+    this.sourcePosition = null;
+    this.getColor_tn0utd$_0 = ChessDisplay$getColor$lambda(this);
     this.draw_vpud9y$_0 = ChessDisplay$draw$lambda;
     var $receiver = this.game.players;
     var key = ChessPlayer$White_getInstance();
@@ -417,8 +468,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     var value_0 = new RandomAIPlayer();
     $receiver_2.put_xwzc9p$('Black', value_0);
     this.updateDisplay_pdl1vj$(null);
-    var sourcePosition = {v: null};
-    this.squareDisplay.onClick = ChessDisplay_init$lambda(this, sourcePosition);
+    this.squareDisplay.onClick = ChessDisplay_init$lambda(this);
   }
   Object.defineProperty(ChessDisplay.prototype, 'game', {
     get: function () {
@@ -438,8 +488,17 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
       return this.draw_vpud9y$_0;
     }
   });
-  function ChessDisplay$getColor$lambda(f, x, y) {
-    return (x % 2 === 0 ? y % 2 === 0 : y % 2 === 1) ? 'white' : 'grey';
+  function ChessDisplay$getColor$lambda(this$ChessDisplay) {
+    return function (f, x, y) {
+      var source = this$ChessDisplay.sourcePosition;
+      if (source != null && source.x === x && source.y === y) {
+        return 'darkgrey';
+      }
+      if (x % 2 === 0 ? y % 2 === 0 : y % 2 === 1)
+        return 'white';
+      else
+        return 'grey';
+    };
   }
   function ChessDisplay$draw$lambda(context, fieldSize, piece, f, f_0) {
     var tmp$;
@@ -462,18 +521,19 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
       context.fillText(isBlack ? '\u265F' : '\u2659', 0.0, 0.0);
     return Unit;
   }
-  function ChessDisplay_init$lambda(this$ChessDisplay, closure$sourcePosition) {
+  function ChessDisplay_init$lambda(this$ChessDisplay) {
     return function (it) {
       var $receiver = this$ChessDisplay.players;
       var key = this$ChessDisplay.game.currentPlayer();
       var tmp$;
       if (Kotlin.isType((Kotlin.isType(tmp$ = $receiver, Map) ? tmp$ : throwCCE()).get_11rb$(key), Player) && it.x >= 0 && it.y >= 0 && it.x < 8 && it.y < 8) {
-        var source = closure$sourcePosition.v;
+        var source = this$ChessDisplay.sourcePosition;
         if (source == null) {
-          closure$sourcePosition.v = new Position(it.x, it.y);
+          this$ChessDisplay.sourcePosition = new Position(it.x, it.y);
+          this$ChessDisplay.updateDisplay_pdl1vj$(this$ChessDisplay.game.winner);
         }
          else {
-          closure$sourcePosition.v = null;
+          this$ChessDisplay.sourcePosition = null;
           this$ChessDisplay.performAction_11re$(new ChessAction(source, new Position(it.x, it.y)));
         }
       }
@@ -522,7 +582,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     var tmp$, tmp$_0, tmp$_1, tmp$_2, tmp$_3, tmp$_4, tmp$_5, tmp$_6;
     if (abs(action.source.x - action.destination.x | 0) <= 1 && abs(action.source.y - action.destination.y | 0) <= 1)
       return true;
-    if (this.hasMoved || this.isInCheck_0(board, action.source))
+    if (this.hasMoved || this.isInCheck_iy0w7l$(board, action.source))
       return false;
     if (this.player === ChessPlayer$White_getInstance()) {
       if ((action.source.x - action.destination.x | 0) === 2 && action.source.y === action.destination.y) {
@@ -683,7 +743,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   ChessPiece.prototype.isIntermediatePositionSafe_0 = function (board, intermediatePosition, originalPosition) {
     board.set_39d550$(intermediatePosition, this);
     board.set_39d550$(originalPosition, null);
-    if (this.isInCheck_0(board, intermediatePosition)) {
+    if (this.isInCheck_iy0w7l$(board, intermediatePosition)) {
       board.set_39d550$(intermediatePosition, null);
       board.set_39d550$(originalPosition, this);
       return false;
@@ -692,7 +752,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     board.set_39d550$(originalPosition, this);
     return true;
   };
-  ChessPiece.prototype.isInCheck_0 = function (board, position) {
+  ChessPiece.prototype.isInCheck_iy0w7l$ = function (board, position) {
     var tmp$, tmp$_0, tmp$_1;
     tmp$ = board.height;
     for (var i = 0; i < tmp$; i++) {
@@ -757,19 +817,130 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     return actions;
   };
   ChessPiece.prototype.possibleQueenMoves_0 = function (board, position) {
-    return this.possibleKingMoves_0(board, position);
+    var actions = ArrayList_init();
+    actions.addAll_brywnq$(this.possibleBishopMoves_0(board, position));
+    actions.addAll_brywnq$(this.possibleRookMoves_0(board, position));
+    return actions;
   };
   ChessPiece.prototype.possibleBishopMoves_0 = function (board, position) {
-    return this.possibleKingMoves_0(board, position);
+    var tmp$, tmp$_0, tmp$_1, tmp$_2;
+    var actions = ArrayList_init();
+    for (var i = 1; i <= 7; i++) {
+      var pos = new Position(position.x + i | 0, position.y + i | 0);
+      if (pos.x < 8 && pos.y < 8 && !equals((tmp$ = board.get_dfplqh$(pos)) != null ? tmp$.player : null, this.player))
+        actions.add_11rb$(new ChessAction(position, pos));
+      else
+        break;
+    }
+    for (var i_0 = 1; i_0 <= 7; i_0++) {
+      var pos_0 = new Position(position.x + i_0 | 0, position.y - i_0 | 0);
+      if (pos_0.x < 8 && pos_0.y >= 0 && !equals((tmp$_0 = board.get_dfplqh$(pos_0)) != null ? tmp$_0.player : null, this.player))
+        actions.add_11rb$(new ChessAction(position, pos_0));
+      else
+        break;
+    }
+    for (var i_1 = 1; i_1 <= 7; i_1++) {
+      var pos_1 = new Position(position.x - i_1 | 0, position.y + i_1 | 0);
+      if (pos_1.x >= 0 && pos_1.y < 8 && !equals((tmp$_1 = board.get_dfplqh$(pos_1)) != null ? tmp$_1.player : null, this.player))
+        actions.add_11rb$(new ChessAction(position, pos_1));
+      else
+        break;
+    }
+    for (var i_2 = 1; i_2 <= 7; i_2++) {
+      var pos_2 = new Position(position.x - i_2 | 0, position.y - i_2 | 0);
+      if (pos_2.x >= 0 && pos_2.y >= 0 && !equals((tmp$_2 = board.get_dfplqh$(pos_2)) != null ? tmp$_2.player : null, this.player))
+        actions.add_11rb$(new ChessAction(position, pos_2));
+      else
+        break;
+    }
+    return actions;
   };
   ChessPiece.prototype.possibleKnightMoves_0 = function (board, position) {
-    return this.possibleKingMoves_0(board, position);
+    var tmp$, tmp$_0, tmp$_1, tmp$_2, tmp$_3, tmp$_4, tmp$_5, tmp$_6;
+    var actions = ArrayList_init();
+    var destination = position.add_vux9f0$(1, 2);
+    if (this.isWithinBoard_0(destination) && !equals((tmp$ = board.get_dfplqh$(destination)) != null ? tmp$.player : null, this.player))
+      actions.add_11rb$(new ChessAction(position, destination));
+    destination = position.add_vux9f0$(2, 1);
+    if (this.isWithinBoard_0(destination) && !equals((tmp$_0 = board.get_dfplqh$(destination)) != null ? tmp$_0.player : null, this.player))
+      actions.add_11rb$(new ChessAction(position, destination));
+    destination = position.add_vux9f0$(1, -2);
+    if (this.isWithinBoard_0(destination) && !equals((tmp$_1 = board.get_dfplqh$(destination)) != null ? tmp$_1.player : null, this.player))
+      actions.add_11rb$(new ChessAction(position, destination));
+    destination = position.add_vux9f0$(2, -1);
+    if (this.isWithinBoard_0(destination) && !equals((tmp$_2 = board.get_dfplqh$(destination)) != null ? tmp$_2.player : null, this.player))
+      actions.add_11rb$(new ChessAction(position, destination));
+    destination = position.add_vux9f0$(-1, 2);
+    if (this.isWithinBoard_0(destination) && !equals((tmp$_3 = board.get_dfplqh$(destination)) != null ? tmp$_3.player : null, this.player))
+      actions.add_11rb$(new ChessAction(position, destination));
+    destination = position.add_vux9f0$(-2, 1);
+    if (this.isWithinBoard_0(destination) && !equals((tmp$_4 = board.get_dfplqh$(destination)) != null ? tmp$_4.player : null, this.player))
+      actions.add_11rb$(new ChessAction(position, destination));
+    destination = position.add_vux9f0$(-1, -2);
+    if (this.isWithinBoard_0(destination) && !equals((tmp$_5 = board.get_dfplqh$(destination)) != null ? tmp$_5.player : null, this.player))
+      actions.add_11rb$(new ChessAction(position, destination));
+    destination = position.add_vux9f0$(-2, -1);
+    if (this.isWithinBoard_0(destination) && !equals((tmp$_6 = board.get_dfplqh$(destination)) != null ? tmp$_6.player : null, this.player))
+      actions.add_11rb$(new ChessAction(position, destination));
+    return actions;
   };
   ChessPiece.prototype.possibleRookMoves_0 = function (board, position) {
-    return this.possibleKingMoves_0(board, position);
+    var tmp$, tmp$_0, tmp$_1, tmp$_2;
+    var actions = ArrayList_init();
+    for (var i = 1; i <= 7; i++) {
+      var pos = new Position(position.x + i | 0, position.y);
+      if (pos.x < 8 && !equals((tmp$ = board.get_dfplqh$(pos)) != null ? tmp$.player : null, this.player))
+        actions.add_11rb$(new ChessAction(position, pos));
+      else
+        break;
+    }
+    for (var i_0 = 1; i_0 <= 7; i_0++) {
+      var pos_0 = new Position(position.x - i_0 | 0, position.y);
+      if (pos_0.x >= 0 && !equals((tmp$_0 = board.get_dfplqh$(pos_0)) != null ? tmp$_0.player : null, this.player))
+        actions.add_11rb$(new ChessAction(position, pos_0));
+      else
+        break;
+    }
+    for (var i_1 = 1; i_1 <= 7; i_1++) {
+      var pos_1 = new Position(position.x, position.y + i_1 | 0);
+      if (pos_1.y < 8 && !equals((tmp$_1 = board.get_dfplqh$(pos_1)) != null ? tmp$_1.player : null, this.player))
+        actions.add_11rb$(new ChessAction(position, pos_1));
+      else
+        break;
+    }
+    for (var i_2 = 1; i_2 <= 7; i_2++) {
+      var pos_2 = new Position(position.x, position.y - i_2 | 0);
+      if (pos_2.y >= 0 && !equals((tmp$_2 = board.get_dfplqh$(pos_2)) != null ? tmp$_2.player : null, this.player))
+        actions.add_11rb$(new ChessAction(position, pos_2));
+      else
+        break;
+    }
+    return actions;
   };
   ChessPiece.prototype.possiblePawnMoves_0 = function (board, position) {
-    return this.possibleKingMoves_0(board, position);
+    var tmp$, tmp$_0;
+    var actions = ArrayList_init();
+    var direction = this.player === ChessPlayer$Black_getInstance() ? -1 : 1;
+    if (board.get_vux9f0$(position.x, position.y + direction | 0) == null)
+      actions.add_11rb$(new ChessAction(position, new Position(position.x, position.y + direction | 0)));
+    if (!this.hasMoved && board.get_vux9f0$(position.x, position.y + direction | 0) == null && board.get_vux9f0$(position.x, position.y + (direction * 2 | 0) | 0) == null)
+      actions.add_11rb$(new ChessAction(position, new Position(position.x, position.y + (direction * 2 | 0) | 0)));
+    if (position.x > 0 && board.get_vux9f0$(position.x - 1 | 0, position.y + direction | 0) != null && !equals((tmp$ = board.get_vux9f0$(position.x - 1 | 0, position.y + direction | 0)) != null ? tmp$.player : null, this.player))
+      actions.add_11rb$(new ChessAction(position, new Position(position.x - 1 | 0, position.y + direction | 0)));
+    if (position.x < 7 && board.get_vux9f0$(position.x + 1 | 0, position.y + direction | 0) != null && !equals((tmp$_0 = board.get_vux9f0$(position.x + 1 | 0, position.y + direction | 0)) != null ? tmp$_0.player : null, this.player))
+      actions.add_11rb$(new ChessAction(position, new Position(position.x + 1 | 0, position.y + direction | 0)));
+    return actions;
+  };
+  ChessPiece.prototype.isWithinBoard_0 = function (position) {
+    var tmp$, tmp$_0, tmp$_1;
+    tmp$ = position.x;
+    if (0 <= tmp$ && tmp$ <= 7) {
+      tmp$_0 = position.y;
+      tmp$_1 = (0 <= tmp$_0 && tmp$_0 <= 7);
+    }
+     else
+      tmp$_1 = false;
+    return tmp$_1;
   };
   ChessPiece.$metadata$ = {
     kind: Kind_CLASS,
@@ -973,6 +1144,9 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     this.x = x;
     this.y = y;
   }
+  Position.prototype.add_vux9f0$ = function (i, j) {
+    return new Position(this.x + i | 0, this.y + j | 0);
+  };
   Position.$metadata$ = {
     kind: Kind_CLASS,
     simpleName: 'Position',
@@ -1026,39 +1200,21 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   SquareGrid.prototype.set_39d550$ = function (position, value) {
     this.fields.set_wxm5ur$(position.x + Kotlin.imul(this.width, position.y) | 0, value);
   };
+  SquareGrid.prototype.copy_urw29u$ = function (width, height, init, fields) {
+    if (width === void 0)
+      width = this.width;
+    if (height === void 0)
+      height = this.height;
+    if (init === void 0)
+      init = this.init;
+    if (fields === void 0)
+      fields = toMutableList(this.fields);
+    return new SquareGrid(width, height, init, fields);
+  };
   SquareGrid.$metadata$ = {
     kind: Kind_CLASS,
     simpleName: 'SquareGrid',
     interfaces: []
-  };
-  SquareGrid.prototype.component1 = function () {
-    return this.width;
-  };
-  SquareGrid.prototype.component2 = function () {
-    return this.height;
-  };
-  SquareGrid.prototype.component3 = function () {
-    return this.init;
-  };
-  SquareGrid.prototype.component4 = function () {
-    return this.fields;
-  };
-  SquareGrid.prototype.copy_urw29u$ = function (width, height, init, fields) {
-    return new SquareGrid(width === void 0 ? this.width : width, height === void 0 ? this.height : height, init === void 0 ? this.init : init, fields === void 0 ? this.fields : fields);
-  };
-  SquareGrid.prototype.toString = function () {
-    return 'SquareGrid(width=' + Kotlin.toString(this.width) + (', height=' + Kotlin.toString(this.height)) + (', init=' + Kotlin.toString(this.init)) + (', fields=' + Kotlin.toString(this.fields)) + ')';
-  };
-  SquareGrid.prototype.hashCode = function () {
-    var result = 0;
-    result = result * 31 + Kotlin.hashCode(this.width) | 0;
-    result = result * 31 + Kotlin.hashCode(this.height) | 0;
-    result = result * 31 + Kotlin.hashCode(this.init) | 0;
-    result = result * 31 + Kotlin.hashCode(this.fields) | 0;
-    return result;
-  };
-  SquareGrid.prototype.equals = function (other) {
-    return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.width, other.width) && Kotlin.equals(this.height, other.height) && Kotlin.equals(this.init, other.init) && Kotlin.equals(this.fields, other.fields)))));
   };
   function SquareGridDisplay(canvas) {
     this.canvas = canvas;
