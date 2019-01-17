@@ -211,7 +211,7 @@ data class ChessPiece(val type: ChessPieceType, val player: ChessPlayer, val has
 		return true
 	}
 
-	private fun isInCheck(board: SquareGrid<ChessPiece?>, position: Position): Boolean {
+	fun isInCheck(board: SquareGrid<ChessPiece?>, position: Position): Boolean {
 		//Checks if any enemy piece (except the king) can move to this kings position
 		for (i in 0 until board.height) {
 			for (j in 0 until board.width) {

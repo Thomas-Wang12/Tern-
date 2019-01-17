@@ -46,7 +46,13 @@ data class ChessState(
 		val enemy = board[action.destination]
 		if (enemy?.player == currentPlayer)
 			return false
-		return piece.isLegal(board, action)
+		if(!piece.isLegal(board, action))
+			return false
+		val newState = nextState(action)
+		val index = newState.board.fields.indexOfFirst { it?.type == ChessPieceType.King && it.player == currentPlayer }
+		val position = Position(index % 8, index / 8)
+		val king = newState.board[position] as ChessPiece
+		return !king.isInCheck(newState.board, position)
 	}
 
 	override fun possibleActions(): List<ChessAction> {
@@ -79,6 +85,7 @@ data class ChessState(
 	}
 
 	override fun findWinner(): ChessPlayer? {
+
 		return null // TODO
 	}
 
