@@ -19,6 +19,10 @@ fun main(args: Array<String>) {
 	chessButton.textContent = "Chess"
 	document.body!!.appendChild(chessButton)
 
+	val alysButton = document.createElement("button") as HTMLButtonElement
+	alysButton.textContent = "Alys"
+	document.body!!.appendChild(alysButton)
+
 	val infoArea = document.createElement("div") as HTMLDivElement
 	document.body!!.appendChild(infoArea)
 	val canvas = document.createElement("canvas") as HTMLCanvasElement
@@ -40,7 +44,10 @@ fun main(args: Array<String>) {
 		game?.end()
 		game = ChessDisplay(canvas, infoArea)
 	})
-
+	alysButton.addEventListener("click", {
+		game?.end()
+		game = AlysDisplay(canvas, infoArea)
+	})
 }
 
 
