@@ -18,6 +18,7 @@ class AlysDisplay(canvas: HTMLCanvasElement, infoArea: HTMLDivElement)
 			1 -> "yellow"
 			2 -> "green"
 			3 -> "lightgreen"
+			4 -> "orange"
 			else -> "white"
 		}
 	}
@@ -29,7 +30,7 @@ class AlysDisplay(canvas: HTMLCanvasElement, infoArea: HTMLDivElement)
 		context.font = fieldSize.toString() + "px arial"
 		context.textBaseline = CanvasTextBaseline.TOP
 		if(piece.treasury != null)
-			context.fillText("B", 0.0, 0.0)
+			context.fillText(piece.treasury.toString(), 0.0, 0.0)
 		else if(piece.piece?.type == AlysType.Fort)
 			context.fillText("F", 0.0, 0.0)
 		else if(piece.piece?.type == AlysType.Soldier)
@@ -58,7 +59,10 @@ class AlysDisplay(canvas: HTMLCanvasElement, infoArea: HTMLDivElement)
 					val sourceField = game.state.board[source] ?: return@click
 					if(sourceField.player != game.state.currentPlayer)
 						return@click
-					performAction(AlysMoveAction(source, it))
+					if(sourceField.piece != null)
+						performAction(AlysMoveAction(source, it))
+					else
+						performAction(AlysCreateAction(AlysType.Soldier, source, it))
 				}
 			}
 		}
