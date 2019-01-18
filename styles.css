@@ -1,0 +1,43 @@
+.grid {
+	display: grid;
+	grid-template-rows: 4rem 3rem auto;
+	grid-template-columns: 20rem calc(100vw - 40rem) 20rem;
+	grid-template-areas:
+	"header header header"
+	"navigation navigation navigation"
+	"control canvas control2";
+}
+
+header {
+	grid-area: header;
+	font-size: 3rem;
+	line-height: 4rem;
+	font-weight: bold;
+	text-align: center;
+	color: white;
+	background-color: #258;
+}
+
+nav {
+	grid-area: navigation;
+	display: flex;
+}
+
+nav button {
+	flex-grow: 1;
+	flex-basis: 0;
+	font-size: 1.5rem;
+	background-color: #9ac;
+}
+
+main {
+	grid-area: control;
+	padding: 0.5rem;
+}
+
+.canvas {
+	grid-area: canvas;
+	margin-left: auto;
+	margin-right: auto;
+	padding-top: 0.5rem;
+}

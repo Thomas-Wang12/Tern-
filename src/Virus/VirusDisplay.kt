@@ -1,6 +1,6 @@
 import org.w3c.dom.*
 
-class VirusDisplay(canvas: HTMLCanvasElement, infoArea: HTMLDivElement)
+class VirusDisplay(canvas: HTMLCanvasElement, infoArea: HTMLElement)
 	: GameDisplay<Virus, VirusState, Int, VirusAction, Int>(canvas, infoArea) {
 	override var game = Virus()
 

@@ -6,16 +6,20 @@ if (typeof this['kotlinx-coroutines-core'] === 'undefined') {
 }
 var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   'use strict';
-  var throwCCE = Kotlin.throwCCE;
   var Kind_CLASS = Kotlin.Kind.CLASS;
-  var Kind_INTERFACE = Kotlin.Kind.INTERFACE;
+  var Random = Kotlin.kotlin.random.Random_za3lpa$;
+  var IntRange = Kotlin.kotlin.ranges.IntRange;
+  var random = Kotlin.kotlin.collections.random_iscd7z$;
+  var throwCCE = Kotlin.throwCCE;
+  var toList = Kotlin.kotlin.collections.toList_7wnvza$;
   var equals = Kotlin.equals;
-  var abs = Kotlin.kotlin.math.abs_za3lpa$;
-  var listOf = Kotlin.kotlin.collections.listOf_i5x0yv$;
+  var mutableListOf = Kotlin.kotlin.collections.mutableListOf_i5x0yv$;
   var Enum = Kotlin.kotlin.Enum;
   var throwISE = Kotlin.throwISE;
+  var Kind_INTERFACE = Kotlin.Kind.INTERFACE;
   var Unit = Kotlin.kotlin.Unit;
-  var IntRange = Kotlin.kotlin.ranges.IntRange;
+  var abs = Kotlin.kotlin.math.abs_za3lpa$;
+  var listOf = Kotlin.kotlin.collections.listOf_i5x0yv$;
   var coroutines = $module$kotlinx_coroutines_core.kotlinx.coroutines;
   var delay = $module$kotlinx_coroutines_core.kotlinx.coroutines.delay_s8cxhz$;
   var COROUTINE_SUSPENDED = Kotlin.kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED;
@@ -23,10 +27,15 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   var launch = $module$kotlinx_coroutines_core.kotlinx.coroutines.launch_s496o7$;
   var L500 = Kotlin.Long.fromInt(500);
   var until = Kotlin.kotlin.ranges.until_dqglrj$;
-  var ensureNotNull = Kotlin.ensureNotNull;
   var toMutableList = Kotlin.kotlin.collections.toMutableList_4c7yge$;
   var numberToInt = Kotlin.numberToInt;
-  var toList = Kotlin.kotlin.collections.toList_7wnvza$;
+  var getCallableRef = Kotlin.getCallableRef;
+  Alys.prototype = Object.create(BoardGame.prototype);
+  Alys.prototype.constructor = Alys;
+  AlysType.prototype = Object.create(Enum.prototype);
+  AlysType.prototype.constructor = AlysType;
+  AlysDisplay.prototype = Object.create(GameDisplay.prototype);
+  AlysDisplay.prototype.constructor = AlysDisplay;
   Chess.prototype = Object.create(BoardGame.prototype);
   Chess.prototype.constructor = Chess;
   ChessPieceType.prototype = Object.create(Enum.prototype);
@@ -45,12 +54,671 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   Virus.prototype.constructor = Virus;
   VirusDisplay.prototype = Object.create(GameDisplay.prototype);
   VirusDisplay.prototype.constructor = VirusDisplay;
+  function Alys(state) {
+    if (state === void 0)
+      state = new AlysState();
+    BoardGame.call(this);
+    this.state_6qhq6m$_0 = state;
+  }
+  Object.defineProperty(Alys.prototype, 'state', {
+    get: function () {
+      return this.state_6qhq6m$_0;
+    },
+    set: function (state) {
+      this.state_6qhq6m$_0 = state;
+    }
+  });
+  Alys.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'Alys',
+    interfaces: [BoardGame]
+  };
+  function AlysState(width, height, playerCount, board, currentPlayer, players) {
+    if (width === void 0)
+      width = 5;
+    if (height === void 0)
+      height = 5;
+    if (playerCount === void 0)
+      playerCount = 4;
+    if (board === void 0)
+      board = new Grid(width, height, AlysState_init$lambda(playerCount));
+    if (currentPlayer === void 0)
+      currentPlayer = 1;
+    if (players === void 0)
+      players = toList(new IntRange(1, playerCount));
+    this.width = width;
+    this.height = height;
+    this.playerCount = playerCount;
+    this.board_312tuy$_0 = board;
+    this.currentPlayer_yz191a$_0 = currentPlayer;
+    this.players_4wz3pm$_0 = players;
+  }
+  Object.defineProperty(AlysState.prototype, 'board', {
+    get: function () {
+      return this.board_312tuy$_0;
+    }
+  });
+  Object.defineProperty(AlysState.prototype, 'currentPlayer', {
+    get: function () {
+      return this.currentPlayer_yz191a$_0;
+    }
+  });
+  Object.defineProperty(AlysState.prototype, 'players', {
+    get: function () {
+      return this.players_4wz3pm$_0;
+    }
+  });
+  var Random_0 = Kotlin.kotlin.random.Random;
+  var random_0 = Kotlin.kotlin.ranges.random_xmiyix$;
+  function AlysState$newGame$lambda(this$AlysState) {
+    return function (x, y) {
+      return new AlysField(random_0(new IntRange(1, this$AlysState.playerCount), Random_0.Default));
+    };
+  }
+  var ArrayList_init = Kotlin.kotlin.collections.ArrayList_init_287e2$;
+  AlysState.prototype.newGame_za3lpa$ = function (seed) {
+    if (seed === void 0)
+      seed = 1;
+    var tmp$, tmp$_0;
+    var random_0 = Random(seed);
+    var newBoard = new Grid(this.width, this.height, AlysState$newGame$lambda(this));
+    var state = new AlysState(this.width, this.height, this.playerCount, newBoard, 1, this.players);
+    var examinedArea = ArrayList_init();
+    tmp$ = newBoard.positions().iterator();
+    while (tmp$.hasNext()) {
+      var position = tmp$.next();
+      if (examinedArea.contains_11rb$(position))
+        continue;
+      var area = state.connectedPositions_dfplqh$(position);
+      examinedArea.addAll_brywnq$(area);
+      if (area.size < 2)
+        continue;
+      var basePosition = random(area, random_0);
+      var tmp$_1 = Kotlin.isType(tmp$_0 = newBoard.get_dfplqh$(basePosition), AlysField) ? tmp$_0 : throwCCE();
+      var tmp$_2 = void 0;
+      var tmp$_3 = void 0;
+      var destination = ArrayList_init();
+      var tmp$_4;
+      tmp$_4 = area.iterator();
+      while (tmp$_4.hasNext()) {
+        var element = tmp$_4.next();
+        var tmp$_5;
+        if ((Kotlin.isType(tmp$_5 = newBoard.get_dfplqh$(element), AlysField) ? tmp$_5 : throwCCE()).piece == null)
+          destination.add_11rb$(element);
+      }
+      newBoard.set_39d550$(basePosition, tmp$_1.copy_jcygvj$(tmp$_2, tmp$_3, destination.size * 5 | 0));
+    }
+    return state;
+  };
+  AlysState.prototype.isLegal_11rc$ = function (action) {
+    if (Kotlin.isType(action, AlysMoveAction))
+      return this.moveIsLegal_0(action);
+    if (Kotlin.isType(action, AlysCreateAction))
+      return this.createIsLegal_0(action);
+    return false;
+  };
+  AlysState.prototype.moveIsLegal_0 = function (action) {
+    return true;
+  };
+  AlysState.prototype.createIsLegal_0 = function (action) {
+    var tmp$, tmp$_0, tmp$_1;
+    tmp$ = this.board.get_dfplqh$(action.source);
+    if (tmp$ == null) {
+      return false;
+    }
+    var base = tmp$;
+    if (base.player !== this.currentPlayer)
+      return false;
+    tmp$_0 = base.treasury;
+    if (tmp$_0 == null) {
+      return false;
+    }
+    var treasury = tmp$_0;
+    if (action.type === AlysType$Fort_getInstance() && treasury >= 15)
+      return this.isConnected_vwqnnw$(action.source, action.destination) && ((tmp$_1 = this.board.get_dfplqh$(action.destination)) != null ? tmp$_1.player : null) === this.currentPlayer;
+    if (action.type === AlysType$Soldier_getInstance() && treasury >= 10)
+      return this.moveIsLegal_0(new AlysMoveAction(action.source, action.destination));
+    return false;
+  };
+  AlysState.prototype.possibleActions = function () {
+    var actions = ArrayList_init();
+    return toList(actions);
+  };
+  AlysState.prototype.nextState_11rc$ = function (action) {
+    var newBoard = this.board.copy_urw29u$();
+    if (Kotlin.isType(action, AlysMoveAction))
+      return this.nextStateFrom_0(action, newBoard);
+    if (Kotlin.isType(action, AlysCreateAction))
+      return this.nextStateFrom_1(action, newBoard);
+    if (Kotlin.isType(action, AlysEndTurnAction))
+      return this.nextStateFrom_2(action, newBoard);
+    return this.copy_gb7y5t$(void 0, void 0, void 0, newBoard);
+  };
+  AlysState.prototype.nextStateFrom_0 = function (action, newBoard) {
+    var tmp$, tmp$_0, tmp$_1, tmp$_2, tmp$_3, tmp$_4, tmp$_5, tmp$_6, tmp$_7;
+    tmp$_0 = (tmp$ = newBoard.get_dfplqh$(action.source)) != null ? tmp$.piece : null;
+    if (tmp$_0 == null) {
+      return this;
+    }
+    var piece = tmp$_0;
+    tmp$_1 = newBoard.get_dfplqh$(action.destination);
+    if (tmp$_1 == null) {
+      return this;
+    }
+    var destination = tmp$_1;
+    if (destination.player !== this.currentPlayer)
+      newBoard.set_39d550$(action.destination, destination.copy_jcygvj$(this.currentPlayer, piece.copy_thel6g$(void 0, void 0, true), null));
+    else {
+      var tmp$_8;
+      if (equals((tmp$_8 = destination.piece) != null ? tmp$_8.type : null, AlysType$Soldier_getInstance()))
+        newBoard.set_39d550$(action.destination, destination.copy_jcygvj$(void 0, destination.piece.copy_thel6g$(void 0, destination.piece.strength + 1 | 0)));
+      else
+        newBoard.set_39d550$(action.destination, destination.copy_jcygvj$(void 0, piece.copy_thel6g$(void 0, void 0, true)));
+    }
+    newBoard.set_39d550$(action.source, (Kotlin.isType(tmp$_2 = newBoard.get_dfplqh$(action.source), AlysField) ? tmp$_2 : throwCCE()).copy_jcygvj$(void 0, null));
+    var newState = this.copy_gb7y5t$(void 0, void 0, void 0, newBoard);
+    var area = newState.connectedPositions_dfplqh$(action.destination);
+    var firstBase = null;
+    tmp$_3 = area.size;
+    for (var i = 0; i < tmp$_3; i++) {
+      var treasury = (tmp$_4 = newBoard.get_dfplqh$(area.get_za3lpa$(i))) != null ? tmp$_4.treasury : null;
+      if (treasury != null) {
+        if (firstBase == null)
+          firstBase = area.get_za3lpa$(i);
+        else {
+          var base = Kotlin.isType(tmp$_5 = newBoard.get_dfplqh$(firstBase), AlysField) ? tmp$_5 : throwCCE();
+          newBoard.set_39d550$(firstBase, base.copy_jcygvj$(void 0, void 0, (typeof (tmp$_6 = base.treasury) === 'number' ? tmp$_6 : throwCCE()) + treasury | 0));
+          newBoard.set_39d550$(area.get_za3lpa$(i), (Kotlin.isType(tmp$_7 = newBoard.get_dfplqh$(area.get_za3lpa$(i)), AlysField) ? tmp$_7 : throwCCE()).copy_jcygvj$(void 0, void 0, null));
+        }
+      }
+    }
+    return newState;
+  };
+  AlysState.prototype.nextStateFrom_1 = function (action, newBoard) {
+    var tmp$, tmp$_0, tmp$_1, tmp$_2, tmp$_3, tmp$_4;
+    tmp$ = newBoard.get_dfplqh$(action.source);
+    if (tmp$ == null) {
+      return this;
+    }
+    var source = tmp$;
+    if (action.type === AlysType$Soldier_getInstance()) {
+      tmp$_2 = action.source;
+      tmp$_1 = (typeof (tmp$_0 = source.treasury) === 'number' ? tmp$_0 : throwCCE()) - 10 | 0;
+      newBoard.set_39d550$(tmp$_2, source.copy_jcygvj$(void 0, new AlysPiece(AlysType$Soldier_getInstance()), tmp$_1));
+      return this.nextStateFrom_0(new AlysMoveAction(action.source, action.destination), newBoard);
+    }
+     else if (action.type === AlysType$Fort_getInstance()) {
+      newBoard.set_39d550$(action.source, source.copy_jcygvj$(void 0, void 0, (typeof (tmp$_3 = source.treasury) === 'number' ? tmp$_3 : throwCCE()) - 15 | 0));
+      newBoard.set_39d550$(action.destination, (Kotlin.isType(tmp$_4 = newBoard.get_dfplqh$(action.destination), AlysField) ? tmp$_4 : throwCCE()).copy_jcygvj$(void 0, new AlysPiece(AlysType$Fort_getInstance())));
+      return this.copy_gb7y5t$(void 0, void 0, void 0, newBoard);
+    }
+    return this;
+  };
+  AlysState.prototype.nextStateFrom_2 = function (action, newBoard) {
+    return this;
+  };
+  AlysState.prototype.findWinner = function () {
+    return null;
+  };
+  AlysState.prototype.isConnected_vwqnnw$ = function (source, destination) {
+    var tmp$;
+    var area = this.connectedPositions_dfplqh$(source);
+    tmp$ = destination.adjacentHexes().iterator();
+    while (tmp$.hasNext()) {
+      var pos = tmp$.next();
+      if (area.contains_11rb$(pos))
+        return true;
+    }
+    return false;
+  };
+  var emptyList = Kotlin.kotlin.collections.emptyList_287e2$;
+  AlysState.prototype.connectedPositions_dfplqh$ = function (source) {
+    var tmp$;
+    tmp$ = this.board.get_dfplqh$(source);
+    if (tmp$ == null) {
+      return emptyList();
+    }
+    var base = tmp$;
+    var front = mutableListOf([source]);
+    var connected = mutableListOf([source]);
+    while (!front.isEmpty()) {
+      var nextPosition = front.removeAt_za3lpa$(0);
+      var $receiver = nextPosition.adjacentHexes();
+      var destination = ArrayList_init();
+      var tmp$_0;
+      tmp$_0 = $receiver.iterator();
+      while (tmp$_0.hasNext()) {
+        var element = tmp$_0.next();
+        var tmp$_1;
+        if (this.board.isWithinBounds_dfplqh$(element) && ((tmp$_1 = this.board.get_dfplqh$(element)) != null ? tmp$_1.player : null) === base.player)
+          destination.add_11rb$(element);
+      }
+      var destination_0 = ArrayList_init();
+      var tmp$_2;
+      tmp$_2 = destination.iterator();
+      while (tmp$_2.hasNext()) {
+        var element_0 = tmp$_2.next();
+        if (!connected.contains_11rb$(element_0))
+          destination_0.add_11rb$(element_0);
+      }
+      var newConnected = destination_0;
+      connected.addAll_brywnq$(newConnected);
+      front.addAll_brywnq$(newConnected);
+    }
+    return connected;
+  };
+  function AlysState_init$lambda(closure$playerCount) {
+    return function (x, y) {
+      return new AlysField(random_0(new IntRange(1, closure$playerCount), Random_0.Default));
+    };
+  }
+  AlysState.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'AlysState',
+    interfaces: [BoardGameState]
+  };
+  AlysState.prototype.component1 = function () {
+    return this.width;
+  };
+  AlysState.prototype.component2 = function () {
+    return this.height;
+  };
+  AlysState.prototype.component3 = function () {
+    return this.playerCount;
+  };
+  AlysState.prototype.component4 = function () {
+    return this.board;
+  };
+  AlysState.prototype.component5 = function () {
+    return this.currentPlayer;
+  };
+  AlysState.prototype.component6 = function () {
+    return this.players;
+  };
+  AlysState.prototype.copy_gb7y5t$ = function (width, height, playerCount, board, currentPlayer, players) {
+    return new AlysState(width === void 0 ? this.width : width, height === void 0 ? this.height : height, playerCount === void 0 ? this.playerCount : playerCount, board === void 0 ? this.board : board, currentPlayer === void 0 ? this.currentPlayer : currentPlayer, players === void 0 ? this.players : players);
+  };
+  AlysState.prototype.toString = function () {
+    return 'AlysState(width=' + Kotlin.toString(this.width) + (', height=' + Kotlin.toString(this.height)) + (', playerCount=' + Kotlin.toString(this.playerCount)) + (', board=' + Kotlin.toString(this.board)) + (', currentPlayer=' + Kotlin.toString(this.currentPlayer)) + (', players=' + Kotlin.toString(this.players)) + ')';
+  };
+  AlysState.prototype.hashCode = function () {
+    var result = 0;
+    result = result * 31 + Kotlin.hashCode(this.width) | 0;
+    result = result * 31 + Kotlin.hashCode(this.height) | 0;
+    result = result * 31 + Kotlin.hashCode(this.playerCount) | 0;
+    result = result * 31 + Kotlin.hashCode(this.board) | 0;
+    result = result * 31 + Kotlin.hashCode(this.currentPlayer) | 0;
+    result = result * 31 + Kotlin.hashCode(this.players) | 0;
+    return result;
+  };
+  AlysState.prototype.equals = function (other) {
+    return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.width, other.width) && Kotlin.equals(this.height, other.height) && Kotlin.equals(this.playerCount, other.playerCount) && Kotlin.equals(this.board, other.board) && Kotlin.equals(this.currentPlayer, other.currentPlayer) && Kotlin.equals(this.players, other.players)))));
+  };
+  function AlysField(player, piece, treasury) {
+    if (piece === void 0)
+      piece = null;
+    if (treasury === void 0)
+      treasury = null;
+    this.player = player;
+    this.piece = piece;
+    this.treasury = treasury;
+  }
+  AlysField.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'AlysField',
+    interfaces: []
+  };
+  AlysField.prototype.component1 = function () {
+    return this.player;
+  };
+  AlysField.prototype.component2 = function () {
+    return this.piece;
+  };
+  AlysField.prototype.component3 = function () {
+    return this.treasury;
+  };
+  AlysField.prototype.copy_jcygvj$ = function (player, piece, treasury) {
+    return new AlysField(player === void 0 ? this.player : player, piece === void 0 ? this.piece : piece, treasury === void 0 ? this.treasury : treasury);
+  };
+  AlysField.prototype.toString = function () {
+    return 'AlysField(player=' + Kotlin.toString(this.player) + (', piece=' + Kotlin.toString(this.piece)) + (', treasury=' + Kotlin.toString(this.treasury)) + ')';
+  };
+  AlysField.prototype.hashCode = function () {
+    var result = 0;
+    result = result * 31 + Kotlin.hashCode(this.player) | 0;
+    result = result * 31 + Kotlin.hashCode(this.piece) | 0;
+    result = result * 31 + Kotlin.hashCode(this.treasury) | 0;
+    return result;
+  };
+  AlysField.prototype.equals = function (other) {
+    return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.player, other.player) && Kotlin.equals(this.piece, other.piece) && Kotlin.equals(this.treasury, other.treasury)))));
+  };
+  function AlysPiece(type, strength, hasMoved) {
+    if (strength === void 0)
+      strength = 1;
+    if (hasMoved === void 0)
+      hasMoved = false;
+    this.type = type;
+    this.strength = strength;
+    this.hasMoved = hasMoved;
+  }
+  AlysPiece.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'AlysPiece',
+    interfaces: []
+  };
+  AlysPiece.prototype.component1 = function () {
+    return this.type;
+  };
+  AlysPiece.prototype.component2 = function () {
+    return this.strength;
+  };
+  AlysPiece.prototype.component3 = function () {
+    return this.hasMoved;
+  };
+  AlysPiece.prototype.copy_thel6g$ = function (type, strength, hasMoved) {
+    return new AlysPiece(type === void 0 ? this.type : type, strength === void 0 ? this.strength : strength, hasMoved === void 0 ? this.hasMoved : hasMoved);
+  };
+  AlysPiece.prototype.toString = function () {
+    return 'AlysPiece(type=' + Kotlin.toString(this.type) + (', strength=' + Kotlin.toString(this.strength)) + (', hasMoved=' + Kotlin.toString(this.hasMoved)) + ')';
+  };
+  AlysPiece.prototype.hashCode = function () {
+    var result = 0;
+    result = result * 31 + Kotlin.hashCode(this.type) | 0;
+    result = result * 31 + Kotlin.hashCode(this.strength) | 0;
+    result = result * 31 + Kotlin.hashCode(this.hasMoved) | 0;
+    return result;
+  };
+  AlysPiece.prototype.equals = function (other) {
+    return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.type, other.type) && Kotlin.equals(this.strength, other.strength) && Kotlin.equals(this.hasMoved, other.hasMoved)))));
+  };
+  function AlysType(name, ordinal) {
+    Enum.call(this);
+    this.name$ = name;
+    this.ordinal$ = ordinal;
+  }
+  function AlysType_initFields() {
+    AlysType_initFields = function () {
+    };
+    AlysType$Fort_instance = new AlysType('Fort', 0);
+    AlysType$Soldier_instance = new AlysType('Soldier', 1);
+    AlysType$Grave_instance = new AlysType('Grave', 2);
+    AlysType$Tree_instance = new AlysType('Tree', 3);
+    AlysType$CoastTree_instance = new AlysType('CoastTree', 4);
+  }
+  var AlysType$Fort_instance;
+  function AlysType$Fort_getInstance() {
+    AlysType_initFields();
+    return AlysType$Fort_instance;
+  }
+  var AlysType$Soldier_instance;
+  function AlysType$Soldier_getInstance() {
+    AlysType_initFields();
+    return AlysType$Soldier_instance;
+  }
+  var AlysType$Grave_instance;
+  function AlysType$Grave_getInstance() {
+    AlysType_initFields();
+    return AlysType$Grave_instance;
+  }
+  var AlysType$Tree_instance;
+  function AlysType$Tree_getInstance() {
+    AlysType_initFields();
+    return AlysType$Tree_instance;
+  }
+  var AlysType$CoastTree_instance;
+  function AlysType$CoastTree_getInstance() {
+    AlysType_initFields();
+    return AlysType$CoastTree_instance;
+  }
+  AlysType.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'AlysType',
+    interfaces: [Enum]
+  };
+  function AlysType$values() {
+    return [AlysType$Fort_getInstance(), AlysType$Soldier_getInstance(), AlysType$Grave_getInstance(), AlysType$Tree_getInstance(), AlysType$CoastTree_getInstance()];
+  }
+  AlysType.values = AlysType$values;
+  function AlysType$valueOf(name) {
+    switch (name) {
+      case 'Fort':
+        return AlysType$Fort_getInstance();
+      case 'Soldier':
+        return AlysType$Soldier_getInstance();
+      case 'Grave':
+        return AlysType$Grave_getInstance();
+      case 'Tree':
+        return AlysType$Tree_getInstance();
+      case 'CoastTree':
+        return AlysType$CoastTree_getInstance();
+      default:throwISE('No enum constant AlysType.' + name);
+    }
+  }
+  AlysType.valueOf_61zpoe$ = AlysType$valueOf;
+  function AlysAction() {
+  }
+  AlysAction.$metadata$ = {
+    kind: Kind_INTERFACE,
+    simpleName: 'AlysAction',
+    interfaces: []
+  };
+  function AlysMoveAction(source, destination) {
+    this.source = source;
+    this.destination = destination;
+  }
+  AlysMoveAction.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'AlysMoveAction',
+    interfaces: [AlysAction]
+  };
+  AlysMoveAction.prototype.component1 = function () {
+    return this.source;
+  };
+  AlysMoveAction.prototype.component2 = function () {
+    return this.destination;
+  };
+  AlysMoveAction.prototype.copy_vwqnnw$ = function (source, destination) {
+    return new AlysMoveAction(source === void 0 ? this.source : source, destination === void 0 ? this.destination : destination);
+  };
+  AlysMoveAction.prototype.toString = function () {
+    return 'AlysMoveAction(source=' + Kotlin.toString(this.source) + (', destination=' + Kotlin.toString(this.destination)) + ')';
+  };
+  AlysMoveAction.prototype.hashCode = function () {
+    var result = 0;
+    result = result * 31 + Kotlin.hashCode(this.source) | 0;
+    result = result * 31 + Kotlin.hashCode(this.destination) | 0;
+    return result;
+  };
+  AlysMoveAction.prototype.equals = function (other) {
+    return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.source, other.source) && Kotlin.equals(this.destination, other.destination)))));
+  };
+  function AlysCreateAction(type, source, destination) {
+    this.type = type;
+    this.source = source;
+    this.destination = destination;
+  }
+  AlysCreateAction.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'AlysCreateAction',
+    interfaces: [AlysAction]
+  };
+  AlysCreateAction.prototype.component1 = function () {
+    return this.type;
+  };
+  AlysCreateAction.prototype.component2 = function () {
+    return this.source;
+  };
+  AlysCreateAction.prototype.component3 = function () {
+    return this.destination;
+  };
+  AlysCreateAction.prototype.copy_yn4ggv$ = function (type, source, destination) {
+    return new AlysCreateAction(type === void 0 ? this.type : type, source === void 0 ? this.source : source, destination === void 0 ? this.destination : destination);
+  };
+  AlysCreateAction.prototype.toString = function () {
+    return 'AlysCreateAction(type=' + Kotlin.toString(this.type) + (', source=' + Kotlin.toString(this.source)) + (', destination=' + Kotlin.toString(this.destination)) + ')';
+  };
+  AlysCreateAction.prototype.hashCode = function () {
+    var result = 0;
+    result = result * 31 + Kotlin.hashCode(this.type) | 0;
+    result = result * 31 + Kotlin.hashCode(this.source) | 0;
+    result = result * 31 + Kotlin.hashCode(this.destination) | 0;
+    return result;
+  };
+  AlysCreateAction.prototype.equals = function (other) {
+    return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.type, other.type) && Kotlin.equals(this.source, other.source) && Kotlin.equals(this.destination, other.destination)))));
+  };
+  function AlysEndTurnAction() {
+  }
+  AlysEndTurnAction.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'AlysEndTurnAction',
+    interfaces: [AlysAction]
+  };
+  function AlysDisplay(canvas, infoArea) {
+    GameDisplay.call(this, canvas, infoArea);
+    this.game_6mofcn$_0 = new Alys();
+    this.sourcePosition = null;
+    this.getColor_vm40yk$_0 = AlysDisplay$getColor$lambda(this);
+    this.draw_6lbnvp$_0 = AlysDisplay$draw$lambda;
+    var $receiver = this.game.players;
+    var value = 'Player 1';
+    $receiver.put_xwzc9p$(1, value);
+    var $receiver_0 = this.players;
+    var key = 'Player 1';
+    var value_0 = new Player();
+    $receiver_0.put_xwzc9p$(key, value_0);
+    var $receiver_1 = this.game.players;
+    var value_1 = 'Player 2';
+    $receiver_1.put_xwzc9p$(2, value_1);
+    var $receiver_2 = this.players;
+    var key_0 = 'Player 2';
+    var value_2 = new Player();
+    $receiver_2.put_xwzc9p$(key_0, value_2);
+    var $receiver_3 = this.game.players;
+    var value_3 = 'Player 3';
+    $receiver_3.put_xwzc9p$(3, value_3);
+    var $receiver_4 = this.players;
+    var key_1 = 'Player 3';
+    var value_4 = new Player();
+    $receiver_4.put_xwzc9p$(key_1, value_4);
+    var $receiver_5 = this.game.players;
+    var value_5 = 'Player 4';
+    $receiver_5.put_xwzc9p$(4, value_5);
+    var $receiver_6 = this.players;
+    var key_2 = 'Player 4';
+    var value_6 = new Player();
+    $receiver_6.put_xwzc9p$(key_2, value_6);
+    this.game.state = this.game.state.newGame_za3lpa$();
+    this.gridDisplay.fieldSize = 39.0;
+    this.gridDisplay.showHexagons();
+    this.updateDisplay_pdl1vj$(null);
+    this.gridDisplay.onClick = AlysDisplay_init$lambda(this);
+  }
+  Object.defineProperty(AlysDisplay.prototype, 'game', {
+    get: function () {
+      return this.game_6mofcn$_0;
+    },
+    set: function (game) {
+      this.game_6mofcn$_0 = game;
+    }
+  });
+  Object.defineProperty(AlysDisplay.prototype, 'getColor', {
+    get: function () {
+      return this.getColor_vm40yk$_0;
+    }
+  });
+  Object.defineProperty(AlysDisplay.prototype, 'draw', {
+    get: function () {
+      return this.draw_6lbnvp$_0;
+    }
+  });
+  function AlysDisplay$getColor$lambda(this$AlysDisplay) {
+    return function (f, x, y) {
+      var tmp$, tmp$_0;
+      var source = this$AlysDisplay.sourcePosition;
+      if (source != null && source.x === x && source.y === y)
+        return 'darkgrey';
+      tmp$ = this$AlysDisplay.game.state.board.get_vux9f0$(x, y);
+      if (tmp$ == null) {
+        return 'transparent';
+      }
+      var piece = tmp$;
+      switch (piece.player) {
+        case 1:
+          tmp$_0 = 'yellow';
+          break;
+        case 2:
+          tmp$_0 = 'green';
+          break;
+        case 3:
+          tmp$_0 = 'lightgreen';
+          break;
+        case 4:
+          tmp$_0 = 'orange';
+          break;
+        default:tmp$_0 = 'white';
+          break;
+      }
+      return tmp$_0;
+    };
+  }
+  function AlysDisplay$draw$lambda(context, fieldSize, piece, f, f_0) {
+    var tmp$, tmp$_0;
+    if (piece == null)
+      return;
+    context.fillStyle = 'black';
+    context.font = fieldSize.toString() + 'px arial';
+    context.textBaseline = 'top';
+    if (piece.treasury != null)
+      context.fillText(piece.treasury.toString(), 0.0, 0.0);
+    else if (equals((tmp$ = piece.piece) != null ? tmp$.type : null, AlysType$Fort_getInstance()))
+      context.fillText('F', 0.0, 0.0);
+    else if (equals((tmp$_0 = piece.piece) != null ? tmp$_0.type : null, AlysType$Soldier_getInstance()))
+      context.fillText('S', 0.0, 0.0);
+    return Unit;
+  }
+  var Map = Kotlin.kotlin.collections.Map;
+  function AlysDisplay_init$lambda(this$AlysDisplay) {
+    return function (it) {
+      var tmp$;
+      var $receiver = this$AlysDisplay.players;
+      var key = this$AlysDisplay.game.currentPlayer();
+      var tmp$_0;
+      if (Kotlin.isType((Kotlin.isType(tmp$_0 = $receiver, Map) ? tmp$_0 : throwCCE()).get_11rb$(key), Player) && this$AlysDisplay.game.state.board.isWithinBounds_dfplqh$(it)) {
+        var source = this$AlysDisplay.sourcePosition;
+        if (source == null) {
+          this$AlysDisplay.sourcePosition = it;
+          this$AlysDisplay.updateDisplay_pdl1vj$(this$AlysDisplay.game.winner);
+        }
+         else {
+          this$AlysDisplay.sourcePosition = null;
+          tmp$ = this$AlysDisplay.game.state.board.get_dfplqh$(source);
+          if (tmp$ == null) {
+            return;
+          }
+          var sourceField = tmp$;
+          if (sourceField.player !== this$AlysDisplay.game.state.currentPlayer)
+            return;
+          if (sourceField.piece != null)
+            this$AlysDisplay.performAction_11re$(new AlysMoveAction(source, it));
+          else
+            this$AlysDisplay.performAction_11re$(new AlysCreateAction(AlysType$Soldier_getInstance(), source, it));
+        }
+      }
+      return Unit;
+    };
+  }
+  AlysDisplay.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'AlysDisplay',
+    interfaces: [GameDisplay]
+  };
   var LinkedHashMap_init = Kotlin.kotlin.collections.LinkedHashMap_init_q3lmfv$;
   function BoardGame() {
     this.players = LinkedHashMap_init();
     this.winner = null;
   }
-  var Map = Kotlin.kotlin.collections.Map;
   BoardGame.prototype.performAction_11rd$ = function (action) {
     var tmp$;
     if (!this.state.isLegal_11rc$(action))
@@ -98,7 +766,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   };
   function ChessState(board, currentPlayer, players) {
     if (board === void 0)
-      board = new SquareGrid(8, 8, ChessState_init$lambda);
+      board = new Grid(8, 8, ChessState_init$lambda);
     if (currentPlayer === void 0)
       currentPlayer = ChessPlayer$White_getInstance();
     if (players === void 0)
@@ -134,7 +802,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     var enemy = this.board.get_dfplqh$(action.destination);
     if (equals(enemy != null ? enemy.player : null, this.currentPlayer))
       return false;
-    if (!piece.isLegal_xm7weo$(this.board, action))
+    if (!piece.isLegal_w8obu5$(this.board, action))
       return false;
     var newState = this.nextState_11rc$(action);
     var $receiver = newState.board.fields;
@@ -157,9 +825,8 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     var index_0 = indexOfFirst$result;
     var position = new Position(index_0 % 8, index_0 / 8 | 0);
     var king = Kotlin.isType(tmp$_0 = newState.board.get_dfplqh$(position), ChessPiece) ? tmp$_0 : throwCCE();
-    return !king.isInCheck_iy0w7l$(newState.board, position);
+    return !king.isInCheck_wzxs7i$(newState.board, position);
   };
-  var ArrayList_init = Kotlin.kotlin.collections.ArrayList_init_287e2$;
   ChessState.prototype.possibleActions = function () {
     var actions = ArrayList_init();
     for (var i = 0; i < 8; i++) {
@@ -167,7 +834,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
         var piece = this.board.get_vux9f0$(i, j);
         if (!equals(piece != null ? piece.player : null, this.currentPlayer))
           continue;
-        actions.addAll_brywnq$(piece.possibleMoves_iy0w7l$(this.board, new Position(i, j)));
+        actions.addAll_brywnq$(piece.possibleMoves_wzxs7i$(this.board, new Position(i, j)));
       }
     }
     var destination = ArrayList_init();
@@ -201,7 +868,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
         var piece = this.board.get_vux9f0$(i, j);
         if (!equals(piece != null ? piece.player : null, this.currentPlayer))
           continue;
-        var $receiver = piece.possibleMoves_iy0w7l$(this.board, new Position(i, j));
+        var $receiver = piece.possibleMoves_wzxs7i$(this.board, new Position(i, j));
         var destination = ArrayList_init();
         var tmp$;
         tmp$ = $receiver.iterator();
@@ -291,7 +958,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   ChessState.prototype.component3 = function () {
     return this.players;
   };
-  ChessState.prototype.copy_tdyev3$ = function (board, currentPlayer, players) {
+  ChessState.prototype.copy_d7oxyc$ = function (board, currentPlayer, players) {
     return new ChessState(board === void 0 ? this.board : board, currentPlayer === void 0 ? this.currentPlayer : currentPlayer, players === void 0 ? this.players : players);
   };
   ChessState.prototype.toString = function () {
@@ -468,7 +1135,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     var value_0 = new RandomAIPlayer();
     $receiver_2.put_xwzc9p$('Black', value_0);
     this.updateDisplay_pdl1vj$(null);
-    this.squareDisplay.onClick = ChessDisplay_init$lambda(this);
+    this.gridDisplay.onClick = ChessDisplay_init$lambda(this);
   }
   Object.defineProperty(ChessDisplay.prototype, 'game', {
     get: function () {
@@ -552,7 +1219,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     this.player = player;
     this.hasMoved = hasMoved;
   }
-  ChessPiece.prototype.isLegal_xm7weo$ = function (board, action) {
+  ChessPiece.prototype.isLegal_w8obu5$ = function (board, action) {
     var tmp$;
     switch (this.type.name) {
       case 'King':
@@ -582,7 +1249,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     var tmp$, tmp$_0, tmp$_1, tmp$_2, tmp$_3, tmp$_4, tmp$_5, tmp$_6;
     if (abs(action.source.x - action.destination.x | 0) <= 1 && abs(action.source.y - action.destination.y | 0) <= 1)
       return true;
-    if (this.hasMoved || this.isInCheck_iy0w7l$(board, action.source))
+    if (this.hasMoved || this.isInCheck_wzxs7i$(board, action.source))
       return false;
     if (this.player === ChessPlayer$White_getInstance()) {
       if ((action.source.x - action.destination.x | 0) === 2 && action.source.y === action.destination.y) {
@@ -743,7 +1410,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   ChessPiece.prototype.isIntermediatePositionSafe_0 = function (board, intermediatePosition, originalPosition) {
     board.set_39d550$(intermediatePosition, this);
     board.set_39d550$(originalPosition, null);
-    if (this.isInCheck_iy0w7l$(board, intermediatePosition)) {
+    if (this.isInCheck_wzxs7i$(board, intermediatePosition)) {
       board.set_39d550$(intermediatePosition, null);
       board.set_39d550$(originalPosition, this);
       return false;
@@ -752,7 +1419,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     board.set_39d550$(originalPosition, this);
     return true;
   };
-  ChessPiece.prototype.isInCheck_iy0w7l$ = function (board, position) {
+  ChessPiece.prototype.isInCheck_wzxs7i$ = function (board, position) {
     var tmp$, tmp$_0, tmp$_1;
     tmp$ = board.height;
     for (var i = 0; i < tmp$; i++) {
@@ -764,13 +1431,13 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
         }
         var piece = tmp$_1;
         if (piece.player !== this.player && piece.type !== ChessPieceType$King_getInstance())
-          if (piece.isLegal_xm7weo$(board, new ChessAction(new Position(i, j), position)))
+          if (piece.isLegal_w8obu5$(board, new ChessAction(new Position(i, j), position)))
             return true;
       }
     }
     return false;
   };
-  ChessPiece.prototype.possibleMoves_iy0w7l$ = function (board, position) {
+  ChessPiece.prototype.possibleMoves_wzxs7i$ = function (board, position) {
     var tmp$;
     switch (this.type.name) {
       case 'King':
@@ -975,7 +1642,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   function GameDisplay(canvas, infoArea) {
     this.canvas = canvas;
     this.infoArea = infoArea;
-    this.squareDisplay = new SquareGridDisplay(this.canvas);
+    this.gridDisplay = new GridDisplay(this.canvas);
     this.aiDelay = L500;
     this.players = LinkedHashMap_init();
   }
@@ -994,7 +1661,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
       this.infoArea.textContent = winner + ' has won!';
     else
       this.infoArea.textContent = 'Current player: ' + this.game.currentPlayer();
-    this.squareDisplay.display_j6czkq$(this.game.state.board, this.getColor, this.draw);
+    this.gridDisplay.display_31tjs9$(this.game.state.board, this.getColor, this.draw);
   };
   function GameDisplay$awaitActionFrom$lambda(this$GameDisplay_0, closure$player_0) {
     return function ($receiver, continuation_0, suspended) {
@@ -1057,7 +1724,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     }
   };
   GameDisplay.prototype.end = function () {
-    this.squareDisplay.end();
+    this.gridDisplay.end();
   };
   GameDisplay.$metadata$ = {
     kind: Kind_CLASS,
@@ -1080,11 +1747,9 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   };
   function RandomAIPlayer() {
   }
-  var Random = Kotlin.kotlin.random.Random;
-  var random = Kotlin.kotlin.ranges.random_xmiyix$;
   RandomAIPlayer.prototype.requestAction_11rb$ = function (state) {
     var actions = state.possibleActions();
-    return actions.get_za3lpa$(random(until(0, actions.size), Random.Default));
+    return actions.get_za3lpa$(random_0(until(0, actions.size), Random_0.Default));
   };
   RandomAIPlayer.prototype.endGame_iuyhfk$ = function (state, won) {
   };
@@ -1093,52 +1758,255 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     simpleName: 'RandomAIPlayer',
     interfaces: [AIPlayer]
   };
-  function main$lambda(closure$game, closure$canvas, closure$infoArea) {
-    return function (it) {
-      var tmp$;
-      (tmp$ = closure$game.v) != null ? (tmp$.end(), Unit) : null;
-      closure$game.v = new TicTacToeDisplay(closure$canvas, closure$infoArea);
+  var ArrayList_init_0 = Kotlin.kotlin.collections.ArrayList_init_ww73n8$;
+  function Grid(width, height, init, fields) {
+    if (fields === void 0) {
+      var size = Kotlin.imul(width, height);
+      var list = ArrayList_init_0(size);
+      for (var index = 0; index < size; index++) {
+        list.add_11rb$(init(index % width, index / width | 0));
+      }
+      fields = list;
+    }
+    this.width = width;
+    this.height = height;
+    this.init = init;
+    this.fields = fields;
+  }
+  Grid.prototype.get_vux9f0$ = function (x, y) {
+    return this.fields.get_za3lpa$(x + Kotlin.imul(this.width, y) | 0);
+  };
+  Grid.prototype.get_dfplqh$ = function (position) {
+    return this.fields.get_za3lpa$(position.x + Kotlin.imul(this.width, position.y) | 0);
+  };
+  Grid.prototype.set_vq7693$ = function (x, y, value) {
+    this.fields.set_wxm5ur$(x + Kotlin.imul(this.width, y) | 0, value);
+  };
+  Grid.prototype.set_39d550$ = function (position, value) {
+    this.fields.set_wxm5ur$(position.x + Kotlin.imul(this.width, position.y) | 0, value);
+  };
+  Grid.prototype.copy_urw29u$ = function (width, height, init, fields) {
+    if (width === void 0)
+      width = this.width;
+    if (height === void 0)
+      height = this.height;
+    if (init === void 0)
+      init = this.init;
+    if (fields === void 0)
+      fields = toMutableList(this.fields);
+    return new Grid(width, height, init, fields);
+  };
+  Grid.prototype.isWithinBounds_dfplqh$ = function (position) {
+    var tmp$, tmp$_0, tmp$_1, tmp$_2, tmp$_3;
+    tmp$ = this.width;
+    tmp$_0 = position.x;
+    if (0 <= tmp$_0 && tmp$_0 < tmp$) {
+      tmp$_1 = this.height;
+      tmp$_2 = position.y;
+      tmp$_3 = (0 <= tmp$_2 && tmp$_2 < tmp$_1);
+    }
+     else
+      tmp$_3 = false;
+    return tmp$_3;
+  };
+  Grid.prototype.positions = function () {
+    var size = this.fields.size;
+    var list = ArrayList_init_0(size);
+    for (var index = 0; index < size; index++) {
+      list.add_11rb$(new Position(index % this.width, index / this.width | 0));
+    }
+    return list;
+  };
+  Grid.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'Grid',
+    interfaces: []
+  };
+  function GridDisplay(canvas) {
+    this.canvas = canvas;
+    var tmp$;
+    this.context = Kotlin.isType(tmp$ = this.canvas.getContext('2d'), CanvasRenderingContext2D) ? tmp$ : throwCCE();
+    this.hexagonal_0 = false;
+    this.fieldSize = 40.0;
+    this.gridThickness = 1.0;
+    this.hexPath = new Path2D();
+    this.hexPathOffset = new Path2D();
+    this.hexDeltaX = 0.0;
+    this.hexDeltaY = 0.0;
+    this.translateX = 0.0;
+    this.onClick = null;
+    this.clickListener = GridDisplay$clickListener$lambda(this);
+    this.canvas.addEventListener('click', this.clickListener);
+  }
+  GridDisplay.prototype.display_31tjs9$ = function (grid, fillStyle, draw) {
+    if (fillStyle === void 0)
+      fillStyle = null;
+    if (draw === void 0)
+      draw = null;
+    var tmp$, tmp$_0, tmp$_1;
+    var deltaX = this.hexagonal_0 ? this.hexDeltaX : this.fieldSize + this.gridThickness;
+    var deltaY = this.hexagonal_0 ? this.hexDeltaY : this.fieldSize + this.gridThickness;
+    var offset = this.hexagonal_0 ? (this.gridThickness + this.fieldSize) / 2 : 0.0;
+    var extraY = this.hexagonal_0 ? this.fieldSize / (2 * Math_0.sqrt(3.0)) : 0.0;
+    this.translateX = (this.canvas.clientWidth - grid.width * deltaX) / 2;
+    this.context.fillStyle = 'black';
+    if (this.gridThickness > 0)
+      this.context.fillRect(this.translateX, 0.0, grid.height * deltaX + this.gridThickness + offset, grid.width * deltaY + this.gridThickness + extraY);
+    tmp$ = grid.height;
+    for (var y = 0; y < tmp$; y++) {
+      tmp$_0 = grid.width;
+      for (var x = 0; x < tmp$_0; x++) {
+        this.context.fillStyle = (tmp$_1 = fillStyle != null ? fillStyle(grid.get_vux9f0$(x, y), x, y) : null) != null ? tmp$_1 : 'white';
+        if (this.hexagonal_0)
+          this.drawHexagon_0(x, y);
+        else
+          this.drawSquare_0(x, y);
+        if (draw != null) {
+          this.context.save();
+          this.context.translate(x * deltaX + this.translateX + (y % 2 === 0 ? offset : 0.0), y * deltaY);
+          draw(this.context, this.fieldSize, grid.get_vux9f0$(x, y), x, y);
+          this.context.restore();
+        }
+      }
+    }
+  };
+  GridDisplay.prototype.drawSquare_0 = function (x, y) {
+    this.context.fillRect(this.translateX + this.gridThickness + x * (this.fieldSize + this.gridThickness), this.gridThickness + y * (this.fieldSize + this.gridThickness), this.fieldSize, this.fieldSize);
+  };
+  GridDisplay.prototype.drawHexagon_0 = function (x, y) {
+    this.context.save();
+    this.context.translate(x * this.hexDeltaX + this.translateX, y * this.hexDeltaY);
+    this.context.fill(y % 2 === 0 ? this.hexPath : this.hexPathOffset);
+    this.context.restore();
+  };
+  GridDisplay.prototype.showHexagons = function () {
+    this.hexagonal_0 = true;
+    this.hexDeltaX = this.fieldSize + this.gridThickness;
+    this.hexDeltaY = 3 * (this.fieldSize / (2 * Math_0.sqrt(3.0))) + this.gridThickness / Math_0.sqrt(3.0);
+    this.hexPath = this.createHexagonPath_0(false);
+    this.hexPathOffset = this.createHexagonPath_0(true);
+  };
+  GridDisplay.prototype.createHexagonPath_0 = function (offset) {
+    var halfWidth = this.fieldSize / 2;
+    var fourthHeight = this.fieldSize / (2 * Math_0.sqrt(3.0));
+    var offsetWidth = offset ? 0.0 : halfWidth + this.gridThickness / 2;
+    var path = new Path2D();
+    path.moveTo(0.0 + offsetWidth, fourthHeight);
+    path.lineTo(halfWidth + offsetWidth, 0.0);
+    path.lineTo(halfWidth * 2 + offsetWidth, fourthHeight);
+    path.lineTo(halfWidth * 2 + offsetWidth, fourthHeight * 3);
+    path.lineTo(halfWidth + offsetWidth, fourthHeight * 4);
+    path.lineTo(0.0 + offsetWidth, fourthHeight * 3);
+    path.closePath();
+    return path;
+  };
+  GridDisplay.prototype.end = function () {
+    var tmp$;
+    this.canvas.removeEventListener('click', this.clickListener);
+    var context = Kotlin.isType(tmp$ = this.canvas.getContext('2d'), CanvasRenderingContext2D) ? tmp$ : throwCCE();
+    context.clearRect(0.0, 0.0, this.canvas.width, this.canvas.height);
+  };
+  GridDisplay.prototype.gridCoordsAt_vux9f0$ = function (canvasX, canvasY) {
+    if (this.hexagonal_0)
+      return this.hexCoords_0(canvasX - numberToInt(this.translateX) | 0, canvasY);
+    return this.squareCoords_0(canvasX - numberToInt(this.translateX) | 0, canvasY);
+  };
+  GridDisplay.prototype.hexCoords_0 = function (canvasX, canvasY) {
+    var tmp$;
+    var gridX = numberToInt(canvasX / this.hexDeltaX);
+    var gridY = numberToInt(canvasY / this.hexDeltaY);
+    var nearestPosition = new Position(gridX, gridY);
+    var smallestDistance = this.distanceToHex_0(canvasX, canvasY, nearestPosition);
+    tmp$ = nearestPosition.adjacentHexes().iterator();
+    while (tmp$.hasNext()) {
+      var hex = tmp$.next();
+      var distance = this.distanceToHex_0(canvasX, canvasY, hex);
+      if (distance < smallestDistance) {
+        smallestDistance = distance;
+        nearestPosition = hex;
+      }
+    }
+    return nearestPosition;
+  };
+  GridDisplay.prototype.distanceToHex_0 = function (canvasX, canvasY, hex) {
+    var baseX = hex.x * this.hexDeltaX + this.hexDeltaX / 2 + (hex.y % 2 === 0 ? this.hexDeltaX / 2 : 0.0);
+    var baseY = hex.y * this.hexDeltaY + this.hexDeltaY * 2 / 3;
+    return (canvasX - baseX) * (canvasX - baseX) + (canvasY - baseY) * (canvasY - baseY);
+  };
+  GridDisplay.prototype.squareCoords_0 = function (canvasX, canvasY) {
+    var localX = canvasX % (this.fieldSize + this.gridThickness);
+    var localY = canvasY % (this.fieldSize + this.gridThickness);
+    if (localX < this.gridThickness || localY < this.gridThickness)
+      return null;
+    var gridX = numberToInt(canvasX / (this.fieldSize + this.gridThickness));
+    var gridY = numberToInt(canvasY / (this.fieldSize + this.gridThickness));
+    return new Position(gridX, gridY);
+  };
+  function GridDisplay$clickListener$lambda(this$GridDisplay) {
+    return function (event) {
+      var tmp$, tmp$_0;
+      Kotlin.isType(tmp$ = event, MouseEvent) ? tmp$ : throwCCE();
+      var gridPosition = this$GridDisplay.gridCoordsAt_vux9f0$(numberToInt(event.offsetX), numberToInt(event.offsetY));
+      if (gridPosition != null)
+        (tmp$_0 = this$GridDisplay.onClick) != null ? tmp$_0(gridPosition) : null;
       return Unit;
     };
   }
-  function main$lambda_0(closure$game, closure$canvas, closure$infoArea) {
+  GridDisplay.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'GridDisplay',
+    interfaces: []
+  };
+  function main$addButton$lambda(closure$game, closure$name, closure$header, closure$gameDisplay, closure$canvas, closure$control) {
     return function (it) {
       var tmp$;
       (tmp$ = closure$game.v) != null ? (tmp$.end(), Unit) : null;
-      closure$game.v = new VirusDisplay(closure$canvas, closure$infoArea);
+      closure$header.textContent = closure$name;
+      closure$game.v = closure$gameDisplay(closure$canvas, closure$control);
       return Unit;
     };
   }
-  function main$lambda_1(closure$game, closure$canvas, closure$infoArea) {
-    return function (it) {
+  function main$addButton(closure$game, closure$header, closure$canvas, closure$control) {
+    return function (gameDisplay, name, navElement) {
       var tmp$;
-      (tmp$ = closure$game.v) != null ? (tmp$.end(), Unit) : null;
-      closure$game.v = new ChessDisplay(closure$canvas, closure$infoArea);
-      return Unit;
+      var button = Kotlin.isType(tmp$ = document.createElement('button'), HTMLButtonElement) ? tmp$ : throwCCE();
+      button.textContent = name;
+      navElement.appendChild(button);
+      button.addEventListener('click', main$addButton$lambda(closure$game, name, closure$header, gameDisplay, closure$canvas, closure$control));
     };
   }
   function main(args) {
     var tmp$, tmp$_0, tmp$_1, tmp$_2, tmp$_3, tmp$_4;
-    var ticTacToeButton = Kotlin.isType(tmp$ = document.createElement('button'), HTMLButtonElement) ? tmp$ : throwCCE();
-    ticTacToeButton.textContent = 'Tic Tac Toe';
-    ensureNotNull(document.body).appendChild(ticTacToeButton);
-    var virusButton = Kotlin.isType(tmp$_0 = document.createElement('button'), HTMLButtonElement) ? tmp$_0 : throwCCE();
-    virusButton.textContent = 'Virus';
-    ensureNotNull(document.body).appendChild(virusButton);
-    var chessButton = Kotlin.isType(tmp$_1 = document.createElement('button'), HTMLButtonElement) ? tmp$_1 : throwCCE();
-    chessButton.textContent = 'Chess';
-    ensureNotNull(document.body).appendChild(chessButton);
-    var infoArea = Kotlin.isType(tmp$_2 = document.createElement('div'), HTMLDivElement) ? tmp$_2 : throwCCE();
-    ensureNotNull(document.body).appendChild(infoArea);
-    var canvas = Kotlin.isType(tmp$_3 = document.createElement('canvas'), HTMLCanvasElement) ? tmp$_3 : throwCCE();
+    var header = Kotlin.isType(tmp$ = document.getElementById('header'), HTMLElement) ? tmp$ : throwCCE();
+    var navigation = Kotlin.isType(tmp$_0 = document.getElementById('navigation'), HTMLElement) ? tmp$_0 : throwCCE();
+    var control = Kotlin.isType(tmp$_1 = document.getElementById('control'), HTMLElement) ? tmp$_1 : throwCCE();
+    var canvas = Kotlin.isType(tmp$_2 = document.getElementById('canvas'), HTMLCanvasElement) ? tmp$_2 : throwCCE();
+    var dpr = window.devicePixelRatio;
+    var element = Kotlin.isType(tmp$_3 = canvas.parentElement, HTMLElement) ? tmp$_3 : throwCCE();
+    var a = element.clientWidth;
+    var b = window.innerHeight - navigation.clientHeight | 0;
+    var styleSize = numberToInt(Math_0.min(a, b) * dpr);
+    var size = numberToInt(styleSize * dpr);
+    canvas.style.width = styleSize.toString() + 'px';
+    canvas.style.height = styleSize.toString() + 'px';
+    canvas.width = size;
+    canvas.height = size;
     var context = Kotlin.isType(tmp$_4 = canvas.getContext('2d'), CanvasRenderingContext2D) ? tmp$_4 : throwCCE();
-    context.canvas.width = window.innerWidth;
-    context.canvas.height = window.innerHeight;
-    ensureNotNull(document.body).appendChild(canvas);
+    context.scale(dpr, dpr);
     var game = {v: null};
-    ticTacToeButton.addEventListener('click', main$lambda(game, canvas, infoArea));
-    virusButton.addEventListener('click', main$lambda_0(game, canvas, infoArea));
-    chessButton.addEventListener('click', main$lambda_1(game, canvas, infoArea));
+    var addButton = main$addButton(game, header, canvas, control);
+    addButton(getCallableRef('AlysDisplay', function (canvas, infoArea) {
+      return new AlysDisplay(canvas, infoArea);
+    }), 'Alys', navigation);
+    addButton(getCallableRef('ChessDisplay', function (canvas, infoArea) {
+      return new ChessDisplay(canvas, infoArea);
+    }), 'Chess', navigation);
+    addButton(getCallableRef('VirusDisplay', function (canvas, infoArea) {
+      return new VirusDisplay(canvas, infoArea);
+    }), 'Virus', navigation);
+    addButton(getCallableRef('TicTacToeDisplay', function (canvas, infoArea) {
+      return new TicTacToeDisplay(canvas, infoArea);
+    }), 'Tic Tac Toe', navigation);
   }
   function Position(x, y) {
     this.x = x;
@@ -1146,6 +2014,39 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   }
   Position.prototype.add_vux9f0$ = function (i, j) {
     return new Position(this.x + i | 0, this.y + j | 0);
+  };
+  Position.prototype.adjacentHexes = function () {
+    return listOf([this.hexNW_za3lpa$(), this.hexNE_za3lpa$(), this.hexW_za3lpa$(), this.hexE_za3lpa$(), this.hexSW_za3lpa$(), this.hexSE_za3lpa$()]);
+  };
+  Position.prototype.hexNW_za3lpa$ = function (distance) {
+    if (distance === void 0)
+      distance = 1;
+    return new Position(this.x - (distance / 2 | 0) + ((this.y + distance | 0) % 2 === 0 ? -1 : 0) | 0, this.y - distance | 0);
+  };
+  Position.prototype.hexNE_za3lpa$ = function (distance) {
+    if (distance === void 0)
+      distance = 1;
+    return new Position(this.x + (distance / 2 | 0) + ((this.y + distance | 0) % 2 === 0 ? 0 : 1) | 0, this.y - distance | 0);
+  };
+  Position.prototype.hexW_za3lpa$ = function (distance) {
+    if (distance === void 0)
+      distance = 1;
+    return new Position(this.x - distance | 0, this.y);
+  };
+  Position.prototype.hexE_za3lpa$ = function (distance) {
+    if (distance === void 0)
+      distance = 1;
+    return new Position(this.x + distance | 0, this.y);
+  };
+  Position.prototype.hexSW_za3lpa$ = function (distance) {
+    if (distance === void 0)
+      distance = 1;
+    return new Position(this.x - (distance / 2 | 0) + ((this.y + distance | 0) % 2 === 0 ? -1 : 0) | 0, this.y + distance | 0);
+  };
+  Position.prototype.hexSE_za3lpa$ = function (distance) {
+    if (distance === void 0)
+      distance = 1;
+    return new Position(this.x + (distance / 2 | 0) + ((this.y + distance | 0) % 2 === 0 ? 0 : 1) | 0, this.y + distance | 0);
   };
   Position.$metadata$ = {
     kind: Kind_CLASS,
@@ -1173,113 +2074,6 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   Position.prototype.equals = function (other) {
     return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.x, other.x) && Kotlin.equals(this.y, other.y)))));
   };
-  var ArrayList_init_0 = Kotlin.kotlin.collections.ArrayList_init_ww73n8$;
-  function SquareGrid(width, height, init, fields) {
-    if (fields === void 0) {
-      var size = Kotlin.imul(width, height);
-      var list = ArrayList_init_0(size);
-      for (var index = 0; index < size; index++) {
-        list.add_11rb$(init(index % width, index / width | 0));
-      }
-      fields = list;
-    }
-    this.width = width;
-    this.height = height;
-    this.init = init;
-    this.fields = fields;
-  }
-  SquareGrid.prototype.get_vux9f0$ = function (x, y) {
-    return this.fields.get_za3lpa$(x + Kotlin.imul(this.width, y) | 0);
-  };
-  SquareGrid.prototype.get_dfplqh$ = function (position) {
-    return this.fields.get_za3lpa$(position.x + Kotlin.imul(this.width, position.y) | 0);
-  };
-  SquareGrid.prototype.set_vq7693$ = function (x, y, value) {
-    this.fields.set_wxm5ur$(x + Kotlin.imul(this.width, y) | 0, value);
-  };
-  SquareGrid.prototype.set_39d550$ = function (position, value) {
-    this.fields.set_wxm5ur$(position.x + Kotlin.imul(this.width, position.y) | 0, value);
-  };
-  SquareGrid.prototype.copy_urw29u$ = function (width, height, init, fields) {
-    if (width === void 0)
-      width = this.width;
-    if (height === void 0)
-      height = this.height;
-    if (init === void 0)
-      init = this.init;
-    if (fields === void 0)
-      fields = toMutableList(this.fields);
-    return new SquareGrid(width, height, init, fields);
-  };
-  SquareGrid.$metadata$ = {
-    kind: Kind_CLASS,
-    simpleName: 'SquareGrid',
-    interfaces: []
-  };
-  function SquareGridDisplay(canvas) {
-    this.canvas = canvas;
-    var tmp$;
-    this.context = Kotlin.isType(tmp$ = this.canvas.getContext('2d'), CanvasRenderingContext2D) ? tmp$ : throwCCE();
-    this.fieldSize = 40.0;
-    this.gridThickness = 1;
-    this.onClick = null;
-    this.clickListener = SquareGridDisplay$clickListener$lambda(this);
-    this.canvas.addEventListener('click', this.clickListener);
-  }
-  SquareGridDisplay.prototype.display_j6czkq$ = function (grid, fillStyle, draw) {
-    if (fillStyle === void 0)
-      fillStyle = null;
-    if (draw === void 0)
-      draw = null;
-    var tmp$, tmp$_0, tmp$_1;
-    this.context.fillStyle = 'black';
-    if (this.gridThickness > 0)
-      this.context.fillRect(0.0, 0.0, grid.height * (this.fieldSize + this.gridThickness) + this.gridThickness, grid.width * (this.fieldSize + this.gridThickness) + this.gridThickness);
-    tmp$ = grid.height;
-    for (var y = 0; y < tmp$; y++) {
-      tmp$_0 = grid.width;
-      for (var x = 0; x < tmp$_0; x++) {
-        this.context.fillStyle = (tmp$_1 = fillStyle != null ? fillStyle(grid.get_vux9f0$(x, y), x, y) : null) != null ? tmp$_1 : 'white';
-        this.context.fillRect(this.gridThickness + x * (this.fieldSize + this.gridThickness), this.gridThickness + y * (this.fieldSize + this.gridThickness), this.fieldSize, this.fieldSize);
-        if (draw != null) {
-          this.context.save();
-          this.context.translate(this.gridThickness + x * (this.fieldSize + this.gridThickness), this.gridThickness + y * (this.fieldSize + this.gridThickness));
-          draw(this.context, this.fieldSize, grid.get_vux9f0$(x, y), x, y);
-          this.context.restore();
-        }
-      }
-    }
-  };
-  SquareGridDisplay.prototype.end = function () {
-    var tmp$;
-    this.canvas.removeEventListener('click', this.clickListener);
-    var context = Kotlin.isType(tmp$ = this.canvas.getContext('2d'), CanvasRenderingContext2D) ? tmp$ : throwCCE();
-    context.clearRect(0.0, 0.0, this.canvas.width, this.canvas.height);
-  };
-  SquareGridDisplay.prototype.gridCoordsAt_vux9f0$ = function (canvasX, canvasY) {
-    var localX = canvasX % (this.fieldSize + this.gridThickness);
-    var localY = canvasY % (this.fieldSize + this.gridThickness);
-    if (localX < this.gridThickness || localY < this.gridThickness)
-      return null;
-    var gridX = numberToInt(canvasX / (this.fieldSize + this.gridThickness));
-    var gridY = numberToInt(canvasY / (this.fieldSize + this.gridThickness));
-    return new Position(gridX, gridY);
-  };
-  function SquareGridDisplay$clickListener$lambda(this$SquareGridDisplay) {
-    return function (event) {
-      var tmp$, tmp$_0;
-      Kotlin.isType(tmp$ = event, MouseEvent) ? tmp$ : throwCCE();
-      var gridPosition = this$SquareGridDisplay.gridCoordsAt_vux9f0$(numberToInt(event.offsetX), numberToInt(event.offsetY));
-      if (gridPosition != null)
-        (tmp$_0 = this$SquareGridDisplay.onClick) != null ? tmp$_0(gridPosition) : null;
-      return Unit;
-    };
-  }
-  SquareGridDisplay.$metadata$ = {
-    kind: Kind_CLASS,
-    simpleName: 'SquareGridDisplay',
-    interfaces: []
-  };
   function TicTacToe(state) {
     if (state === void 0)
       state = new TicTacToeState();
@@ -1301,7 +2095,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   };
   function TicTacToeState(board, currentPlayer, players) {
     if (board === void 0)
-      board = new SquareGrid(3, 3, TicTacToeState_init$lambda);
+      board = new Grid(3, 3, TicTacToeState_init$lambda);
     if (currentPlayer === void 0)
       currentPlayer = TicTacToePiece$Cross_getInstance();
     if (players === void 0)
@@ -1379,7 +2173,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   TicTacToeState.prototype.component3 = function () {
     return this.players;
   };
-  TicTacToeState.prototype.copy_lnjj55$ = function (board, currentPlayer, players) {
+  TicTacToeState.prototype.copy_2sqnw4$ = function (board, currentPlayer, players) {
     return new TicTacToeState(board === void 0 ? this.board : board, currentPlayer === void 0 ? this.currentPlayer : currentPlayer, players === void 0 ? this.players : players);
   };
   TicTacToeState.prototype.toString = function () {
@@ -1488,7 +2282,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     var value_0 = new RandomAIPlayer();
     $receiver_2.put_xwzc9p$('Circle', value_0);
     this.updateDisplay_pdl1vj$(null);
-    this.squareDisplay.onClick = TicTacToeDisplay_init$lambda(this);
+    this.gridDisplay.onClick = TicTacToeDisplay_init$lambda(this);
   }
   Object.defineProperty(TicTacToeDisplay.prototype, 'game', {
     get: function () {
@@ -1560,7 +2354,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     if (playerCount === void 0)
       playerCount = 2;
     if (board === void 0)
-      board = new SquareGrid(width, height, VirusState_init$lambda(playerCount, height));
+      board = new Grid(width, height, VirusState_init$lambda(playerCount, height));
     if (currentPlayer === void 0)
       currentPlayer = 1;
     if (players === void 0)
@@ -1859,7 +2653,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   VirusState.prototype.component6 = function () {
     return this.players;
   };
-  VirusState.prototype.copy_1vh1ys$ = function (width, height, playerCount, board, currentPlayer, players) {
+  VirusState.prototype.copy_r8hqx5$ = function (width, height, playerCount, board, currentPlayer, players) {
     return new VirusState(width === void 0 ? this.width : width, height === void 0 ? this.height : height, playerCount === void 0 ? this.playerCount : playerCount, board === void 0 ? this.board : board, currentPlayer === void 0 ? this.currentPlayer : currentPlayer, players === void 0 ? this.players : players);
   };
   VirusState.prototype.toString = function () {
@@ -1929,7 +2723,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     $receiver_2.put_xwzc9p$(key_0, value_2);
     this.updateDisplay_pdl1vj$(null);
     var sourcePosition = {v: null};
-    this.squareDisplay.onClick = VirusDisplay_init$lambda(this, sourcePosition);
+    this.gridDisplay.onClick = VirusDisplay_init$lambda(this, sourcePosition);
   }
   Object.defineProperty(VirusDisplay.prototype, 'game', {
     get: function () {
@@ -1983,6 +2777,31 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     simpleName: 'VirusDisplay',
     interfaces: [GameDisplay]
   };
+  _.Alys = Alys;
+  _.AlysState = AlysState;
+  _.AlysField = AlysField;
+  _.AlysPiece = AlysPiece;
+  Object.defineProperty(AlysType, 'Fort', {
+    get: AlysType$Fort_getInstance
+  });
+  Object.defineProperty(AlysType, 'Soldier', {
+    get: AlysType$Soldier_getInstance
+  });
+  Object.defineProperty(AlysType, 'Grave', {
+    get: AlysType$Grave_getInstance
+  });
+  Object.defineProperty(AlysType, 'Tree', {
+    get: AlysType$Tree_getInstance
+  });
+  Object.defineProperty(AlysType, 'CoastTree', {
+    get: AlysType$CoastTree_getInstance
+  });
+  _.AlysType = AlysType;
+  _.AlysAction = AlysAction;
+  _.AlysMoveAction = AlysMoveAction;
+  _.AlysCreateAction = AlysCreateAction;
+  _.AlysEndTurnAction = AlysEndTurnAction;
+  _.AlysDisplay = AlysDisplay;
   _.BoardGame = BoardGame;
   _.BoardGameState = BoardGameState;
   _.Chess = Chess;
@@ -2020,10 +2839,10 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   _.Player = Player;
   _.AIPlayer = AIPlayer;
   _.RandomAIPlayer = RandomAIPlayer;
+  _.Grid = Grid;
+  _.GridDisplay = GridDisplay;
   _.main_kand9s$ = main;
   _.Position = Position;
-  _.SquareGrid = SquareGrid;
-  _.SquareGridDisplay = SquareGridDisplay;
   _.TicTacToe = TicTacToe;
   _.TicTacToeState = TicTacToeState;
   _.TicTacToeAction = TicTacToeAction;

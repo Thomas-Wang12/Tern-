@@ -3,8 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <title>Tern</title>
+    <link rel="stylesheet" type="text/css" href="style-reset.css"/>
+    <link rel="stylesheet" type="text/css" href="styles.css"/>
 </head>
-<body style="margin:0;padding:0;overflow:hidden;">
+<body style="overflow-x:hidden;">
+
+<div class="grid">
+    <header id="header"></header>
+    <nav id="navigation"></nav>
+    <main id="control"></main>
+    <div class="canvas">
+        <canvas id="canvas"></canvas>
+    </div>
+</div>
 
 <script type="text/javascript" src="out/production/Tern/lib/kotlin.js"></script>
 <script type="text/javascript" src="out/production/Tern/lib/kotlinx-coroutines-core.js"></script>

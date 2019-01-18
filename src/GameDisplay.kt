@@ -1,7 +1,7 @@
 import kotlinx.coroutines.*
 import org.w3c.dom.*
 
-abstract class GameDisplay<G : BoardGame<S, T, A, P>, S : BoardGameState<T, A, P>, T, A, P>(val canvas: HTMLCanvasElement, val infoArea: HTMLDivElement) {
+abstract class GameDisplay<G : BoardGame<S, T, A, P>, S : BoardGameState<T, A, P>, T, A, P>(val canvas: HTMLCanvasElement, val infoArea: HTMLElement) {
 	abstract var game: G
 	val gridDisplay = GridDisplay(canvas)
 	var aiDelay = 500L

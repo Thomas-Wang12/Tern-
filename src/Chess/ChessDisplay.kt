@@ -1,6 +1,6 @@
 import org.w3c.dom.*
 
-class ChessDisplay(canvas: HTMLCanvasElement, infoArea: HTMLDivElement)
+class ChessDisplay(canvas: HTMLCanvasElement, infoArea: HTMLElement)
 	: GameDisplay<Chess, ChessState, ChessPiece?, ChessAction, ChessPlayer>(canvas, infoArea) {
 	override var game = Chess()
 

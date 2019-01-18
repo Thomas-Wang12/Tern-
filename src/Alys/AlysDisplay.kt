@@ -1,6 +1,6 @@
 import org.w3c.dom.*
 
-class AlysDisplay(canvas: HTMLCanvasElement, infoArea: HTMLDivElement)
+class AlysDisplay(canvas: HTMLCanvasElement, infoArea: HTMLElement)
 	: GameDisplay<Alys, AlysState, AlysField?, AlysAction, Int>(canvas, infoArea) {
 	override var game = Alys()
 
@@ -38,11 +38,16 @@ class AlysDisplay(canvas: HTMLCanvasElement, infoArea: HTMLDivElement)
 	}
 
 	init {
-		game.players[1] = "White"
-		players["White"] = Player()
-		game.players[2] = "Black"
-		players["Black"] = RandomAIPlayer<AlysState, AlysAction>()
+		game.players[1] = "Player 1"
+		players["Player 1"] = Player()
+		game.players[2] = "Player 2"
+		players["Player 2"] = Player()
+		game.players[3] = "Player 3"
+		players["Player 3"] = Player()
+		game.players[4] = "Player 4"
+		players["Player 4"] = Player()
 		game.state = game.state.newGame()
+		gridDisplay.fieldSize = 39.0
 		gridDisplay.showHexagons()
 
 		updateDisplay(null)

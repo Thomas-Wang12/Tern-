@@ -1,6 +1,6 @@
 import org.w3c.dom.*
 
-class TicTacToeDisplay(canvas: HTMLCanvasElement, infoArea: HTMLDivElement)
+class TicTacToeDisplay(canvas: HTMLCanvasElement, infoArea: HTMLElement)
 	: GameDisplay<TicTacToe, TicTacToeState, TicTacToePiece?, TicTacToeAction, TicTacToePiece>(canvas, infoArea) {
 	override var game = TicTacToe()
 

@@ -14,18 +14,20 @@ class GridDisplay(val canvas: HTMLCanvasElement) {
 	var hexPathOffset = Path2D()
 	var hexDeltaX = 0.0
 	var hexDeltaY = 0.0
+	var translateX = 0.0
 	var onClick: ((Position) -> Unit)? = null
 
 	fun <T> display(grid: Grid<T>,
 									fillStyle: ((T, x: Int, y: Int) -> String)? = null,
 									draw: ((context: CanvasRenderingContext2D, fieldSize: Double, field: T, x: Int, y: Int) -> Unit)? = null) {
-		val deltaX = if(hexagonal) hexDeltaX else fieldSize + gridThickness
-		val deltaY = if(hexagonal) hexDeltaY else fieldSize + gridThickness
-		val offset = if(hexagonal) (gridThickness + fieldSize)/2 else 0.0
-		val extraY = if(hexagonal) fieldSize / (2 * sqrt(3.0)) else 0.0
+		val deltaX = if (hexagonal) hexDeltaX else fieldSize + gridThickness
+		val deltaY = if (hexagonal) hexDeltaY else fieldSize + gridThickness
+		val offset = if (hexagonal) (gridThickness + fieldSize) / 2 else 0.0
+		val extraY = if (hexagonal) fieldSize / (2 * sqrt(3.0)) else 0.0
+		translateX = (canvas.clientWidth - grid.width * deltaX) / 2
 		context.fillStyle = "black"
 		if (gridThickness > 0)
-			context.fillRect(0.0, 0.0,
+			context.fillRect(translateX, 0.0,
 					grid.height * deltaX + gridThickness + offset,
 					grid.width * deltaY + gridThickness + extraY)
 		for (y in 0 until grid.height) {
@@ -37,7 +39,7 @@ class GridDisplay(val canvas: HTMLCanvasElement) {
 					drawSquare(x, y)
 				if (draw != null) {
 					context.save()
-						context.translate(x * deltaX + if(y%2 == 0) offset else 0.0, y * deltaY)
+					context.translate(x * deltaX + translateX + if (y % 2 == 0) offset else 0.0, y * deltaY)
 					draw(context, fieldSize, grid[x, y], x, y)
 					context.restore()
 				}
@@ -47,14 +49,14 @@ class GridDisplay(val canvas: HTMLCanvasElement) {
 
 	private fun drawSquare(x: Int, y: Int) {
 		context.fillRect(
-				gridThickness + x.toDouble() * (fieldSize + gridThickness),
+				translateX + gridThickness + x.toDouble() * (fieldSize + gridThickness),
 				gridThickness + y.toDouble() * (fieldSize + gridThickness),
 				fieldSize, fieldSize)
 	}
 
 	private fun drawHexagon(x: Int, y: Int) {
 		context.save()
-		context.translate(x * hexDeltaX, y * hexDeltaY)
+		context.translate(x * hexDeltaX + translateX, y * hexDeltaY)
 		context.fill(if (y % 2 == 0) hexPath else hexPathOffset)
 		context.restore()
 	}
@@ -100,9 +102,9 @@ class GridDisplay(val canvas: HTMLCanvasElement) {
 	}
 
 	fun gridCoordsAt(canvasX: Int, canvasY: Int): Position? {
-		if(hexagonal)
-			return hexCoords(canvasX, canvasY)
-		return squareCoords(canvasX, canvasY)
+		if (hexagonal)
+			return hexCoords(canvasX - translateX.toInt(), canvasY)
+		return squareCoords(canvasX - translateX.toInt(), canvasY)
 	}
 
 	private fun hexCoords(canvasX: Int, canvasY: Int): Position? {
@@ -110,9 +112,9 @@ class GridDisplay(val canvas: HTMLCanvasElement) {
 		val gridY = (canvasY / hexDeltaY).toInt()
 		var nearestPosition = Position(gridX, gridY)
 		var smallestDistance = distanceToHex(canvasX, canvasY, nearestPosition)
-		for(hex in nearestPosition.adjacentHexes()){
+		for (hex in nearestPosition.adjacentHexes()) {
 			val distance = distanceToHex(canvasX, canvasY, hex)
-			if(distance < smallestDistance){
+			if (distance < smallestDistance) {
 				smallestDistance = distance
 				nearestPosition = hex
 			}
@@ -121,8 +123,8 @@ class GridDisplay(val canvas: HTMLCanvasElement) {
 	}
 
 	private fun distanceToHex(canvasX: Int, canvasY: Int, hex: Position): Double {
-		val baseX = hex.x * hexDeltaX + hexDeltaX/2 + if (hex.y%2==0) hexDeltaX / 2 else 0.0
-		val baseY = hex.y * hexDeltaY + hexDeltaY*2/3
+		val baseX = hex.x * hexDeltaX + hexDeltaX / 2 + if (hex.y % 2 == 0) hexDeltaX / 2 else 0.0
+		val baseY = hex.y * hexDeltaY + hexDeltaY * 2 / 3
 		return (canvasX - baseX) * (canvasX - baseX) + (canvasY - baseY) * (canvasY - baseY)
 	}
 
