@@ -17,10 +17,18 @@ class Grid<T>(
 
 	fun copy(
 			width: Int = this.width,
-			height: Int  = this.height,
+			height: Int = this.height,
 			init: (x: Int, y: Int) -> T = this.init,
 			fields: MutableList<T> = this.fields.toMutableList()
-	) : Grid<T> {
+	): Grid<T> {
 		return Grid(width, height, init, fields)
+	}
+
+	fun isWithinBounds(position: Position): Boolean {
+		return position.x in 0 until width && position.y in 0 until height
+	}
+
+	fun positions(): List<Position> {
+		return List(fields.size) { index -> Position(index % width, index / width) }
 	}
 }

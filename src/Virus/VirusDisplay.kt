@@ -24,7 +24,7 @@ class VirusDisplay(canvas: HTMLCanvasElement, infoArea: HTMLDivElement)
 
 		var sourcePosition: Position? = null
 
-		squareDisplay.onClick = {
+		gridDisplay.onClick = {
 			if (players[game.currentPlayer()] is Player && it.x >= 0 && it.y >= 0 && it.x < game.state.width && it.y < game.state.height) {
 				val source = sourcePosition
 				if (source == null) {

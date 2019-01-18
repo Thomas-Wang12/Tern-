@@ -23,7 +23,7 @@ class TicTacToeDisplay(canvas: HTMLCanvasElement, infoArea: HTMLDivElement)
 
 		updateDisplay(null)
 
-		squareDisplay.onClick = {
+		gridDisplay.onClick = {
 			if (players[game.currentPlayer()] is Player && it.x >= 0 && it.y >= 0 && it.x < 3 && it.y < 3)
 				performAction(TicTacToeAction(game.state.currentPlayer, it.x, it.y))
 		}

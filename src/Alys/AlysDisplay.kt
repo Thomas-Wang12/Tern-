@@ -5,54 +5,60 @@ class AlysDisplay(canvas: HTMLCanvasElement, infoArea: HTMLDivElement)
 	override var game = Alys()
 
 	var sourcePosition: Position? = null
-
-	init {
-		squareDisplay.showHexagons()
-	}
+	//var selectedArea = listOf<Position>()
 
 	override val getColor = getColor@ { _: AlysField?, x: Int, y: Int ->
 		val source = sourcePosition
-		if(source != null && source.x == x && source.y == y){
+		if(source != null && source.x == x && source.y == y)
 			return@getColor "darkgrey"
+		val piece = game.state.board[x,y] ?: return@getColor "transparent"
+		//if(Position(x,y) in selectedArea)
+		//	return@getColor "red"
+		return@getColor when(piece.player){
+			1 -> "yellow"
+			2 -> "green"
+			3 -> "lightgreen"
+			else -> "white"
 		}
-		if (if (x % 2 == 0) y % 2 == 0 else y % 2 == 1)
-			return@getColor "white"
-		else
-			return@getColor "grey"
 	}
 
-	override val draw = { context: CanvasRenderingContext2D, fieldSize: Double, piece: AlysField?, _: Int, _: Int ->
+	override val draw = draw@{ context: CanvasRenderingContext2D, fieldSize: Double, piece: AlysField?, _: Int, _: Int ->
+		if(piece == null)
+			return@draw
 		context.fillStyle = "black"
 		context.font = fieldSize.toString() + "px arial"
 		context.textBaseline = CanvasTextBaseline.TOP
-		val isBlack = piece?.player == 1
-		/*when (piece?.type) {
-			ChessPieceType.King -> context.fillText(if (isBlack) "♚" else "♔", 0.0, 0.0)
-			ChessPieceType.Queen -> context.fillText(if (isBlack) "♛" else "♕", 0.0, 0.0)
-			ChessPieceType.Knight -> context.fillText(if (isBlack) "♞" else "♘", 0.0, 0.0)
-			ChessPieceType.Rook -> context.fillText(if (isBlack) "♜" else "♖", 0.0, 0.0)
-			ChessPieceType.Bishop -> context.fillText(if (isBlack) "♝" else "♗", 0.0, 0.0)
-			ChessPieceType.Pawn -> context.fillText(if (isBlack) "♟" else "♙", 0.0, 0.0)
-		}*/
+		if(piece.treasury != null)
+			context.fillText("B", 0.0, 0.0)
+		else if(piece.piece?.type == AlysType.Fort)
+			context.fillText("F", 0.0, 0.0)
+		else if(piece.piece?.type == AlysType.Soldier)
+			context.fillText("S", 0.0, 0.0)
 	}
 
 	init {
 		game.players[1] = "White"
 		players["White"] = Player()
 		game.players[2] = "Black"
-		players["Black"] = RandomAIPlayer<ChessState, ChessAction>()
+		players["Black"] = RandomAIPlayer<AlysState, AlysAction>()
+		game.state = game.state.newGame()
+		gridDisplay.showHexagons()
 
 		updateDisplay(null)
 
-		squareDisplay.onClick = {
-			if (players[game.currentPlayer()] is Player && it.x >= 0 && it.y >= 0 && it.x < 8 && it.y < 8) {
+		gridDisplay.onClick = click@{
+			if (players[game.currentPlayer()] is Player && game.state.board.isWithinBounds(it)) {
 				val source = sourcePosition
 				if (source == null) {
-					sourcePosition = Position(it.x, it.y)
+					sourcePosition = it
+					//selectedArea = game.state.connectedPositions(it)
 					updateDisplay(game.winner)
 				} else {
 					sourcePosition = null
-					performAction(AlysMoveAction(source, Position(it.x, it.y)))
+					val sourceField = game.state.board[source] ?: return@click
+					if(sourceField.player != game.state.currentPlayer)
+						return@click
+					performAction(AlysMoveAction(source, it))
 				}
 			}
 		}

@@ -3,7 +3,7 @@ import org.w3c.dom.*
 
 abstract class GameDisplay<G : BoardGame<S, T, A, P>, S : BoardGameState<T, A, P>, T, A, P>(val canvas: HTMLCanvasElement, val infoArea: HTMLDivElement) {
 	abstract var game: G
-	val squareDisplay = GridDisplay(canvas)
+	val gridDisplay = GridDisplay(canvas)
 	var aiDelay = 500L
 	val players: MutableMap<String, Any> = mutableMapOf()
 
@@ -25,7 +25,7 @@ abstract class GameDisplay<G : BoardGame<S, T, A, P>, S : BoardGameState<T, A, P
 			infoArea.textContent = winner + " has won!"
 		else
 			infoArea.textContent = "Current player: " + game.currentPlayer()
-		squareDisplay.display(game.state.board, getColor, draw)
+		gridDisplay.display(game.state.board, getColor, draw)
 	}
 
 	fun awaitActionFrom(player: Any?) {
@@ -39,7 +39,7 @@ abstract class GameDisplay<G : BoardGame<S, T, A, P>, S : BoardGameState<T, A, P
 	}
 
 	fun end() {
-		squareDisplay.end()
+		gridDisplay.end()
 	}
 }
 

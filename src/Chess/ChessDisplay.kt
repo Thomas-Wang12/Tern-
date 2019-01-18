@@ -40,7 +40,7 @@ class ChessDisplay(canvas: HTMLCanvasElement, infoArea: HTMLDivElement)
 
 		updateDisplay(null)
 
-		squareDisplay.onClick = {
+		gridDisplay.onClick = {
 			if (players[game.currentPlayer()] is Player && it.x >= 0 && it.y >= 0 && it.x < 8 && it.y < 8) {
 				val source = sourcePosition
 				if (source == null) {
