@@ -1,16 +1,28 @@
 import kotlinx.coroutines.*
 import org.w3c.dom.*
+import kotlin.browser.document
 
-abstract class GameDisplay<G : BoardGame<S, T, A, P>, S : BoardGameState<T, A, P>, T, A, P>(val canvas: HTMLCanvasElement, val infoArea: HTMLElement) {
+abstract class GameDisplay<G : BoardGame<S, T, A, P>, S : BoardGameState<T, A, P>, T, A, P>(
+		val canvas: HTMLCanvasElement,
+		val playerArea: HTMLElement,
+		val gameArea: HTMLElement
+) {
 	abstract var game: G
 	val gridDisplay = GridDisplay(canvas)
-	var aiDelay = 500L
+	var aiDelay = 200L
 	val players: MutableMap<String, Any> = mutableMapOf()
-
+	val playerList = document.createElement("div") as HTMLDivElement
+	val messageLine = document.createElement("div") as HTMLDivElement
 
 	abstract val getColor: ((T, x: Int, y: Int) -> String)?
 	abstract val draw: ((context: CanvasRenderingContext2D, fieldSize: Double, field: T, x: Int, y: Int) -> Unit)?
 
+	init {
+		playerArea.innerHTML = ""
+		messageLine.className = "message-line"
+		playerArea.appendChild(playerList)
+		playerArea.appendChild(messageLine)
+	}
 
 	fun performAction(action: A) {
 		game.performAction(action)
@@ -22,10 +34,11 @@ abstract class GameDisplay<G : BoardGame<S, T, A, P>, S : BoardGameState<T, A, P
 
 	fun updateDisplay(winner: String?) {
 		if (winner != null)
-			infoArea.textContent = winner + " has won!"
+			messageLine.textContent = winner + " has won!"
 		else
-			infoArea.textContent = "Current player: " + game.currentPlayer()
+			messageLine.textContent = "Current player: " + game.currentPlayer()
 		gridDisplay.display(game.state.board, getColor, draw)
+		updatePlayerList()
 	}
 
 	fun awaitActionFrom(player: Any?) {
@@ -40,6 +53,16 @@ abstract class GameDisplay<G : BoardGame<S, T, A, P>, S : BoardGameState<T, A, P
 
 	fun end() {
 		gridDisplay.end()
+	}
+
+	fun updatePlayerList(){
+		playerList.innerHTML = ""
+		for(player in players.keys){
+			val playerElement = document.createElement("div") as HTMLDivElement
+			playerElement.className = "player"
+			playerElement.textContent = player
+			playerList.appendChild(playerElement)
+		}
 	}
 }
 

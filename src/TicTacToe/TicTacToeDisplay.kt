@@ -1,7 +1,7 @@
 import org.w3c.dom.*
 
-class TicTacToeDisplay(canvas: HTMLCanvasElement, infoArea: HTMLElement)
-	: GameDisplay<TicTacToe, TicTacToeState, TicTacToePiece?, TicTacToeAction, TicTacToePiece>(canvas, infoArea) {
+class TicTacToeDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameArea: HTMLElement)
+	: GameDisplay<TicTacToe, TicTacToeState, TicTacToePiece?, TicTacToeAction, TicTacToePiece>(canvas, playerArea, gameArea) {
 	override var game = TicTacToe()
 
 	override val getColor = null

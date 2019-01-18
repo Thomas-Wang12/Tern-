@@ -1,7 +1,7 @@
 import org.w3c.dom.*
 
-class AlysDisplay(canvas: HTMLCanvasElement, infoArea: HTMLElement)
-	: GameDisplay<Alys, AlysState, AlysField?, AlysAction, Int>(canvas, infoArea) {
+class AlysDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameArea: HTMLElement)
+	: GameDisplay<Alys, AlysState, AlysField?, AlysAction, Int>(canvas, playerArea, gameArea) {
 	override var game = Alys()
 
 	var sourcePosition: Position? = null
@@ -47,6 +47,7 @@ class AlysDisplay(canvas: HTMLCanvasElement, infoArea: HTMLElement)
 		game.players[4] = "Player 4"
 		players["Player 4"] = Player()
 		game.state = game.state.newGame()
+		gridDisplay.gridColor = "blue"
 		gridDisplay.fieldSize = 39.0
 		gridDisplay.showHexagons()
 

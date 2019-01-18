@@ -7,7 +7,8 @@ import kotlin.math.min
 fun main(args: Array<String>) {
 	val header = document.getElementById("header") as HTMLElement
 	val navigation = document.getElementById("navigation") as HTMLElement
-	val control = document.getElementById("control") as HTMLElement
+	val playerArea = document.getElementById("player-area") as HTMLElement
+	val gameArea = document.getElementById("game-area") as HTMLElement
 	val canvas = document.getElementById("canvas") as HTMLCanvasElement
 
 	val dpr = window.devicePixelRatio
@@ -24,7 +25,7 @@ fun main(args: Array<String>) {
 	var game: GameDisplay<*, *, *, *, *>? = null
 
 	fun addButton(
-			gameDisplay: (canvas: HTMLCanvasElement, infoArea: HTMLElement) -> GameDisplay<*,*,*,*,*>,
+			gameDisplay: (HTMLCanvasElement, HTMLElement, HTMLElement) -> GameDisplay<*,*,*,*,*>,
 			name: String,
 			navElement: HTMLElement
 	) {
@@ -34,7 +35,7 @@ fun main(args: Array<String>) {
 		button.addEventListener("click", {
 			game?.end()
 			header.textContent = name
-			game = gameDisplay(canvas, control)
+			game = gameDisplay(canvas, playerArea, gameArea)
 		})
 	}
 
@@ -42,23 +43,4 @@ fun main(args: Array<String>) {
 	addButton(::ChessDisplay, "Chess", navigation)
 	addButton(::VirusDisplay, "Virus", navigation)
 	addButton(::TicTacToeDisplay, "Tic Tac Toe", navigation)
-}
-
-
-data class Position(val x: Int, val y: Int) {
-	fun add(i: Int, j: Int): Position {
-		return Position(x + i, y + j)
-	}
-
-	fun adjacentHexes(): List<Position> {
-		return listOf(hexNW(), hexNE(), hexW(), hexE(), hexSW(), hexSE())
-	}
-
-	fun hexNW(distance: Int = 1) = Position(x - distance/2 + if((y+distance)%2==0) -1 else 0, y - distance)
-	fun hexNE(distance: Int = 1) = Position(x + distance/2 + if((y+distance)%2==0) 0 else 1, y - distance)
-	fun hexW(distance: Int = 1) = Position(x - distance, y)
-	fun hexE(distance: Int = 1) = Position(x + distance, y)
-	fun hexSW(distance: Int = 1) = Position(x - distance/2 + if((y+distance)%2==0) -1 else 0, y + distance)
-	fun hexSE(distance: Int = 1) = Position(x + distance/2 + if((y+distance)%2==0) 0 else 1, y + distance)
-
 }

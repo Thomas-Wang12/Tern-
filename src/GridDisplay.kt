@@ -8,8 +8,9 @@ import kotlin.math.sqrt
 class GridDisplay(val canvas: HTMLCanvasElement) {
 	val context: CanvasRenderingContext2D = canvas.getContext("2d") as CanvasRenderingContext2D
 	private var hexagonal = false
-	var fieldSize = 40.0
+	var fieldSize = 50.0
 	var gridThickness = 1.0
+	var gridColor = "black"
 	var hexPath = Path2D()
 	var hexPathOffset = Path2D()
 	var hexDeltaX = 0.0
@@ -25,7 +26,7 @@ class GridDisplay(val canvas: HTMLCanvasElement) {
 		val offset = if (hexagonal) (gridThickness + fieldSize) / 2 else 0.0
 		val extraY = if (hexagonal) fieldSize / (2 * sqrt(3.0)) else 0.0
 		translateX = (canvas.clientWidth - grid.width * deltaX) / 2
-		context.fillStyle = "black"
+		context.fillStyle = gridColor
 		if (gridThickness > 0)
 			context.fillRect(translateX, 0.0,
 					grid.height * deltaX + gridThickness + offset,
@@ -39,7 +40,7 @@ class GridDisplay(val canvas: HTMLCanvasElement) {
 					drawSquare(x, y)
 				if (draw != null) {
 					context.save()
-					context.translate(x * deltaX + translateX + if (y % 2 == 0) offset else 0.0, y * deltaY)
+					context.translate(x * deltaX + translateX + gridThickness + if (y % 2 == 0) offset else 0.0, y * deltaY)
 					draw(context, fieldSize, grid[x, y], x, y)
 					context.restore()
 				}
@@ -56,7 +57,7 @@ class GridDisplay(val canvas: HTMLCanvasElement) {
 
 	private fun drawHexagon(x: Int, y: Int) {
 		context.save()
-		context.translate(x * hexDeltaX + translateX, y * hexDeltaY)
+		context.translate(x * hexDeltaX + translateX + gridThickness, y * hexDeltaY)
 		context.fill(if (y % 2 == 0) hexPath else hexPathOffset)
 		context.restore()
 	}

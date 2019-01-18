@@ -5,7 +5,7 @@
 	grid-template-areas:
 	"header header header"
 	"navigation navigation navigation"
-	"control canvas control2";
+	"player canvas game";
 }
 
 header {
@@ -30,8 +30,13 @@ nav button {
 	background-color: #9ac;
 }
 
-main {
-	grid-area: control;
+#player-area {
+	grid-area: player;
+	padding: 0.5rem;
+}
+
+#game-area {
+	grid-area: game;
 	padding: 0.5rem;
 }
 
