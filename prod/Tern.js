@@ -25,7 +25,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   var COROUTINE_SUSPENDED = Kotlin.kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED;
   var CoroutineImpl = Kotlin.kotlin.coroutines.CoroutineImpl;
   var launch = $module$kotlinx_coroutines_core.kotlinx.coroutines.launch_s496o7$;
-  var L500 = Kotlin.Long.fromInt(500);
+  var L200 = Kotlin.Long.fromInt(200);
   var until = Kotlin.kotlin.ranges.until_dqglrj$;
   var toMutableList = Kotlin.kotlin.collections.toMutableList_4c7yge$;
   var numberToInt = Kotlin.numberToInt;
@@ -575,8 +575,8 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     simpleName: 'AlysEndTurnAction',
     interfaces: [AlysAction]
   };
-  function AlysDisplay(canvas, infoArea) {
-    GameDisplay.call(this, canvas, infoArea);
+  function AlysDisplay(canvas, playerArea, gameArea) {
+    GameDisplay.call(this, canvas, playerArea, gameArea);
     this.game_6mofcn$_0 = new Alys();
     this.sourcePosition = null;
     this.getColor_vm40yk$_0 = AlysDisplay$getColor$lambda(this);
@@ -610,7 +610,9 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     var value_6 = new Player();
     $receiver_6.put_xwzc9p$(key_2, value_6);
     this.game.state = this.game.state.newGame_za3lpa$();
+    this.gridDisplay.gridColor = 'blue';
     this.gridDisplay.fieldSize = 39.0;
+    this.gridDisplay.outerBorder = 50.0;
     this.gridDisplay.showHexagons();
     this.updateDisplay_pdl1vj$(null);
     this.gridDisplay.onClick = AlysDisplay_init$lambda(this);
@@ -1116,8 +1118,8 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     }
   }
   ChessPlayer.valueOf_61zpoe$ = ChessPlayer$valueOf;
-  function ChessDisplay(canvas, infoArea) {
-    GameDisplay.call(this, canvas, infoArea);
+  function ChessDisplay(canvas, playerArea, gameArea) {
+    GameDisplay.call(this, canvas, playerArea, gameArea);
     this.game_vohlt0$_0 = new Chess();
     this.sourcePosition = null;
     this.getColor_tn0utd$_0 = ChessDisplay$getColor$lambda(this);
@@ -1639,12 +1641,20 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   ChessPiece.prototype.equals = function (other) {
     return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.type, other.type) && Kotlin.equals(this.player, other.player) && Kotlin.equals(this.hasMoved, other.hasMoved)))));
   };
-  function GameDisplay(canvas, infoArea) {
+  function GameDisplay(canvas, playerArea, gameArea) {
     this.canvas = canvas;
-    this.infoArea = infoArea;
+    this.playerArea = playerArea;
+    this.gameArea = gameArea;
     this.gridDisplay = new GridDisplay(this.canvas);
-    this.aiDelay = L500;
+    this.aiDelay = L200;
     this.players = LinkedHashMap_init();
+    var tmp$, tmp$_0;
+    this.playerList = Kotlin.isType(tmp$ = document.createElement('div'), HTMLDivElement) ? tmp$ : throwCCE();
+    this.messageLine = Kotlin.isType(tmp$_0 = document.createElement('div'), HTMLDivElement) ? tmp$_0 : throwCCE();
+    this.playerArea.innerHTML = '';
+    this.messageLine.className = 'message-line';
+    this.playerArea.appendChild(this.playerList);
+    this.playerArea.appendChild(this.messageLine);
   }
   GameDisplay.prototype.performAction_11re$ = function (action) {
     this.game.performAction_11rd$(action);
@@ -1658,10 +1668,11 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   };
   GameDisplay.prototype.updateDisplay_pdl1vj$ = function (winner) {
     if (winner != null)
-      this.infoArea.textContent = winner + ' has won!';
+      this.messageLine.textContent = winner + ' has won!';
     else
-      this.infoArea.textContent = 'Current player: ' + this.game.currentPlayer();
+      this.messageLine.textContent = 'Current player: ' + this.game.currentPlayer();
     this.gridDisplay.display_31tjs9$(this.game.state.board, this.getColor, this.draw);
+    this.updatePlayerList();
   };
   function GameDisplay$awaitActionFrom$lambda(this$GameDisplay_0, closure$player_0) {
     return function ($receiver, continuation_0, suspended) {
@@ -1725,6 +1736,18 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   };
   GameDisplay.prototype.end = function () {
     this.gridDisplay.end();
+  };
+  GameDisplay.prototype.updatePlayerList = function () {
+    var tmp$, tmp$_0;
+    this.playerList.innerHTML = '';
+    tmp$ = this.players.keys.iterator();
+    while (tmp$.hasNext()) {
+      var player = tmp$.next();
+      var playerElement = Kotlin.isType(tmp$_0 = document.createElement('div'), HTMLDivElement) ? tmp$_0 : throwCCE();
+      playerElement.className = 'player';
+      playerElement.textContent = player;
+      this.playerList.appendChild(playerElement);
+    }
   };
   GameDisplay.$metadata$ = {
     kind: Kind_CLASS,
@@ -1827,8 +1850,10 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     var tmp$;
     this.context = Kotlin.isType(tmp$ = this.canvas.getContext('2d'), CanvasRenderingContext2D) ? tmp$ : throwCCE();
     this.hexagonal_0 = false;
-    this.fieldSize = 40.0;
+    this.fieldSize = 50.0;
     this.gridThickness = 1.0;
+    this.gridColor = 'black';
+    this.outerBorder = 1.0;
     this.hexPath = new Path2D();
     this.hexPathOffset = new Path2D();
     this.hexDeltaX = 0.0;
@@ -1849,9 +1874,9 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     var offset = this.hexagonal_0 ? (this.gridThickness + this.fieldSize) / 2 : 0.0;
     var extraY = this.hexagonal_0 ? this.fieldSize / (2 * Math_0.sqrt(3.0)) : 0.0;
     this.translateX = (this.canvas.clientWidth - grid.width * deltaX) / 2;
-    this.context.fillStyle = 'black';
+    this.context.fillStyle = this.gridColor;
     if (this.gridThickness > 0)
-      this.context.fillRect(this.translateX, 0.0, grid.height * deltaX + this.gridThickness + offset, grid.width * deltaY + this.gridThickness + extraY);
+      this.context.fillRect(this.translateX + this.gridThickness - this.outerBorder, 0.0 + this.gridThickness - this.outerBorder, grid.height * deltaX - this.gridThickness + this.outerBorder * 2 + offset, grid.width * deltaY - this.gridThickness + this.outerBorder * 2 + extraY);
     tmp$ = grid.height;
     for (var y = 0; y < tmp$; y++) {
       tmp$_0 = grid.width;
@@ -1863,7 +1888,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
           this.drawSquare_0(x, y);
         if (draw != null) {
           this.context.save();
-          this.context.translate(x * deltaX + this.translateX + (y % 2 === 0 ? offset : 0.0), y * deltaY);
+          this.context.translate(x * deltaX + this.translateX + this.gridThickness + (y % 2 === 0 ? offset : 0.0), y * deltaY);
           draw(this.context, this.fieldSize, grid.get_vux9f0$(x, y), x, y);
           this.context.restore();
         }
@@ -1875,7 +1900,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   };
   GridDisplay.prototype.drawHexagon_0 = function (x, y) {
     this.context.save();
-    this.context.translate(x * this.hexDeltaX + this.translateX, y * this.hexDeltaY);
+    this.context.translate(x * this.hexDeltaX + this.translateX + this.gridThickness, y * this.hexDeltaY);
     this.context.fill(y % 2 === 0 ? this.hexPath : this.hexPathOffset);
     this.context.restore();
   };
@@ -1957,32 +1982,33 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     simpleName: 'GridDisplay',
     interfaces: []
   };
-  function main$addButton$lambda(closure$game, closure$name, closure$header, closure$gameDisplay, closure$canvas, closure$control) {
+  function main$addButton$lambda(closure$game, closure$name, closure$header, closure$gameDisplay, closure$canvas, closure$playerArea, closure$gameArea) {
     return function (it) {
       var tmp$;
       (tmp$ = closure$game.v) != null ? (tmp$.end(), Unit) : null;
       closure$header.textContent = closure$name;
-      closure$game.v = closure$gameDisplay(closure$canvas, closure$control);
+      closure$game.v = closure$gameDisplay(closure$canvas, closure$playerArea, closure$gameArea);
       return Unit;
     };
   }
-  function main$addButton(closure$game, closure$header, closure$canvas, closure$control) {
+  function main$addButton(closure$game, closure$header, closure$canvas, closure$playerArea, closure$gameArea) {
     return function (gameDisplay, name, navElement) {
       var tmp$;
       var button = Kotlin.isType(tmp$ = document.createElement('button'), HTMLButtonElement) ? tmp$ : throwCCE();
       button.textContent = name;
       navElement.appendChild(button);
-      button.addEventListener('click', main$addButton$lambda(closure$game, name, closure$header, gameDisplay, closure$canvas, closure$control));
+      button.addEventListener('click', main$addButton$lambda(closure$game, name, closure$header, gameDisplay, closure$canvas, closure$playerArea, closure$gameArea));
     };
   }
   function main(args) {
-    var tmp$, tmp$_0, tmp$_1, tmp$_2, tmp$_3, tmp$_4;
+    var tmp$, tmp$_0, tmp$_1, tmp$_2, tmp$_3, tmp$_4, tmp$_5;
     var header = Kotlin.isType(tmp$ = document.getElementById('header'), HTMLElement) ? tmp$ : throwCCE();
     var navigation = Kotlin.isType(tmp$_0 = document.getElementById('navigation'), HTMLElement) ? tmp$_0 : throwCCE();
-    var control = Kotlin.isType(tmp$_1 = document.getElementById('control'), HTMLElement) ? tmp$_1 : throwCCE();
-    var canvas = Kotlin.isType(tmp$_2 = document.getElementById('canvas'), HTMLCanvasElement) ? tmp$_2 : throwCCE();
+    var playerArea = Kotlin.isType(tmp$_1 = document.getElementById('player-area'), HTMLElement) ? tmp$_1 : throwCCE();
+    var gameArea = Kotlin.isType(tmp$_2 = document.getElementById('game-area'), HTMLElement) ? tmp$_2 : throwCCE();
+    var canvas = Kotlin.isType(tmp$_3 = document.getElementById('canvas'), HTMLCanvasElement) ? tmp$_3 : throwCCE();
     var dpr = window.devicePixelRatio;
-    var element = Kotlin.isType(tmp$_3 = canvas.parentElement, HTMLElement) ? tmp$_3 : throwCCE();
+    var element = Kotlin.isType(tmp$_4 = canvas.parentElement, HTMLElement) ? tmp$_4 : throwCCE();
     var a = element.clientWidth;
     var b = window.innerHeight - navigation.clientHeight | 0;
     var styleSize = numberToInt(Math_0.min(a, b) * dpr);
@@ -1991,21 +2017,21 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     canvas.style.height = styleSize.toString() + 'px';
     canvas.width = size;
     canvas.height = size;
-    var context = Kotlin.isType(tmp$_4 = canvas.getContext('2d'), CanvasRenderingContext2D) ? tmp$_4 : throwCCE();
+    var context = Kotlin.isType(tmp$_5 = canvas.getContext('2d'), CanvasRenderingContext2D) ? tmp$_5 : throwCCE();
     context.scale(dpr, dpr);
     var game = {v: null};
-    var addButton = main$addButton(game, header, canvas, control);
-    addButton(getCallableRef('AlysDisplay', function (canvas, infoArea) {
-      return new AlysDisplay(canvas, infoArea);
+    var addButton = main$addButton(game, header, canvas, playerArea, gameArea);
+    addButton(getCallableRef('AlysDisplay', function (canvas, playerArea, gameArea) {
+      return new AlysDisplay(canvas, playerArea, gameArea);
     }), 'Alys', navigation);
-    addButton(getCallableRef('ChessDisplay', function (canvas, infoArea) {
-      return new ChessDisplay(canvas, infoArea);
+    addButton(getCallableRef('ChessDisplay', function (canvas, playerArea, gameArea) {
+      return new ChessDisplay(canvas, playerArea, gameArea);
     }), 'Chess', navigation);
-    addButton(getCallableRef('VirusDisplay', function (canvas, infoArea) {
-      return new VirusDisplay(canvas, infoArea);
+    addButton(getCallableRef('VirusDisplay', function (canvas, playerArea, gameArea) {
+      return new VirusDisplay(canvas, playerArea, gameArea);
     }), 'Virus', navigation);
-    addButton(getCallableRef('TicTacToeDisplay', function (canvas, infoArea) {
-      return new TicTacToeDisplay(canvas, infoArea);
+    addButton(getCallableRef('TicTacToeDisplay', function (canvas, playerArea, gameArea) {
+      return new TicTacToeDisplay(canvas, playerArea, gameArea);
     }), 'Tic Tac Toe', navigation);
   }
   function Position(x, y) {
@@ -2264,8 +2290,8 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     }
   }
   TicTacToePiece.valueOf_61zpoe$ = TicTacToePiece$valueOf;
-  function TicTacToeDisplay(canvas, infoArea) {
-    GameDisplay.call(this, canvas, infoArea);
+  function TicTacToeDisplay(canvas, playerArea, gameArea) {
+    GameDisplay.call(this, canvas, playerArea, gameArea);
     this.game_p4bo12$_0 = new TicTacToe();
     this.getColor_fajsqn$_0 = null;
     this.draw_p5ofi0$_0 = TicTacToeDisplay$draw$lambda;
@@ -2281,6 +2307,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     var $receiver_2 = this.players;
     var value_0 = new RandomAIPlayer();
     $receiver_2.put_xwzc9p$('Circle', value_0);
+    this.gridDisplay.outerBorder = 0.0;
     this.updateDisplay_pdl1vj$(null);
     this.gridDisplay.onClick = TicTacToeDisplay_init$lambda(this);
   }
@@ -2702,8 +2729,8 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   VirusAction.prototype.equals = function (other) {
     return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.source, other.source) && Kotlin.equals(this.destination, other.destination)))));
   };
-  function VirusDisplay(canvas, infoArea) {
-    GameDisplay.call(this, canvas, infoArea);
+  function VirusDisplay(canvas, playerArea, gameArea) {
+    GameDisplay.call(this, canvas, playerArea, gameArea);
     this.game_rcjipt$_0 = new Virus();
     this.getColor_csj3a4$_0 = VirusDisplay$getColor$lambda;
     this.draw_rdwa6r$_0 = null;

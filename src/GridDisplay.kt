@@ -11,6 +11,7 @@ class GridDisplay(val canvas: HTMLCanvasElement) {
 	var fieldSize = 50.0
 	var gridThickness = 1.0
 	var gridColor = "black"
+	var outerBorder = 1.0
 	var hexPath = Path2D()
 	var hexPathOffset = Path2D()
 	var hexDeltaX = 0.0
@@ -28,9 +29,9 @@ class GridDisplay(val canvas: HTMLCanvasElement) {
 		translateX = (canvas.clientWidth - grid.width * deltaX) / 2
 		context.fillStyle = gridColor
 		if (gridThickness > 0)
-			context.fillRect(translateX, 0.0,
-					grid.height * deltaX + gridThickness + offset,
-					grid.width * deltaY + gridThickness + extraY)
+			context.fillRect(translateX + gridThickness - outerBorder, 0.0 + gridThickness - outerBorder,
+					grid.height * deltaX - gridThickness + outerBorder * 2 + offset,
+					grid.width * deltaY - gridThickness + outerBorder * 2 + extraY)
 		for (y in 0 until grid.height) {
 			for (x in 0 until grid.width) {
 				context.fillStyle = fillStyle?.invoke(grid[x, y], x, y) ?: "white"

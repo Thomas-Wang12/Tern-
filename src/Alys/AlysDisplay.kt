@@ -49,6 +49,7 @@ class AlysDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameArea: 
 		game.state = game.state.newGame()
 		gridDisplay.gridColor = "blue"
 		gridDisplay.fieldSize = 39.0
+		gridDisplay.outerBorder = 50.0
 		gridDisplay.showHexagons()
 
 		updateDisplay(null)

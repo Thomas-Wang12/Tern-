@@ -20,6 +20,7 @@ class TicTacToeDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameA
 		players["Cross"] = Player()
 		game.players[TicTacToePiece.Circle] = "Circle"
 		players["Circle"] = RandomAIPlayer<TicTacToeState, TicTacToeAction>()
+		gridDisplay.outerBorder = 0.0
 
 		updateDisplay(null)
 
