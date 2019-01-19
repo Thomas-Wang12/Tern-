@@ -32,7 +32,7 @@ abstract class GameDisplay<G : BoardGame<S, T, A, P>, S : BoardGameState<T, A, P
 		awaitActionFrom(players[game.currentPlayer()])
 	}
 
-	fun updateDisplay(winner: String?) {
+	open fun updateDisplay(winner: String?) {
 		if (winner != null)
 			messageLine.textContent = winner + " has won!"
 		else
