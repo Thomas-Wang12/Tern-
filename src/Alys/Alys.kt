@@ -1,3 +1,4 @@
+import kotlin.math.min
 import kotlin.random.Random
 
 class Alys(override var state: AlysState = AlysState())
@@ -23,7 +24,7 @@ data class AlysState(
 		val state = AlysState(width, height, playerCount, newBoard, 1, players)
 		val examinedArea = mutableListOf<PositionedField<AlysField>>()
 		for (position in newBoard.positions()) {
-			if (examinedArea.any{it.position == position})
+			if (examinedArea.any { it.position == position })
 				continue
 			val area = state.connectedPositions(position)
 			examinedArea.addAll(area)
@@ -46,7 +47,39 @@ data class AlysState(
 	}
 
 	private fun moveIsLegal(action: AlysMoveAction): Boolean {
+		val sourceField = board[action.source] ?: return false
+		val destinationField = board[action.destination] ?: return false
+		if (sourceField.piece?.type != AlysType.Soldier)
+			return false
+		if (destinationField.player == currentPlayer) {
+			if (destinationField.piece?.type == AlysType.Fort)
+				return false
+			if (destinationField.piece?.type == AlysType.Soldier && destinationField.piece.strength > 4)
+				return false
+			return true
+		}
+		var defense = defenseOf(destinationField)
+		val defenses = action.destination.adjacentHexes()
+				.filter { board.isWithinBounds(it) }
+				.map { board[it] }
+				.filter { it != null && it.player == destinationField.player }
+				.map { if (it == null) 0 else defenseOf(it) }
+		for(def in defenses)
+			if(def > defense)
+				defense = def
+		if(sourceField.piece.strength <= defense)
+			return false
 		return true
+	}
+
+	private fun defenseOf(field: AlysField): Int {
+		if (field.piece?.type == AlysType.Soldier)
+			return min(field.piece.strength, 3)
+		if (field.piece?.type == AlysType.Fort)
+			return 2
+		if (field.treasury != null)
+			return 1
+		return 0
 	}
 
 	private fun createIsLegal(action: AlysCreateAction): Boolean {
@@ -80,26 +113,52 @@ data class AlysState(
 	private fun nextStateFrom(action: AlysMoveAction, newBoard: Grid<AlysField?>): AlysState {
 		val piece = newBoard[action.source]?.piece ?: return this
 		val destination = newBoard[action.destination] ?: return this
+		val newState = this.copy(board = newBoard)
 		// modifying destination
 		when {
 			destination.player != currentPlayer ->
-				newBoard[action.destination] = destination.copy(player = currentPlayer, piece = piece.copy(hasMoved = true), treasury = null)
+				invadeField(action.source, action.destination, newState)
 			destination.piece?.type == AlysType.Soldier ->
-				newBoard[action.destination] = destination.copy(piece = destination.piece.copy(strength = destination.piece.strength + piece.strength))
+				newBoard[action.destination] = destination.copy(
+						piece = destination.piece.copy(strength = min(4, destination.piece.strength + piece.strength))
+				)
 			else ->
 				newBoard[action.destination] = destination.copy()
 		}
 		newBoard[action.source] = (newBoard[action.source] as AlysField).copy(piece = null)
-		val newState = this.copy(board = newBoard)
-		// consolidating money
-		val area = newState.connectedPositions(action.destination)
-		val bases = area.filter{it.field.treasury != null}
-		val treasury = bases.sumBy { it.field.treasury ?: 0 }
-		val biggestBase = bases.maxBy { it.field.treasury ?: 0 } as PositionedField<AlysField>
-		for(base in bases)
-			newBoard[base.position] = base.field.copy(treasury = null)
-		newBoard[biggestBase.position] = biggestBase.field.copy(treasury = treasury)
 		return newState
+	}
+
+	private fun invadeField(source: Position, destination: Position, newState: AlysState) {
+		val piece = newState.board[source]?.piece as AlysPiece
+		newState.board[destination] = AlysField(currentPlayer, piece.copy(hasMoved = true))
+		mergeAreas(destination, newState)
+		fixSplitAreas(destination, newState)
+	}
+
+	private fun mergeAreas(mergePoint: Position, newState: AlysState) {
+		val area = newState.connectedPositions(mergePoint)
+		val bases = area.filter { it.field.treasury != null }
+		val treasury = bases.sumBy { it.field.treasury ?: 0 }
+		val biggestBase = bases.maxBy { it.field.treasury ?: 0 } ?: return
+		for (base in bases)
+			newState.board[base.position] = base.field.copy(treasury = null)
+		newState.board[biggestBase.position] = biggestBase.field.copy(treasury = treasury)
+	}
+
+	private fun fixSplitAreas(mergePoint: Position, newState: AlysState) {
+		for (position in mergePoint.adjacentHexes()) {
+			if (!newState.board.isWithinBounds(position) || newState.board[position] == null)
+				continue
+			val area = newState.connectedPositions(position)
+			if (area.size == 1)
+				continue
+			if (area.any { it.field.treasury != null })
+				continue
+			val emptyArea = area.filter { it.field.piece?.type != AlysType.Soldier && it.field.piece?.type != AlysType.Fort }
+			val newBase = if (emptyArea.isEmpty()) area.random() else emptyArea.random()
+			newState.board[newBase.position] = AlysField(newBase.field.player, treasury = 0)
+		}
 	}
 
 	private fun nextStateFrom(action: AlysCreateAction, newBoard: Grid<AlysField?>): AlysState {
@@ -117,13 +176,13 @@ data class AlysState(
 
 	private fun nextStateFrom(action: AlysEndTurnAction, newBoard: Grid<AlysField?>): AlysState {
 		val basePositions = newBoard.positions().filter { newBoard[it]?.player == currentPlayer && newBoard[it]?.treasury != null }
-		for(position in basePositions){
+		for (position in basePositions) {
 			val base = newBoard[position] as AlysField
 			val treasury = (base.treasury as Int) + connectedPositions(position).size
 			newBoard[position] = base.copy(treasury = treasury)
 		}
-		var nextPlayer = currentPlayer+1
-		if(nextPlayer > playerCount){
+		var nextPlayer = currentPlayer + 1
+		if (nextPlayer > playerCount) {
 			nextPlayer = 1
 		}
 		beginTurn(nextPlayer, newBoard)
@@ -132,23 +191,23 @@ data class AlysState(
 
 	private fun beginTurn(player: Int, newBoard: Grid<AlysField?>) {
 		val basePositions = newBoard.positions().filter { newBoard[it]?.player == player && newBoard[it]?.treasury != null }
-		for(position in basePositions){
+		for (position in basePositions) {
 			val base = newBoard[position] as AlysField
 			val treasury = (base.treasury as Int) + connectedPositions(position).size
 			val soldiers = connectedPositions(position).filter { it.field.piece?.type == AlysType.Soldier }
-			for(soldier in soldiers)
+			for (soldier in soldiers)
 				newBoard[soldier.position] = soldier.field.copy(piece = soldier.field.piece?.copy(hasMoved = false))
 			val upkeep = soldiers.map { upkeepFor(it.field.piece?.strength ?: 0) }.sum()
-			if(upkeep <= treasury)
+			if (upkeep <= treasury)
 				newBoard[position] = base.copy(treasury = treasury - upkeep)
 			else
-				for(soldier in soldiers)
+				for (soldier in soldiers)
 					newBoard[soldier.position] = AlysField(player, AlysPiece(AlysType.Grave))
 		}
 	}
 
 	private fun upkeepFor(strength: Int): Int {
-		return when(strength){
+		return when (strength) {
 			1 -> 2
 			2 -> 6
 			3 -> 18
@@ -181,7 +240,7 @@ data class AlysState(
 			connected.addAll(newConnected)
 			front.addAll(newConnected)
 		}
-		return connected.map{ PositionedField(it, board[it] as AlysField) }
+		return connected.map { PositionedField(it, board[it] as AlysField) }
 	}
 }
 
