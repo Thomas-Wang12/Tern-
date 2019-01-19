@@ -91,7 +91,7 @@ class AlysDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameArea: 
 						return@click
 					}
 					val selectedArea = game.state.connectedPositions(it)
-					sourcePosition = selectedArea[selectedArea.indexOfFirst { game.state.board[it]?.treasury != null }]
+					sourcePosition = selectedArea.find { it.field.treasury != null }?.position
 					updateDisplay(game.winner)
 				} else {
 					sourcePosition = null

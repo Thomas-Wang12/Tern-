@@ -19,6 +19,7 @@ abstract class GameDisplay<G : BoardGame<S, T, A, P>, S : BoardGameState<T, A, P
 
 	init {
 		playerArea.innerHTML = ""
+		gameArea.innerHTML = ""
 		messageLine.className = "message-line"
 		playerArea.appendChild(playerList)
 		playerArea.appendChild(messageLine)
