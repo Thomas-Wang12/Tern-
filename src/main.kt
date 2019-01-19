@@ -13,7 +13,7 @@ fun main(args: Array<String>) {
 
 	val dpr = window.devicePixelRatio
 	val element = canvas.parentElement as HTMLElement
-	val styleSize = (min(element.clientWidth, window.innerHeight - navigation.clientHeight)* dpr).toInt()
+	val styleSize = min(element.clientWidth, window.innerHeight - navigation.clientHeight)
 	val size = (styleSize * dpr).toInt()
 	canvas.style.width = styleSize.toString() + "px"
 	canvas.style.height = styleSize.toString() + "px"
