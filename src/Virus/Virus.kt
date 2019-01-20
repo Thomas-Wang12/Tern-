@@ -5,6 +5,21 @@ import kotlin.math.min
 class Virus(override var state: VirusState = VirusState())
 	: BoardGame<VirusState, Int, VirusAction, Int>() {
 
+	companion object {
+		val rules = listOf<Rule<VirusState, VirusAction>>(
+				Rule("Cannot place piece outside board") { action, state ->
+					state.board.isWithinBounds(action.source) && state.board.isWithinBounds(action.destination)
+				},
+				Rule("Can only place the current player's piece") { action, state ->
+					state.board[action.source.x, action.source.y] == state.currentPlayer
+				},
+				Rule("Can only place pieces on empty fields") { action, state ->
+					state.board[action.destination.x, action.destination.y] != 0
+				},
+				Rule("Cannot move farther than two squares") { action, state ->
+					abs(action.source.x - action.destination.x) > 2 || abs(action.source.y - action.destination.y) <= 2
+				})
+	}
 }
 
 data class VirusState(
@@ -45,16 +60,11 @@ data class VirusState(
 		override val players: List<Int> = (1..playerCount).toList()
 ) : BoardGameState<Int, VirusAction, Int> {
 
-	override fun isLegal(action: VirusAction): Boolean {
-		if (!isWithinBoard(action.source) || !isWithinBoard(action.destination))
-			return false
-		if (board[action.source.x, action.source.y] != currentPlayer)
-			return false
-		if (board[action.destination.x, action.destination.y] != 0)
-			return false
-		if (abs(action.source.x - action.destination.x) > 2 || abs(action.source.y - action.destination.y) > 2)
-			return false
-		return true
+	override fun confirmLegality(action: VirusAction): Result<Any?> {
+		for(rule in Virus.rules)
+			if(!rule.isLegal(action, this))
+				return Result.failure(rule.name)
+		return Result.success()
 	}
 
 	override fun possibleActions(): List<VirusAction> {
@@ -147,14 +157,6 @@ data class VirusState(
 			}
 		}
 		return movablePlayers
-	}
-
-	private fun isWithinBoard(position: Position): Boolean {
-		if (position.x < 0 || position.y < 0)
-			return false
-		if (position.x >= width || position.y >= height)
-			return false
-		return true
 	}
 
 	private fun switchSurroundings(position: Position, board: Grid<Int>) {

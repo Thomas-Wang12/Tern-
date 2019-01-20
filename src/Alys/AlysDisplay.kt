@@ -43,6 +43,12 @@ class AlysDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameArea: 
 			context.fillText("F", 0.0, 0.0)
 		else if (piece.piece?.type == AlysType.Soldier)
 			context.fillText("S", 0.0, 0.0)
+		else if (piece.piece?.type == AlysType.Tree)
+			context.fillText("T", 0.0, 0.0)
+		else if (piece.piece?.type == AlysType.CoastTree)
+			context.fillText("P", 0.0, 0.0)
+		else if (piece.piece?.type == AlysType.Grave)
+			context.fillText("G", 0.0, 0.0)
 	}
 
 	init {

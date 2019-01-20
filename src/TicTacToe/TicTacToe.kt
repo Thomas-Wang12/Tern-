@@ -1,6 +1,15 @@
 class TicTacToe(override var state: TicTacToeState = TicTacToeState())
 	: BoardGame<TicTacToeState, TicTacToePiece?, TicTacToeAction, TicTacToePiece>() {
 
+	companion object {
+		val rules = listOf<Rule<TicTacToeState, TicTacToeAction>>(
+				Rule("Can only place the current player's piece") { action, state ->
+					state.currentPlayer == action.piece
+				},
+				Rule("Can only place pieces on empty fields") { action, state ->
+					state.board[action.x, action.y] == null
+				})
+	}
 }
 
 data class TicTacToeState(
@@ -9,12 +18,11 @@ data class TicTacToeState(
 		override val players: List<TicTacToePiece> = listOf(TicTacToePiece.Cross, TicTacToePiece.Circle)
 ) : BoardGameState<TicTacToePiece?, TicTacToeAction, TicTacToePiece> {
 
-	override fun isLegal(action: TicTacToeAction): Boolean {
-		if (action.piece != currentPlayer)
-			return false
-		if (board[action.x, action.y] != null)
-			return false
-		return true
+	override fun confirmLegality(action: TicTacToeAction): Result<Any?> {
+		for(rule in TicTacToe.rules)
+			if(!rule.isLegal(action, this))
+				return Result.failure(rule.name)
+		return Result.success()
 	}
 
 	override fun possibleActions(): List<TicTacToeAction> {
@@ -26,7 +34,7 @@ data class TicTacToeState(
 		return actions.toList()
 	}
 
-	override fun nextState(action: TicTacToeAction): BoardGameState<TicTacToePiece?, TicTacToeAction, TicTacToePiece> {
+	override fun nextState(action: TicTacToeAction): TicTacToeState {
 		val newBoard = board.copy()
 		newBoard[action.x, action.y] = action.piece
 		return TicTacToeState(newBoard, if (currentPlayer == TicTacToePiece.Cross) TicTacToePiece.Circle else TicTacToePiece.Cross)
@@ -56,6 +64,5 @@ data class TicTacToeState(
 	}
 }
 
-data class TicTacToeAction(val piece: TicTacToePiece, val x: Int, val y: Int)
-
 enum class TicTacToePiece { Cross, Circle }
+data class TicTacToeAction(val piece: TicTacToePiece, val x: Int, val y: Int)

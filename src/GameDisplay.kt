@@ -12,6 +12,7 @@ abstract class GameDisplay<G : BoardGame<S, T, A, P>, S : BoardGameState<T, A, P
 	var aiDelay = 200L
 	val players: MutableMap<String, Any> = mutableMapOf()
 	val playerList = document.createElement("div") as HTMLDivElement
+	val turnLine = document.createElement("div") as HTMLDivElement
 	val messageLine = document.createElement("div") as HTMLDivElement
 
 	abstract val getColor: ((T, x: Int, y: Int) -> String)?
@@ -20,13 +21,19 @@ abstract class GameDisplay<G : BoardGame<S, T, A, P>, S : BoardGameState<T, A, P
 	init {
 		playerArea.innerHTML = ""
 		gameArea.innerHTML = ""
+		turnLine.className = "message-line"
 		messageLine.className = "message-line"
 		playerArea.appendChild(playerList)
+		playerArea.appendChild(turnLine)
 		playerArea.appendChild(messageLine)
 	}
 
 	fun performAction(action: A) {
-		game.performAction(action)
+		game.performAction(action).onFailure {
+			messageLine.textContent = it.error
+			updateDisplay(game.winner)
+			return
+		}
 		updateDisplay(game.winner)
 		if (game.winner != null || game.state.possibleActions().isEmpty())
 			return
@@ -37,7 +44,7 @@ abstract class GameDisplay<G : BoardGame<S, T, A, P>, S : BoardGameState<T, A, P
 		if (winner != null)
 			messageLine.textContent = winner + " has won!"
 		else
-			messageLine.textContent = "Current player: " + game.currentPlayer()
+			turnLine.textContent = "Current player: " + game.currentPlayer()
 		gridDisplay.display(game.state.board, getColor, draw)
 		updatePlayerList()
 	}

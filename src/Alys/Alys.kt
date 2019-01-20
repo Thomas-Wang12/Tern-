@@ -2,12 +2,10 @@ import kotlin.math.min
 import kotlin.random.Random
 
 class Alys(override var state: AlysState = AlysState())
-	: BoardGame<AlysState, AlysField?, AlysAction, Int>() {
-
-}
+	: BoardGame<AlysState, AlysField?, AlysAction, Int>()
 
 data class AlysState(
-		val width: Int = 5, val height: Int = 5,
+		val width: Int = 10, val height: Int = 10,
 		val playerCount: Int = 4,
 		override val board: Grid<AlysField?> = Grid(width, height, { x, y ->
 			AlysField((1..playerCount).random())
@@ -31,26 +29,39 @@ data class AlysState(
 			if (area.size < 2)
 				continue
 			val base = area.random(random)
-			newBoard[base.position] = base.field?.copy(treasury = area.filter { it.field?.piece == null }.size * 5)
+			newBoard[base.position] = base.field.copy(treasury = area.filter { it.field.piece == null }.size * 5)
 		}
 		return state
 	}
 
-	override fun isLegal(action: AlysAction): Boolean {
+	override fun confirmLegality(action: AlysAction): Result<Any?> {
+		/*
+		for (rule in action.rules)
+			if (!rule.isLegal(this))
+				return Result.failure(rule.name)
+		*/
 		if (action is AlysMoveAction)
-			return moveIsLegal(action)
+			return if(moveIsLegal(action)) Result.success() else Result.failure("can't")
 		if (action is AlysCreateAction)
-			return createIsLegal(action)
+			return if(createIsLegal(action)) Result.success() else Result.failure("can't")
 		if (action is AlysEndTurnAction)
-			return true
-		return false
+			return Result.success()
+		return Result.failure("can't")
 	}
 
-	private fun moveIsLegal(action: AlysMoveAction): Boolean {
+	private fun moveIsLegal(action: AlysMoveAction, ignorePiece: Boolean = false): Boolean {
 		val sourceField = board[action.source] ?: return false
 		val destinationField = board[action.destination] ?: return false
-		if (sourceField.piece?.type != AlysType.Soldier)
+		val sourceArea = connectedPositions(action.source)
+		val allowedPositions = mutableListOf<Position>()
+		for (place in sourceArea)
+			allowedPositions.addAll(place.position.adjacentHexes())
+		allowedPositions.addAll(sourceArea.map { it.position })
+		if (action.destination !in allowedPositions)
 			return false
+		if (!ignorePiece && sourceField.piece?.type != AlysType.Soldier)
+			return false
+		val strength = sourceField.piece?.strength ?: 1
 		if (destinationField.player == currentPlayer) {
 			if (destinationField.piece?.type == AlysType.Fort)
 				return false
@@ -64,10 +75,10 @@ data class AlysState(
 				.map { board[it] }
 				.filter { it != null && it.player == destinationField.player }
 				.map { if (it == null) 0 else defenseOf(it) }
-		for(def in defenses)
-			if(def > defense)
+		for (def in defenses)
+			if (def > defense)
 				defense = def
-		if(sourceField.piece.strength <= defense)
+		if (strength <= defense)
 			return false
 		return true
 	}
@@ -90,7 +101,7 @@ data class AlysState(
 		if (action.type == AlysType.Fort && treasury >= 15)
 			return isConnected(action.source, action.destination) && board[action.destination]?.player == currentPlayer
 		if (action.type == AlysType.Soldier && treasury >= 10)
-			return moveIsLegal(AlysMoveAction(action.source, action.destination))
+			return moveIsLegal(AlysMoveAction(action.source, action.destination), true)
 		return false
 	}
 
@@ -99,7 +110,7 @@ data class AlysState(
 		return actions.toList()
 	}
 
-	override fun nextState(action: AlysAction): BoardGameState<AlysField?, AlysAction, Int> {
+	override fun nextState(action: AlysAction): AlysState {
 		val newBoard = board.copy()
 		if (action is AlysMoveAction)
 			return nextStateFrom(action, newBoard)
@@ -190,16 +201,31 @@ data class AlysState(
 	}
 
 	private fun beginTurn(player: Int, newBoard: Grid<AlysField?>) {
-		val basePositions = newBoard.positions().filter { newBoard[it]?.player == player && newBoard[it]?.treasury != null }
-		for (position in basePositions) {
-			val base = newBoard[position] as AlysField
-			val treasury = (base.treasury as Int) + connectedPositions(position).size
-			val soldiers = connectedPositions(position).filter { it.field.piece?.type == AlysType.Soldier }
+		val playerArea = newBoard.positionedFields()
+				.filter { it.field?.player == player }
+				.map { PositionedField(it.position, it.field as AlysField) }
+		val newTrees = mutableListOf<Position>()
+		for (place in playerArea)
+			if (place.field.piece == null && place.field.treasury == null)
+				if (place.position.adjacentHexes()
+								.map { if (newBoard.isWithinBounds(it)) newBoard[it] else null }
+								.filter { it?.piece?.type == AlysType.Tree }.size > 1)
+					newTrees.add(place.position)
+		for (position in newTrees)
+			newBoard[position] = AlysField(player, AlysPiece(AlysType.Tree))
+		for (place in playerArea.filter { it.field.piece?.type == AlysType.Grave })
+			newBoard[place.position] = AlysField(player, AlysPiece(AlysType.Tree))
+		val bases = playerArea.filter { it.field.player == player && it.field.treasury != null }
+		for (base in bases) {
+			val area = connectedPositions(base.position)
+			val treasury = (base.field.treasury as Int)
+			+area.filter { it.field.piece?.type != AlysType.Tree && it.field.piece?.type != AlysType.CoastTree }.size
+			val soldiers = area.filter { it.field.piece?.type == AlysType.Soldier }
 			for (soldier in soldiers)
 				newBoard[soldier.position] = soldier.field.copy(piece = soldier.field.piece?.copy(hasMoved = false))
 			val upkeep = soldiers.map { upkeepFor(it.field.piece?.strength ?: 0) }.sum()
 			if (upkeep <= treasury)
-				newBoard[position] = base.copy(treasury = treasury - upkeep)
+				newBoard[base.position] = base.field.copy(treasury = treasury - upkeep)
 			else
 				for (soldier in soldiers)
 					newBoard[soldier.position] = AlysField(player, AlysPiece(AlysType.Grave))
@@ -247,7 +273,26 @@ data class AlysState(
 data class AlysField(val player: Int, val piece: AlysPiece? = null, val treasury: Int? = null)
 data class AlysPiece(val type: AlysType, val strength: Int = 1, val hasMoved: Boolean = false)
 enum class AlysType { Fort, Soldier, Grave, Tree, CoastTree }
-interface AlysAction {}
-data class AlysMoveAction(val source: Position, val destination: Position) : AlysAction
-data class AlysCreateAction(val type: AlysType, val source: Position, val destination: Position) : AlysAction
-class AlysEndTurnAction : AlysAction
+interface AlysAction {
+	val rules: List<Rule<AlysState, AlysAction>>
+}
+
+data class AlysMoveAction(val source: Position, val destination: Position) : AlysAction {
+	override val rules = listOf<Rule<AlysState, AlysAction>>(
+			Rule("Pieces can only be moved next to or within their area") { action, state ->
+				true
+			})
+}
+
+data class AlysCreateAction(val type: AlysType, val source: Position, val destination: Position) : AlysAction {
+	override val rules = listOf(
+			Rule<AlysState, AlysAction>("The area must be able to afford the piece") { action, state ->
+				true
+			})
+}
+
+class AlysEndTurnAction : AlysAction {
+	override val rules = listOf<Rule<AlysState, AlysAction>>()
+}
+
+class Rule<S, A>(val name: String, val isLegal: (action: A, state: S) -> Boolean)

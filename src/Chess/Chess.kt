@@ -39,20 +39,23 @@ data class ChessState(
 		override val players: List<ChessPlayer> = listOf(ChessPlayer.White, ChessPlayer.Black)
 ) : BoardGameState<ChessPiece?, ChessAction, ChessPlayer> {
 
-	override fun isLegal(action: ChessAction): Boolean {
-		val piece = board[action.source] ?: return false
+	override fun confirmLegality(action: ChessAction): Result<Any?> {
+		val piece = board[action.source] ?: return Result.failure("Couldn't find piece")
 		if (piece.player != currentPlayer)
-			return false
+			return Result.failure("Can only move own pieces")
 		val enemy = board[action.destination]
 		if (enemy?.player == currentPlayer)
-			return false
+			return Result.failure("Cannot take own pieces")
 		if(!piece.isLegal(board, action))
-			return false
+			return Result.failure("Piece cannot move there")
 		val newState = nextState(action)
 		val index = newState.board.fields.indexOfFirst { it?.type == ChessPieceType.King && it.player == currentPlayer }
 		val position = Position(index % 8, index / 8)
 		val king = newState.board[position] as ChessPiece
-		return !king.isInCheck(newState.board, position)
+		return if(king.isInCheck(newState.board, position))
+			Result.failure("Cannot make a move that would leave the king in check")
+		else
+			Result.success()
 	}
 
 	override fun possibleActions(): List<ChessAction> {
@@ -65,10 +68,10 @@ data class ChessState(
 				actions.addAll(piece.possibleMoves(board, Position(i, j)))
 			}
 		}
-		return actions.filter { isLegal(it) }
+		return actions.filter { confirmLegality(it) is Success }
 	}
 
-	override fun nextState(action: ChessAction): BoardGameState<ChessPiece?, ChessAction, ChessPlayer> {
+	override fun nextState(action: ChessAction): ChessState {
 		val newBoard = board.copy()
 		var newPiece = board[action.source]?.copy(hasMoved = true) as ChessPiece
 		if (newPiece.type == ChessPieceType.Pawn) {
@@ -90,7 +93,7 @@ data class ChessState(
 				val piece = board[i,j]
 				if(piece?.player != currentPlayer)
 					continue
-				if(piece.possibleMoves(board, Position(i, j)).filter { isLegal(it) }.isNotEmpty())
+				if(piece.possibleMoves(board, Position(i, j)).any { confirmLegality(it) is Success })
 					return null
 			}
 		}
