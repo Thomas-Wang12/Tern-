@@ -65,9 +65,6 @@ nav button {
 
 canvas {
 	display: inline-block;
-	image-rendering: -moz-crisp-edges;
-  image-rendering: -webkit-crisp-edges;
-  image-rendering: pixelated;
 }
 
 button {

@@ -74,6 +74,8 @@ class AlysDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameArea: 
 	}
 
 	init {
+		val context: CanvasRenderingContext2D = canvas.getContext("2d") as CanvasRenderingContext2D
+		context.imageSmoothingEnabled = false
 		addImage("S1")
 		addImage("S1R")
 		addImage("S2")

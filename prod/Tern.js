@@ -10,31 +10,33 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   var listOf = Kotlin.kotlin.collections.listOf_i5x0yv$;
   var equals = Kotlin.equals;
   var Kind_OBJECT = Kotlin.Kind.OBJECT;
-  var Kind_CLASS = Kotlin.Kind.CLASS;
-  var Random = Kotlin.kotlin.random.Random_za3lpa$;
   var IntRange = Kotlin.kotlin.ranges.IntRange;
-  var random = Kotlin.kotlin.collections.random_iscd7z$;
   var toList = Kotlin.kotlin.collections.toList_7wnvza$;
-  var throwCCE = Kotlin.throwCCE;
-  var sum = Kotlin.kotlin.collections.sum_plj8ka$;
-  var mutableListOf = Kotlin.kotlin.collections.mutableListOf_i5x0yv$;
+  var Kind_CLASS = Kotlin.Kind.CLASS;
   var Enum = Kotlin.kotlin.Enum;
   var throwISE = Kotlin.throwISE;
   var Kind_INTERFACE = Kotlin.Kind.INTERFACE;
+  var Random = Kotlin.kotlin.random.Random_za3lpa$;
+  var toMutableList = Kotlin.kotlin.collections.toMutableList_4c7yge$;
+  var numberToInt = Kotlin.numberToInt;
+  var random = Kotlin.kotlin.collections.random_iscd7z$;
+  var until = Kotlin.kotlin.ranges.until_dqglrj$;
+  var random_0 = Kotlin.kotlin.ranges.random_xmiyix$;
+  var throwCCE = Kotlin.throwCCE;
   var Unit = Kotlin.kotlin.Unit;
-  var getCallableRef = Kotlin.getCallableRef;
-  var defineInlineFunction = Kotlin.defineInlineFunction;
-  var wrapFunction = Kotlin.wrapFunction;
-  var abs = Kotlin.kotlin.math.abs_za3lpa$;
   var coroutines = $module$kotlinx_coroutines_core.kotlinx.coroutines;
+  var L500 = Kotlin.Long.fromInt(500);
   var delay = $module$kotlinx_coroutines_core.kotlinx.coroutines.delay_s8cxhz$;
   var COROUTINE_SUSPENDED = Kotlin.kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED;
   var CoroutineImpl = Kotlin.kotlin.coroutines.CoroutineImpl;
   var launch = $module$kotlinx_coroutines_core.kotlinx.coroutines.launch_s496o7$;
+  var getCallableRef = Kotlin.getCallableRef;
+  var sum = Kotlin.kotlin.collections.sum_plj8ka$;
+  var mutableListOf = Kotlin.kotlin.collections.mutableListOf_i5x0yv$;
+  var defineInlineFunction = Kotlin.defineInlineFunction;
+  var wrapFunction = Kotlin.wrapFunction;
+  var abs = Kotlin.kotlin.math.abs_za3lpa$;
   var L200 = Kotlin.Long.fromInt(200);
-  var until = Kotlin.kotlin.ranges.until_dqglrj$;
-  var toMutableList = Kotlin.kotlin.collections.toMutableList_4c7yge$;
-  var numberToInt = Kotlin.numberToInt;
   Alys.prototype = Object.create(BoardGame.prototype);
   Alys.prototype.constructor = Alys;
   AlysType.prototype = Object.create(Enum.prototype);
@@ -134,7 +136,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   var ArrayList_init_0 = Kotlin.kotlin.collections.ArrayList_init_ww73n8$;
   function Alys$Companion$commonRules$lambda_4(action, state, f) {
     var tmp$;
-    var originArea = state.connectedPositions_dfplqh$(action.origin);
+    var originArea = AlysState$Companion_getInstance().connectedPositions_jwhin5$(action.origin, state.board);
     var allowedPositions = ArrayList_init();
     tmp$ = originArea.iterator();
     while (tmp$.hasNext()) {
@@ -258,674 +260,22 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     }
     return Alys$Companion_instance;
   }
-  Alys.$metadata$ = {
-    kind: Kind_CLASS,
-    simpleName: 'Alys',
-    interfaces: [BoardGame]
-  };
-  function AlysState(width, height, playerCount, board, currentPlayer, players) {
+  Alys.prototype.newGame_qt1dr2$ = function (width, height, seed) {
     if (width === void 0)
       width = 10;
     if (height === void 0)
       height = 10;
-    if (playerCount === void 0)
-      playerCount = 4;
-    if (board === void 0)
-      board = new Grid(width, height, AlysState_init$lambda(playerCount));
-    if (currentPlayer === void 0)
-      currentPlayer = 1;
-    if (players === void 0)
-      players = toList(new IntRange(1, playerCount));
-    this.width = width;
-    this.height = height;
-    this.playerCount = playerCount;
-    this.board_312tuy$_0 = board;
-    this.currentPlayer_yz191a$_0 = currentPlayer;
-    this.players_4wz3pm$_0 = players;
-  }
-  Object.defineProperty(AlysState.prototype, 'board', {
-    get: function () {
-      return this.board_312tuy$_0;
-    }
-  });
-  Object.defineProperty(AlysState.prototype, 'currentPlayer', {
-    get: function () {
-      return this.currentPlayer_yz191a$_0;
-    }
-  });
-  Object.defineProperty(AlysState.prototype, 'players', {
-    get: function () {
-      return this.players_4wz3pm$_0;
-    }
-  });
-  var Random_0 = Kotlin.kotlin.random.Random;
-  var random_0 = Kotlin.kotlin.ranges.random_xmiyix$;
-  function AlysState$newGame$lambda(this$AlysState) {
-    return function (x, y) {
-      return new AlysField(random_0(new IntRange(1, this$AlysState.playerCount), Random_0.Default));
-    };
-  }
-  var Collection = Kotlin.kotlin.collections.Collection;
-  AlysState.prototype.newGame_za3lpa$ = function (seed) {
     if (seed === void 0)
       seed = 1;
-    var tmp$;
-    var random_0 = Random(seed);
-    var newBoard = new Grid(this.width, this.height, AlysState$newGame$lambda(this));
-    var state = new AlysState(this.width, this.height, this.playerCount, newBoard, 1, this.players);
-    var examinedArea = ArrayList_init();
-    tmp$ = newBoard.positions().iterator();
-    loop_label: while (tmp$.hasNext()) {
-      var position = tmp$.next();
-      var any$result;
-      any$break: do {
-        var tmp$_0;
-        if (Kotlin.isType(examinedArea, Collection) && examinedArea.isEmpty()) {
-          any$result = false;
-          break any$break;
-        }
-        tmp$_0 = examinedArea.iterator();
-        while (tmp$_0.hasNext()) {
-          var element = tmp$_0.next();
-          var tmp$_1;
-          if ((tmp$_1 = element.position) != null ? tmp$_1.equals(position) : null) {
-            any$result = true;
-            break any$break;
-          }
-        }
-        any$result = false;
-      }
-       while (false);
-      if (any$result)
-        continue loop_label;
-      var area = state.connectedPositions_dfplqh$(position);
-      examinedArea.addAll_brywnq$(area);
-      if (area.size < 2)
-        continue loop_label;
-      var base = random(area, random_0);
-      var tmp$_2 = base.position;
-      var tmp$_3 = base.field;
-      var tmp$_4 = void 0;
-      var tmp$_5 = void 0;
-      var destination = ArrayList_init();
-      var tmp$_6;
-      tmp$_6 = area.iterator();
-      while (tmp$_6.hasNext()) {
-        var element_0 = tmp$_6.next();
-        if (element_0.field.piece == null)
-          destination.add_11rb$(element_0);
-      }
-      newBoard.set_39d550$(tmp$_2, tmp$_3.copy_jcygvj$(tmp$_4, tmp$_5, destination.size * 5 | 0));
-    }
-    return state;
+    var creator = new AlysBoardCreator(width, height, seed);
+    creator.generateLand();
+    creator.fillBoard_za3lpa$(this.players.size);
+    this.state = new AlysState(width, height, this.players.size, creator.board, 1, toList(new IntRange(1, this.players.size)));
   };
-  AlysState.prototype.confirmLegality_11rc$ = function (action) {
-    if (Kotlin.isType(action, AlysMoveAction))
-      return this.confirmMoveLegality_0(action);
-    if (Kotlin.isType(action, AlysCreateAction))
-      return this.confirmCreateLegality_0(action);
-    if (Kotlin.isType(action, AlysEndTurnAction))
-      return Result$Companion_getInstance().success();
-    return Result$Companion_getInstance().failure_ytbaoo$('Unknown action');
-  };
-  AlysState.prototype.confirmRules_byoodm$ = function (action, rules, info) {
-    var tmp$;
-    tmp$ = rules.iterator();
-    while (tmp$.hasNext()) {
-      var rule = tmp$.next();
-      if (!rule.isLegal(action, this, info))
-        return Result$Companion_getInstance().failure_ytbaoo$(rule.description);
-    }
-    return Result$Companion_getInstance().success();
-  };
-  AlysState.prototype.confirmMoveLegality_0 = function (action, previousInfo) {
-    if (previousInfo === void 0)
-      previousInfo = null;
-    var info = previousInfo != null ? previousInfo : new AlysActionInfo();
-    if (previousInfo == null) {
-      var $this = this.confirmRules_byoodm$(action, Alys$Companion_getInstance().commonRules, info);
-      if (Kotlin.isType($this, Failure)) {
-        return $this;
-      }
-       else
-        Kotlin.isType($this, Success) || throwCCE();
-    }
-    return this.confirmRules_byoodm$(action, Alys$Companion_getInstance().moveRules, info);
-  };
-  AlysState.prototype.confirmCreateLegality_0 = function (action) {
-    var info = new AlysActionInfo();
-    var $this = this.confirmRules_byoodm$(action, Alys$Companion_getInstance().commonRules, info);
-    if (Kotlin.isType($this, Failure)) {
-      return $this;
-    }
-     else
-      Kotlin.isType($this, Success) || throwCCE();
-    var $this_0 = this.confirmRules_byoodm$(action, Alys$Companion_getInstance().createRules, info);
-    if (Kotlin.isType($this_0, Failure)) {
-      return $this_0;
-    }
-     else
-      Kotlin.isType($this_0, Success) || throwCCE();
-    if (action.type === AlysType$Soldier_getInstance()) {
-      info.originPiece = new AlysPiece(AlysType$Soldier_getInstance());
-      return this.confirmMoveLegality_0(new AlysMoveAction(action.origin, action.destination), info);
-    }
-    return Result$Companion_getInstance().success();
-  };
-  var Math_0 = Math;
-  AlysState.prototype.defenseOf_i615cl$ = function (field) {
-    var tmp$, tmp$_0;
-    if (equals((tmp$ = field.piece) != null ? tmp$.type : null, AlysType$Soldier_getInstance())) {
-      var a = field.piece.strength;
-      return Math_0.min(a, 3);
-    }
-    if (equals((tmp$_0 = field.piece) != null ? tmp$_0.type : null, AlysType$Fort_getInstance()))
-      return 2;
-    if (field.treasury != null)
-      return 1;
-    return 0;
-  };
-  AlysState.prototype.possibleActions = function () {
-    var actions = ArrayList_init();
-    return toList(actions);
-  };
-  AlysState.prototype.nextState_11rc$ = function (action) {
-    var newBoard = this.board.copy_urw29u$();
-    if (Kotlin.isType(action, AlysMoveAction))
-      return this.nextStateFrom_0(action, newBoard);
-    if (Kotlin.isType(action, AlysCreateAction))
-      return this.nextStateFrom_1(action, newBoard);
-    if (Kotlin.isType(action, AlysEndTurnAction))
-      return this.nextStateFrom_2(action, newBoard);
-    return this.copy_gb7y5t$(void 0, void 0, void 0, newBoard);
-  };
-  AlysState.prototype.nextStateFrom_0 = function (action, newBoard) {
-    var tmp$, tmp$_0, tmp$_1, tmp$_2;
-    tmp$_0 = (tmp$ = newBoard.get_dfplqh$(action.origin)) != null ? tmp$.piece : null;
-    if (tmp$_0 == null) {
-      return this;
-    }
-    var piece = tmp$_0;
-    tmp$_1 = newBoard.get_dfplqh$(action.destination);
-    if (tmp$_1 == null) {
-      return this;
-    }
-    var destination = tmp$_1;
-    var newState = this.copy_gb7y5t$(void 0, void 0, void 0, newBoard);
-    if (destination.player !== this.currentPlayer)
-      this.invadeField_0(action.origin, action.destination, newState);
-    else {
-      var tmp$_3;
-      if (equals((tmp$_3 = destination.piece) != null ? tmp$_3.type : null, AlysType$Soldier_getInstance())) {
-        var tmp$_4 = action.destination;
-        var tmp$_5 = void 0;
-        var tmp$_6 = destination.piece;
-        var tmp$_7 = void 0;
-        var b = destination.piece.strength + piece.strength | 0;
-        newBoard.set_39d550$(tmp$_4, destination.copy_jcygvj$(tmp$_5, tmp$_6.copy_thel6g$(tmp$_7, Math_0.min(4, b))));
-      }
-       else {
-        var tmp$_8;
-        if (((tmp$_8 = destination.piece) != null ? tmp$_8.type : null) != null)
-          newBoard.set_39d550$(action.destination, new AlysField(this.currentPlayer, piece.copy_thel6g$(void 0, void 0, true)));
-        else
-          newBoard.set_39d550$(action.destination, new AlysField(this.currentPlayer, piece.copy_thel6g$()));
-      }
-    }
-    newBoard.set_39d550$(action.origin, (Kotlin.isType(tmp$_2 = newBoard.get_dfplqh$(action.origin), AlysField) ? tmp$_2 : throwCCE()).copy_jcygvj$(void 0, null));
-    return newState;
-  };
-  AlysState.prototype.invadeField_0 = function (origin, destination, newState) {
-    var tmp$, tmp$_0;
-    var piece = Kotlin.isType(tmp$_0 = (tmp$ = newState.board.get_dfplqh$(origin)) != null ? tmp$.piece : null, AlysPiece) ? tmp$_0 : throwCCE();
-    newState.board.set_39d550$(destination, new AlysField(this.currentPlayer, piece.copy_thel6g$(void 0, void 0, true)));
-    this.mergeAreas_0(destination, newState);
-    this.fixSplitAreas_0(destination, newState);
-  };
-  AlysState.prototype.mergeAreas_0 = function (mergePoint, newState) {
-    var tmp$, tmp$_0;
-    var area = newState.connectedPositions_dfplqh$(mergePoint);
-    var destination = ArrayList_init();
-    var tmp$_1;
-    tmp$_1 = area.iterator();
-    while (tmp$_1.hasNext()) {
-      var element = tmp$_1.next();
-      if (element.field.treasury != null)
-        destination.add_11rb$(element);
-    }
-    var bases = destination;
-    var tmp$_2;
-    var sum = 0;
-    tmp$_2 = bases.iterator();
-    while (tmp$_2.hasNext()) {
-      var element_0 = tmp$_2.next();
-      var tmp$_3;
-      sum = sum + ((tmp$_3 = element_0.field.treasury) != null ? tmp$_3 : 0) | 0;
-    }
-    var treasury = sum;
-    var maxBy$result;
-    maxBy$break: do {
-      var iterator = bases.iterator();
-      if (!iterator.hasNext()) {
-        maxBy$result = null;
-        break maxBy$break;
-      }
-      var maxElem = iterator.next();
-      var tmp$_4;
-      var maxValue = (tmp$_4 = maxElem.field.treasury) != null ? tmp$_4 : 0;
-      while (iterator.hasNext()) {
-        var e = iterator.next();
-        var tmp$_5;
-        var v = (tmp$_5 = e.field.treasury) != null ? tmp$_5 : 0;
-        if (Kotlin.compareTo(maxValue, v) < 0) {
-          maxElem = e;
-          maxValue = v;
-        }
-      }
-      maxBy$result = maxElem;
-    }
-     while (false);
-    tmp$ = maxBy$result;
-    if (tmp$ == null) {
-      return;
-    }
-    var biggestBase = tmp$;
-    tmp$_0 = bases.iterator();
-    while (tmp$_0.hasNext()) {
-      var base = tmp$_0.next();
-      newState.board.set_39d550$(base.position, base.field.copy_jcygvj$(void 0, void 0, null));
-    }
-    newState.board.set_39d550$(biggestBase.position, biggestBase.field.copy_jcygvj$(void 0, void 0, treasury));
-  };
-  AlysState.prototype.fixSplitAreas_0 = function (mergePoint, newState) {
-    var tmp$;
-    tmp$ = mergePoint.adjacentHexes().iterator();
-    loop_label: while (tmp$.hasNext()) {
-      var position = tmp$.next();
-      if (!newState.board.isWithinBounds_dfplqh$(position) || newState.board.get_dfplqh$(position) == null)
-        continue loop_label;
-      var area = newState.connectedPositions_dfplqh$(position);
-      if (area.size === 1) {
-        newState.board.set_39d550$(area.get_za3lpa$(0).position, area.get_za3lpa$(0).field.copy_jcygvj$(void 0, void 0, null));
-        continue loop_label;
-      }
-      var any$result;
-      any$break: do {
-        var tmp$_0;
-        if (Kotlin.isType(area, Collection) && area.isEmpty()) {
-          any$result = false;
-          break any$break;
-        }
-        tmp$_0 = area.iterator();
-        while (tmp$_0.hasNext()) {
-          var element = tmp$_0.next();
-          if (element.field.treasury != null) {
-            any$result = true;
-            break any$break;
-          }
-        }
-        any$result = false;
-      }
-       while (false);
-      if (any$result)
-        continue loop_label;
-      var destination = ArrayList_init();
-      var tmp$_1;
-      tmp$_1 = area.iterator();
-      while (tmp$_1.hasNext()) {
-        var element_0 = tmp$_1.next();
-        var tmp$_2, tmp$_3;
-        if (!equals((tmp$_2 = element_0.field.piece) != null ? tmp$_2.type : null, AlysType$Soldier_getInstance()) && !equals((tmp$_3 = element_0.field.piece) != null ? tmp$_3.type : null, AlysType$Fort_getInstance()))
-          destination.add_11rb$(element_0);
-      }
-      var emptyArea = destination;
-      var newBase = emptyArea.isEmpty() ? random(area, Random_0.Default) : random(emptyArea, Random_0.Default);
-      newState.board.set_39d550$(newBase.position, new AlysField(newBase.field.player, void 0, 0));
-    }
-  };
-  AlysState.prototype.nextStateFrom_1 = function (action, newBoard) {
-    var tmp$, tmp$_0, tmp$_1, tmp$_2, tmp$_3, tmp$_4;
-    tmp$ = newBoard.get_dfplqh$(action.origin);
-    if (tmp$ == null) {
-      return this;
-    }
-    var origin = tmp$;
-    if (action.type === AlysType$Soldier_getInstance()) {
-      tmp$_2 = action.origin;
-      tmp$_1 = (typeof (tmp$_0 = origin.treasury) === 'number' ? tmp$_0 : throwCCE()) - 10 | 0;
-      newBoard.set_39d550$(tmp$_2, origin.copy_jcygvj$(void 0, new AlysPiece(AlysType$Soldier_getInstance()), tmp$_1));
-      return this.nextStateFrom_0(new AlysMoveAction(action.origin, action.destination), newBoard);
-    }
-     else if (action.type === AlysType$Fort_getInstance()) {
-      newBoard.set_39d550$(action.origin, origin.copy_jcygvj$(void 0, void 0, (typeof (tmp$_3 = origin.treasury) === 'number' ? tmp$_3 : throwCCE()) - 15 | 0));
-      newBoard.set_39d550$(action.destination, (Kotlin.isType(tmp$_4 = newBoard.get_dfplqh$(action.destination), AlysField) ? tmp$_4 : throwCCE()).copy_jcygvj$(void 0, new AlysPiece(AlysType$Fort_getInstance())));
-      return this.copy_gb7y5t$(void 0, void 0, void 0, newBoard);
-    }
-    return this;
-  };
-  AlysState.prototype.nextStateFrom_2 = function (action, newBoard) {
-    var tmp$, tmp$_0, tmp$_1;
-    var $receiver = newBoard.positions();
-    var destination = ArrayList_init();
-    var tmp$_2;
-    tmp$_2 = $receiver.iterator();
-    while (tmp$_2.hasNext()) {
-      var element = tmp$_2.next();
-      var tmp$_3, tmp$_4;
-      if (((tmp$_3 = newBoard.get_dfplqh$(element)) != null ? tmp$_3.player : null) === this.currentPlayer && ((tmp$_4 = newBoard.get_dfplqh$(element)) != null ? tmp$_4.treasury : null) != null)
-        destination.add_11rb$(element);
-    }
-    var basePositions = destination;
-    tmp$ = basePositions.iterator();
-    while (tmp$.hasNext()) {
-      var position = tmp$.next();
-      var base = Kotlin.isType(tmp$_0 = newBoard.get_dfplqh$(position), AlysField) ? tmp$_0 : throwCCE();
-      var treasury = (typeof (tmp$_1 = base.treasury) === 'number' ? tmp$_1 : throwCCE()) + this.connectedPositions_dfplqh$(position).size | 0;
-      newBoard.set_39d550$(position, base.copy_jcygvj$(void 0, void 0, treasury));
-    }
-    var nextPlayer = this.currentPlayer + 1 | 0;
-    if (nextPlayer > this.playerCount) {
-      nextPlayer = 1;
-    }
-    this.beginTurn_0(nextPlayer, newBoard);
-    return this.copy_gb7y5t$(void 0, void 0, void 0, newBoard, nextPlayer);
-  };
-  AlysState.prototype.beginTurn_0 = function (player, newBoard) {
-    var tmp$, tmp$_0, tmp$_1, tmp$_2, tmp$_3, tmp$_4, tmp$_5, tmp$_6, tmp$_7;
-    var $receiver = newBoard.positionedFields();
-    var destination = ArrayList_init();
-    var tmp$_8;
-    tmp$_8 = $receiver.iterator();
-    while (tmp$_8.hasNext()) {
-      var element = tmp$_8.next();
-      var tmp$_9;
-      if (((tmp$_9 = element.field) != null ? tmp$_9.player : null) === player)
-        destination.add_11rb$(element);
-    }
-    var destination_0 = ArrayList_init_0(collectionSizeOrDefault(destination, 10));
-    var tmp$_10;
-    tmp$_10 = destination.iterator();
-    while (tmp$_10.hasNext()) {
-      var item = tmp$_10.next();
-      var tmp$_11;
-      destination_0.add_11rb$(new PositionedField(item.position, Kotlin.isType(tmp$_11 = item.field, AlysField) ? tmp$_11 : throwCCE()));
-    }
-    var playerArea = destination_0;
-    var newTrees = ArrayList_init();
-    tmp$ = playerArea.iterator();
-    while (tmp$.hasNext()) {
-      var place = tmp$.next();
-      if (place.field.piece == null && place.field.treasury == null) {
-        var $receiver_0 = place.position.adjacentHexes();
-        var destination_1 = ArrayList_init_0(collectionSizeOrDefault($receiver_0, 10));
-        var tmp$_12;
-        tmp$_12 = $receiver_0.iterator();
-        while (tmp$_12.hasNext()) {
-          var item_0 = tmp$_12.next();
-          destination_1.add_11rb$(newBoard.isWithinBounds_dfplqh$(item_0) ? newBoard.get_dfplqh$(item_0) : null);
-        }
-        var destination_2 = ArrayList_init();
-        var tmp$_13;
-        tmp$_13 = destination_1.iterator();
-        while (tmp$_13.hasNext()) {
-          var element_0 = tmp$_13.next();
-          var tmp$_14;
-          if (equals((tmp$_14 = element_0 != null ? element_0.piece : null) != null ? tmp$_14.type : null, AlysType$Tree_getInstance()))
-            destination_2.add_11rb$(element_0);
-        }
-        if (destination_2.size > 1)
-          newTrees.add_11rb$(place.position);
-      }
-    }
-    tmp$_0 = newTrees.iterator();
-    while (tmp$_0.hasNext()) {
-      var position = tmp$_0.next();
-      newBoard.set_39d550$(position, new AlysField(player, new AlysPiece(AlysType$Tree_getInstance())));
-    }
-    var destination_3 = ArrayList_init();
-    var tmp$_15;
-    tmp$_15 = playerArea.iterator();
-    while (tmp$_15.hasNext()) {
-      var element_1 = tmp$_15.next();
-      var tmp$_16;
-      if (equals((tmp$_16 = element_1.field.piece) != null ? tmp$_16.type : null, AlysType$Grave_getInstance()))
-        destination_3.add_11rb$(element_1);
-    }
-    tmp$_1 = destination_3.iterator();
-    while (tmp$_1.hasNext()) {
-      var place_0 = tmp$_1.next();
-      newBoard.set_39d550$(place_0.position, new AlysField(player, new AlysPiece(AlysType$Tree_getInstance())));
-    }
-    var destination_4 = ArrayList_init();
-    var tmp$_17;
-    tmp$_17 = playerArea.iterator();
-    while (tmp$_17.hasNext()) {
-      var element_2 = tmp$_17.next();
-      var tmp$_18;
-      var tmp$_19 = equals((tmp$_18 = element_2.field.piece) != null ? tmp$_18.type : null, AlysType$Soldier_getInstance());
-      if (tmp$_19) {
-        var $receiver_1 = element_2.position.adjacentHexes();
-        var destination_5 = ArrayList_init();
-        var tmp$_20;
-        tmp$_20 = $receiver_1.iterator();
-        while (tmp$_20.hasNext()) {
-          var element_3 = tmp$_20.next();
-          var tmp$_21;
-          if (newBoard.isWithinBounds_dfplqh$(element_3) && ((tmp$_21 = newBoard.get_dfplqh$(element_3)) != null ? tmp$_21.player : null) === player)
-            destination_5.add_11rb$(element_3);
-        }
-        tmp$_19 = destination_5.isEmpty();
-      }
-      if (tmp$_19)
-        destination_4.add_11rb$(element_2);
-    }
-    tmp$_2 = destination_4.iterator();
-    while (tmp$_2.hasNext()) {
-      var place_1 = tmp$_2.next();
-      newBoard.set_39d550$(place_1.position, new AlysField(player, new AlysPiece(AlysType$Grave_getInstance())));
-    }
-    var destination_6 = ArrayList_init();
-    var tmp$_22;
-    tmp$_22 = playerArea.iterator();
-    while (tmp$_22.hasNext()) {
-      var element_4 = tmp$_22.next();
-      if (element_4.field.player === player && element_4.field.treasury != null)
-        destination_6.add_11rb$(element_4);
-    }
-    var bases = destination_6;
-    tmp$_3 = bases.iterator();
-    while (tmp$_3.hasNext()) {
-      var base = tmp$_3.next();
-      var area = this.connectedPositions_dfplqh$(base.position);
-      var treasury = typeof (tmp$_4 = base.field.treasury) === 'number' ? tmp$_4 : throwCCE();
-      var destination_7 = ArrayList_init();
-      var tmp$_23;
-      tmp$_23 = area.iterator();
-      while (tmp$_23.hasNext()) {
-        var element_5 = tmp$_23.next();
-        var tmp$_24, tmp$_25;
-        if (!equals((tmp$_24 = element_5.field.piece) != null ? tmp$_24.type : null, AlysType$Tree_getInstance()) && !equals((tmp$_25 = element_5.field.piece) != null ? tmp$_25.type : null, AlysType$CoastTree_getInstance()))
-          destination_7.add_11rb$(element_5);
-      }
-      +destination_7.size;
-      var destination_8 = ArrayList_init();
-      var tmp$_26;
-      tmp$_26 = area.iterator();
-      while (tmp$_26.hasNext()) {
-        var element_6 = tmp$_26.next();
-        var tmp$_27;
-        if (equals((tmp$_27 = element_6.field.piece) != null ? tmp$_27.type : null, AlysType$Soldier_getInstance()))
-          destination_8.add_11rb$(element_6);
-      }
-      var soldiers = destination_8;
-      tmp$_5 = soldiers.iterator();
-      while (tmp$_5.hasNext()) {
-        var soldier = tmp$_5.next();
-        newBoard.set_39d550$(soldier.position, soldier.field.copy_jcygvj$(void 0, (tmp$_6 = soldier.field.piece) != null ? tmp$_6.copy_thel6g$(void 0, void 0, false) : null));
-      }
-      var destination_9 = ArrayList_init_0(collectionSizeOrDefault(soldiers, 10));
-      var tmp$_28;
-      tmp$_28 = soldiers.iterator();
-      while (tmp$_28.hasNext()) {
-        var item_1 = tmp$_28.next();
-        var tmp$_29, tmp$_30;
-        destination_9.add_11rb$(this.upkeepFor_0((tmp$_30 = (tmp$_29 = item_1.field.piece) != null ? tmp$_29.strength : null) != null ? tmp$_30 : 0));
-      }
-      var upkeep = sum(destination_9);
-      if (upkeep <= treasury)
-        newBoard.set_39d550$(base.position, base.field.copy_jcygvj$(void 0, void 0, treasury - upkeep | 0));
-      else {
-        tmp$_7 = soldiers.iterator();
-        while (tmp$_7.hasNext()) {
-          var soldier_0 = tmp$_7.next();
-          newBoard.set_39d550$(soldier_0.position, new AlysField(player, new AlysPiece(AlysType$Grave_getInstance())));
-        }
-      }
-    }
-  };
-  AlysState.prototype.upkeepFor_0 = function (strength) {
-    var tmp$;
-    switch (strength) {
-      case 1:
-        tmp$ = 2;
-        break;
-      case 2:
-        tmp$ = 6;
-        break;
-      case 3:
-        tmp$ = 18;
-        break;
-      case 4:
-        tmp$ = 54;
-        break;
-      default:tmp$ = 0;
-        break;
-    }
-    return tmp$;
-  };
-  AlysState.prototype.findWinner = function () {
-    return null;
-  };
-  AlysState.prototype.isConnected_vwqnnw$ = function (origin, destination) {
-    var tmp$;
-    var area = this.connectedPositions_dfplqh$(origin);
-    tmp$ = destination.adjacentHexes().iterator();
-    loop_label: while (tmp$.hasNext()) {
-      var pos = tmp$.next();
-      var any$result;
-      any$break: do {
-        var tmp$_0;
-        if (Kotlin.isType(area, Collection) && area.isEmpty()) {
-          any$result = false;
-          break any$break;
-        }
-        tmp$_0 = area.iterator();
-        while (tmp$_0.hasNext()) {
-          var element = tmp$_0.next();
-          var tmp$_1;
-          if ((tmp$_1 = element.position) != null ? tmp$_1.equals(pos) : null) {
-            any$result = true;
-            break any$break;
-          }
-        }
-        any$result = false;
-      }
-       while (false);
-      if (any$result)
-        return true;
-    }
-    return false;
-  };
-  var emptyList = Kotlin.kotlin.collections.emptyList_287e2$;
-  AlysState.prototype.connectedPositions_dfplqh$ = function (origin) {
-    var tmp$;
-    tmp$ = this.board.get_dfplqh$(origin);
-    if (tmp$ == null) {
-      return emptyList();
-    }
-    var base = tmp$;
-    var front = mutableListOf([origin]);
-    var connected = mutableListOf([origin]);
-    while (!front.isEmpty()) {
-      var nextPosition = front.removeAt_za3lpa$(0);
-      var $receiver = nextPosition.adjacentHexes();
-      var destination = ArrayList_init();
-      var tmp$_0;
-      tmp$_0 = $receiver.iterator();
-      while (tmp$_0.hasNext()) {
-        var element = tmp$_0.next();
-        var tmp$_1;
-        if (this.board.isWithinBounds_dfplqh$(element) && ((tmp$_1 = this.board.get_dfplqh$(element)) != null ? tmp$_1.player : null) === base.player)
-          destination.add_11rb$(element);
-      }
-      var destination_0 = ArrayList_init();
-      var tmp$_2;
-      tmp$_2 = destination.iterator();
-      while (tmp$_2.hasNext()) {
-        var element_0 = tmp$_2.next();
-        if (!connected.contains_11rb$(element_0))
-          destination_0.add_11rb$(element_0);
-      }
-      var newConnected = destination_0;
-      connected.addAll_brywnq$(newConnected);
-      front.addAll_brywnq$(newConnected);
-    }
-    var destination_1 = ArrayList_init_0(collectionSizeOrDefault(connected, 10));
-    var tmp$_3;
-    tmp$_3 = connected.iterator();
-    while (tmp$_3.hasNext()) {
-      var item = tmp$_3.next();
-      var tmp$_4;
-      destination_1.add_11rb$(new PositionedField(item, Kotlin.isType(tmp$_4 = this.board.get_dfplqh$(item), AlysField) ? tmp$_4 : throwCCE()));
-    }
-    return destination_1;
-  };
-  function AlysState_init$lambda(closure$playerCount) {
-    return function (x, y) {
-      return new AlysField(random_0(new IntRange(1, closure$playerCount), Random_0.Default));
-    };
-  }
-  AlysState.$metadata$ = {
+  Alys.$metadata$ = {
     kind: Kind_CLASS,
-    simpleName: 'AlysState',
-    interfaces: [BoardGameState]
-  };
-  AlysState.prototype.component1 = function () {
-    return this.width;
-  };
-  AlysState.prototype.component2 = function () {
-    return this.height;
-  };
-  AlysState.prototype.component3 = function () {
-    return this.playerCount;
-  };
-  AlysState.prototype.component4 = function () {
-    return this.board;
-  };
-  AlysState.prototype.component5 = function () {
-    return this.currentPlayer;
-  };
-  AlysState.prototype.component6 = function () {
-    return this.players;
-  };
-  AlysState.prototype.copy_gb7y5t$ = function (width, height, playerCount, board, currentPlayer, players) {
-    return new AlysState(width === void 0 ? this.width : width, height === void 0 ? this.height : height, playerCount === void 0 ? this.playerCount : playerCount, board === void 0 ? this.board : board, currentPlayer === void 0 ? this.currentPlayer : currentPlayer, players === void 0 ? this.players : players);
-  };
-  AlysState.prototype.toString = function () {
-    return 'AlysState(width=' + Kotlin.toString(this.width) + (', height=' + Kotlin.toString(this.height)) + (', playerCount=' + Kotlin.toString(this.playerCount)) + (', board=' + Kotlin.toString(this.board)) + (', currentPlayer=' + Kotlin.toString(this.currentPlayer)) + (', players=' + Kotlin.toString(this.players)) + ')';
-  };
-  AlysState.prototype.hashCode = function () {
-    var result = 0;
-    result = result * 31 + Kotlin.hashCode(this.width) | 0;
-    result = result * 31 + Kotlin.hashCode(this.height) | 0;
-    result = result * 31 + Kotlin.hashCode(this.playerCount) | 0;
-    result = result * 31 + Kotlin.hashCode(this.board) | 0;
-    result = result * 31 + Kotlin.hashCode(this.currentPlayer) | 0;
-    result = result * 31 + Kotlin.hashCode(this.players) | 0;
-    return result;
-  };
-  AlysState.prototype.equals = function (other) {
-    return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.width, other.width) && Kotlin.equals(this.height, other.height) && Kotlin.equals(this.playerCount, other.playerCount) && Kotlin.equals(this.board, other.board) && Kotlin.equals(this.currentPlayer, other.currentPlayer) && Kotlin.equals(this.players, other.players)))));
+    simpleName: 'Alys',
+    interfaces: [BoardGame]
   };
   function AlysField(player, piece, treasury) {
     if (piece === void 0)
@@ -1253,19 +603,175 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   AlysActionInfo.prototype.equals = function (other) {
     return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.originField, other.originField) && Kotlin.equals(this.destinationField, other.destinationField) && Kotlin.equals(this.originPiece, other.originPiece) && Kotlin.equals(this.destinationPiece, other.destinationPiece)))));
   };
+  function AlysBoardCreator(width, height, seed) {
+    this.seed = seed;
+    this.board = new Grid(width, height, AlysBoardCreator$board$lambda);
+    this.numberOfCenters = 3;
+    this.landFraction = 0.8;
+  }
+  var Collection = Kotlin.kotlin.collections.Collection;
+  AlysBoardCreator.prototype.generateLand = function () {
+    var tmp$;
+    var random_0 = Random(this.seed);
+    var remainingPositions = toMutableList(this.board.positions());
+    var centers = this.generateCenters_0(remainingPositions, random_0);
+    var createdFields = toMutableList(centers);
+    var fieldsToCreate = numberToInt(this.board.fields.size * this.landFraction);
+    loop_label: while (createdFields.size < fieldsToCreate) {
+      var position = random(remainingPositions, random_0);
+      var $receiver = position.adjacentHexes();
+      var any$result;
+      any$break: do {
+        var tmp$_0;
+        if (Kotlin.isType($receiver, Collection) && $receiver.isEmpty()) {
+          any$result = false;
+          break any$break;
+        }
+        tmp$_0 = $receiver.iterator();
+        while (tmp$_0.hasNext()) {
+          var element = tmp$_0.next();
+          if (createdFields.contains_11rb$(element)) {
+            any$result = true;
+            break any$break;
+          }
+        }
+        any$result = false;
+      }
+       while (false);
+      if (any$result) {
+        createdFields.add_11rb$(position);
+        remainingPositions.remove_11rb$(position);
+      }
+    }
+    tmp$ = createdFields.iterator();
+    while (tmp$.hasNext()) {
+      var position_0 = tmp$.next();
+      this.board.set_39d550$(position_0, new AlysField(0));
+    }
+  };
+  AlysBoardCreator.prototype.generateCenters_0 = function (remainingPositions, random) {
+    var tmp$;
+    var centers = ArrayList_init();
+    tmp$ = this.numberOfCenters;
+    for (var i = 1; i <= tmp$; i++) {
+      var index = random_0(until(0, remainingPositions.size), random);
+      centers.add_11rb$(remainingPositions.removeAt_za3lpa$(index));
+    }
+    return centers;
+  };
+  AlysBoardCreator.prototype.fillBoard_za3lpa$ = function (playerCount) {
+    var tmp$;
+    var random_1 = Random(this.seed);
+    var $receiver = this.board.positionedFields();
+    var destination = ArrayList_init();
+    var tmp$_0;
+    tmp$_0 = $receiver.iterator();
+    while (tmp$_0.hasNext()) {
+      var element = tmp$_0.next();
+      if (element.field != null)
+        destination.add_11rb$(element);
+    }
+    var destination_0 = ArrayList_init_0(collectionSizeOrDefault(destination, 10));
+    var tmp$_1;
+    tmp$_1 = destination.iterator();
+    while (tmp$_1.hasNext()) {
+      var item = tmp$_1.next();
+      destination_0.add_11rb$(item.position);
+    }
+    var remainingPositions = toMutableList(destination_0);
+    while (remainingPositions.size > 0) {
+      for (var player = 1; player <= playerCount; player++) {
+        var index = random_0(until(0, remainingPositions.size), random_1);
+        this.board.set_39d550$(remainingPositions.removeAt_za3lpa$(index), new AlysField(player));
+      }
+    }
+    var examinedArea = ArrayList_init();
+    tmp$ = this.board.positions().iterator();
+    loop_label: while (tmp$.hasNext()) {
+      var position = tmp$.next();
+      var any$result;
+      any$break: do {
+        var tmp$_2;
+        if (Kotlin.isType(examinedArea, Collection) && examinedArea.isEmpty()) {
+          any$result = false;
+          break any$break;
+        }
+        tmp$_2 = examinedArea.iterator();
+        while (tmp$_2.hasNext()) {
+          var element_0 = tmp$_2.next();
+          var tmp$_3;
+          if ((tmp$_3 = element_0.position) != null ? tmp$_3.equals(position) : null) {
+            any$result = true;
+            break any$break;
+          }
+        }
+        any$result = false;
+      }
+       while (false);
+      if (any$result)
+        continue loop_label;
+      var area = AlysState$Companion_getInstance().connectedPositions_jwhin5$(position, this.board);
+      examinedArea.addAll_brywnq$(area);
+      if (area.size < 2)
+        continue loop_label;
+      var base = random(area, random_1);
+      var tmp$_4 = this.board;
+      var tmp$_5 = base.position;
+      var tmp$_6 = base.field;
+      var tmp$_7 = void 0;
+      var tmp$_8 = void 0;
+      var destination_1 = ArrayList_init();
+      var tmp$_9;
+      tmp$_9 = area.iterator();
+      while (tmp$_9.hasNext()) {
+        var element_1 = tmp$_9.next();
+        if (element_1.field.piece == null)
+          destination_1.add_11rb$(element_1);
+      }
+      tmp$_4.set_39d550$(tmp$_5, tmp$_6.copy_jcygvj$(tmp$_7, tmp$_8, destination_1.size * 5 | 0));
+    }
+  };
+  function AlysBoardCreator$board$lambda(f, f_0) {
+    return null;
+  }
+  AlysBoardCreator.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'AlysBoardCreator',
+    interfaces: []
+  };
+  var LinkedHashMap_init = Kotlin.kotlin.collections.LinkedHashMap_init_q3lmfv$;
+  var Random_0 = Kotlin.kotlin.random.Random;
   function AlysDisplay(canvas, playerArea, gameArea) {
     GameDisplay.call(this, canvas, playerArea, gameArea);
     this.game_6mofcn$_0 = new Alys();
-    this.sourcePosition = null;
+    this.originPosition = null;
     this.buildType = null;
-    var tmp$, tmp$_0, tmp$_1, tmp$_2, tmp$_3;
+    var tmp$, tmp$_0, tmp$_1, tmp$_2, tmp$_3, tmp$_4;
     this.fortButton_0 = Kotlin.isType(tmp$ = document.createElement('button'), HTMLButtonElement) ? tmp$ : throwCCE();
     this.soldierButton_0 = Kotlin.isType(tmp$_0 = document.createElement('button'), HTMLButtonElement) ? tmp$_0 : throwCCE();
     this.undoButton_0 = Kotlin.isType(tmp$_1 = document.createElement('button'), HTMLButtonElement) ? tmp$_1 : throwCCE();
     this.endTurnButton_0 = Kotlin.isType(tmp$_2 = document.createElement('button'), HTMLButtonElement) ? tmp$_2 : throwCCE();
     this.statusArea_0 = Kotlin.isType(tmp$_3 = document.createElement('div'), HTMLDivElement) ? tmp$_3 : throwCCE();
+    this.images = LinkedHashMap_init();
     this.getColor_vm40yk$_0 = AlysDisplay$getColor$lambda(this);
-    this.draw_6lbnvp$_0 = AlysDisplay$draw$lambda;
+    this.draw_6lbnvp$_0 = AlysDisplay$draw$lambda(this);
+    var context = Kotlin.isType(tmp$_4 = canvas.getContext('2d'), CanvasRenderingContext2D) ? tmp$_4 : throwCCE();
+    context.imageSmoothingEnabled = false;
+    this.addImage_61zpoe$('S1');
+    this.addImage_61zpoe$('S1R');
+    this.addImage_61zpoe$('S2');
+    this.addImage_61zpoe$('S2R');
+    this.addImage_61zpoe$('S3');
+    this.addImage_61zpoe$('S3R');
+    this.addImage_61zpoe$('S4');
+    this.addImage_61zpoe$('S4R');
+    this.addImage_61zpoe$('B');
+    this.addImage_61zpoe$('BR');
+    this.addImage_61zpoe$('F');
+    this.addImage_61zpoe$('T');
+    this.addImage_61zpoe$('C');
+    this.addImage_61zpoe$('G');
+    launch(coroutines.GlobalScope, void 0, void 0, AlysDisplay_init$lambda(this));
     var $receiver = this.game.players;
     var value = 'Player 1';
     $receiver.put_xwzc9p$(1, value);
@@ -1294,7 +800,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     var key_2 = 'Player 4';
     var value_6 = new Player();
     $receiver_6.put_xwzc9p$(key_2, value_6);
-    this.game.state = this.game.state.newGame_za3lpa$();
+    this.game.newGame_qt1dr2$(void 0, void 0, random_0(new IntRange(0, 100000), Random_0.Default));
     this.gridDisplay.gridColor = 'blue';
     this.gridDisplay.fieldSize = 39.0;
     this.gridDisplay.outerBorder = 50.0;
@@ -1321,7 +827,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
       return $receiver.endTurn_0(event), Unit;
     }.bind(null, this)));
     this.updateDisplay_pdl1vj$(null);
-    this.gridDisplay.onClick = AlysDisplay_init$lambda(this);
+    this.gridDisplay.onClick = AlysDisplay_init$lambda_0(this);
   }
   Object.defineProperty(AlysDisplay.prototype, 'game', {
     get: function () {
@@ -1341,6 +847,34 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
       return this.draw_6lbnvp$_0;
     }
   });
+  AlysDisplay.prototype.soldierImage_vz30o2$ = function (piece, showReady) {
+    var tmp$;
+    var flag = piece.hasMoved || !showReady ? '' : 'R';
+    switch (piece.strength) {
+      case 1:
+        tmp$ = 'S1' + flag;
+        break;
+      case 2:
+        tmp$ = 'S2' + flag;
+        break;
+      case 3:
+        tmp$ = 'S3' + flag;
+        break;
+      case 4:
+        tmp$ = 'S4' + flag;
+        break;
+      default:tmp$ = 'S1' + flag;
+        break;
+    }
+    return tmp$;
+  };
+  AlysDisplay.prototype.addImage_61zpoe$ = function (name) {
+    var tmp$, tmp$_0;
+    var $receiver = this.images;
+    var value = Kotlin.isType(tmp$ = document.createElement('img'), HTMLImageElement) ? tmp$ : throwCCE();
+    $receiver.put_xwzc9p$(name, value);
+    (tmp$_0 = this.images.get_11rb$(name)) != null ? (tmp$_0.src = 'assets/' + name + '.png') : null;
+  };
   AlysDisplay.prototype.updateDisplay_pdl1vj$ = function (winner) {
     if (winner != null)
       this.messageLine.textContent = winner + ' has won!';
@@ -1352,7 +886,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   };
   AlysDisplay.prototype.updateButtons_0 = function () {
     var tmp$;
-    var source = this.sourcePosition;
+    var source = this.originPosition;
     if (source != null && ((tmp$ = this.game.state.board.get_dfplqh$(source)) != null ? tmp$.treasury : null) != null) {
       this.fortButton_0.disabled = equals(this.buildType, AlysType$Fort_getInstance());
       this.soldierButton_0.disabled = equals(this.buildType, AlysType$Soldier_getInstance());
@@ -1379,8 +913,8 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   function AlysDisplay$getColor$lambda(this$AlysDisplay) {
     return function (f, x, y) {
       var tmp$, tmp$_0;
-      var source = this$AlysDisplay.sourcePosition;
-      if (source != null && source.x === x && source.y === y)
+      var origin = this$AlysDisplay.originPosition;
+      if (origin != null && origin.x === x && origin.y === y)
         return 'darkgrey';
       tmp$ = this$AlysDisplay.game.state.board.get_vux9f0$(x, y);
       if (tmp$ == null) {
@@ -1406,37 +940,95 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
       return tmp$_0;
     };
   }
-  function AlysDisplay$draw$lambda(context, fieldSize, field, f, f_0) {
-    var tmp$, tmp$_0, tmp$_1, tmp$_2, tmp$_3;
-    if (field == null)
-      return;
-    context.fillStyle = 'black';
-    context.font = fieldSize.toString() + 'px arial';
-    context.textBaseline = 'top';
-    if (field.treasury != null)
-      context.fillText(field.treasury.toString(), 0.0, 0.0);
-    else if (equals((tmp$ = field.piece) != null ? tmp$.type : null, AlysType$Fort_getInstance()))
-      context.fillText('F', 0.0, 0.0);
-    else if (equals((tmp$_0 = field.piece) != null ? tmp$_0.type : null, AlysType$Soldier_getInstance()))
-      context.fillText(field.piece.hasMoved ? 'S' : 'S*', 0.0, 0.0);
-    else if (equals((tmp$_1 = field.piece) != null ? tmp$_1.type : null, AlysType$Tree_getInstance()))
-      context.fillText('T', 0.0, 0.0);
-    else if (equals((tmp$_2 = field.piece) != null ? tmp$_2.type : null, AlysType$CoastTree_getInstance()))
-      context.fillText('P', 0.0, 0.0);
-    else if (equals((tmp$_3 = field.piece) != null ? tmp$_3.type : null, AlysType$Grave_getInstance()))
-      context.fillText('G', 0.0, 0.0);
-    return Unit;
+  function AlysDisplay$draw$lambda(this$AlysDisplay) {
+    return function (context, fieldSize, field, f, f_0) {
+      var tmp$, tmp$_0, tmp$_1;
+      if (field == null)
+        return;
+      context.fillStyle = 'black';
+      context.font = fieldSize.toString() + 'px arial';
+      context.textBaseline = 'top';
+      tmp$_0 = (tmp$ = field.piece) != null ? tmp$.type : null;
+      if (equals(tmp$_0, AlysType$Fort_getInstance()))
+        tmp$_1 = 'F';
+      else if (equals(tmp$_0, AlysType$Soldier_getInstance()))
+        tmp$_1 = this$AlysDisplay.soldierImage_vz30o2$(field.piece, field.player === this$AlysDisplay.game.state.currentPlayer);
+      else if (equals(tmp$_0, AlysType$Tree_getInstance()))
+        tmp$_1 = 'T';
+      else if (equals(tmp$_0, AlysType$CoastTree_getInstance()))
+        tmp$_1 = 'C';
+      else if (equals(tmp$_0, AlysType$Grave_getInstance()))
+        tmp$_1 = 'G';
+      else
+        tmp$_1 = field.treasury != null && field.treasury >= 10 && field.player === this$AlysDisplay.game.state.currentPlayer ? 'BR' : field.treasury != null ? 'B' : null;
+      var image = tmp$_1;
+      if (image != null)
+        context.drawImage(this$AlysDisplay.images.get_11rb$(image), 0.0, 0.0, fieldSize, fieldSize);
+      return Unit;
+    };
   }
+  function AlysDisplay_init$lambda(this$AlysDisplay_0) {
+    return function ($receiver, continuation_0, suspended) {
+      var instance = new Coroutine$AlysDisplay_init$lambda(this$AlysDisplay_0, $receiver, this, continuation_0);
+      if (suspended)
+        return instance;
+      else
+        return instance.doResume(null);
+    };
+  }
+  function Coroutine$AlysDisplay_init$lambda(this$AlysDisplay_0, $receiver, controller, continuation_0) {
+    CoroutineImpl.call(this, continuation_0);
+    this.$controller = controller;
+    this.exceptionState_0 = 1;
+    this.local$this$AlysDisplay = this$AlysDisplay_0;
+  }
+  Coroutine$AlysDisplay_init$lambda.$metadata$ = {
+    kind: Kotlin.Kind.CLASS,
+    simpleName: null,
+    interfaces: [CoroutineImpl]
+  };
+  Coroutine$AlysDisplay_init$lambda.prototype = Object.create(CoroutineImpl.prototype);
+  Coroutine$AlysDisplay_init$lambda.prototype.constructor = Coroutine$AlysDisplay_init$lambda;
+  Coroutine$AlysDisplay_init$lambda.prototype.doResume = function () {
+    do
+      try {
+        switch (this.state_0) {
+          case 0:
+            this.state_0 = 2;
+            this.result_0 = delay(L500, this);
+            if (this.result_0 === COROUTINE_SUSPENDED)
+              return COROUTINE_SUSPENDED;
+            continue;
+          case 1:
+            throw this.exception_0;
+          case 2:
+            return this.local$this$AlysDisplay.updateDisplay_pdl1vj$(null), Unit;
+          default:this.state_0 = 1;
+            throw new Error('State Machine Unreachable execution');
+        }
+      }
+       catch (e) {
+        if (this.state_0 === 1) {
+          this.exceptionState_0 = this.state_0;
+          throw e;
+        }
+         else {
+          this.state_0 = this.exceptionState_0;
+          this.exception_0 = e;
+        }
+      }
+     while (true);
+  };
   var Map = Kotlin.kotlin.collections.Map;
-  function AlysDisplay_init$lambda(this$AlysDisplay) {
+  function AlysDisplay_init$lambda_0(this$AlysDisplay) {
     return function (it) {
       var tmp$, tmp$_0, tmp$_1, tmp$_2;
       var $receiver = this$AlysDisplay.players;
       var key = this$AlysDisplay.game.currentPlayer();
       var tmp$_3;
       if (Kotlin.isType((Kotlin.isType(tmp$_3 = $receiver, Map) ? tmp$_3 : throwCCE()).get_11rb$(key), Player) && this$AlysDisplay.game.state.board.isWithinBounds_dfplqh$(it)) {
-        var source = this$AlysDisplay.sourcePosition;
-        if (source == null) {
+        var origin = this$AlysDisplay.originPosition;
+        if (origin == null) {
           tmp$ = this$AlysDisplay.game.state.board.get_dfplqh$(it);
           if (tmp$ == null) {
             return;
@@ -1445,11 +1037,11 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
           if (selectedField.player !== this$AlysDisplay.game.state.currentPlayer)
             return;
           if (equals((tmp$_0 = selectedField.piece) != null ? tmp$_0.type : null, AlysType$Soldier_getInstance())) {
-            this$AlysDisplay.sourcePosition = it;
+            this$AlysDisplay.originPosition = it;
             this$AlysDisplay.updateDisplay_pdl1vj$(this$AlysDisplay.game.winner);
             return;
           }
-          var selectedArea = this$AlysDisplay.game.state.connectedPositions_dfplqh$(it);
+          var selectedArea = AlysState$Companion_getInstance().connectedPositions_jwhin5$(it, this$AlysDisplay.game.state.board);
           var tmp$_4 = this$AlysDisplay;
           var firstOrNull$result;
           firstOrNull$break: do {
@@ -1465,18 +1057,18 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
             firstOrNull$result = null;
           }
            while (false);
-          tmp$_4.sourcePosition = (tmp$_1 = firstOrNull$result) != null ? tmp$_1.position : null;
+          tmp$_4.originPosition = (tmp$_1 = firstOrNull$result) != null ? tmp$_1.position : null;
           this$AlysDisplay.updateDisplay_pdl1vj$(this$AlysDisplay.game.winner);
         }
          else {
-          this$AlysDisplay.sourcePosition = null;
-          var sourceField = this$AlysDisplay.game.state.board.get_dfplqh$(source);
+          this$AlysDisplay.originPosition = null;
+          var sourceField = this$AlysDisplay.game.state.board.get_dfplqh$(origin);
           var type = this$AlysDisplay.buildType;
           this$AlysDisplay.buildType = null;
           if (equals((tmp$_2 = sourceField != null ? sourceField.piece : null) != null ? tmp$_2.type : null, AlysType$Soldier_getInstance()))
-            this$AlysDisplay.performAction_11re$(new AlysMoveAction(source, it));
+            this$AlysDisplay.performAction_11re$(new AlysMoveAction(origin, it));
           else if (type != null)
-            this$AlysDisplay.performAction_11re$(new AlysCreateAction(type, source, it));
+            this$AlysDisplay.performAction_11re$(new AlysCreateAction(type, origin, it));
           else {
             this$AlysDisplay.updateDisplay_pdl1vj$(this$AlysDisplay.game.winner);
           }
@@ -1490,7 +1082,625 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     simpleName: 'AlysDisplay',
     interfaces: [GameDisplay]
   };
-  var LinkedHashMap_init = Kotlin.kotlin.collections.LinkedHashMap_init_q3lmfv$;
+  function AlysState(width, height, playerCount, board, currentPlayer, players) {
+    AlysState$Companion_getInstance();
+    if (width === void 0)
+      width = 10;
+    if (height === void 0)
+      height = 10;
+    if (playerCount === void 0)
+      playerCount = 4;
+    if (board === void 0)
+      board = new Grid(width, height, AlysState_init$lambda(playerCount));
+    if (currentPlayer === void 0)
+      currentPlayer = 1;
+    if (players === void 0)
+      players = toList(new IntRange(1, playerCount));
+    this.width = width;
+    this.height = height;
+    this.playerCount = playerCount;
+    this.board_312tuy$_0 = board;
+    this.currentPlayer_yz191a$_0 = currentPlayer;
+    this.players_4wz3pm$_0 = players;
+  }
+  Object.defineProperty(AlysState.prototype, 'board', {
+    get: function () {
+      return this.board_312tuy$_0;
+    }
+  });
+  Object.defineProperty(AlysState.prototype, 'currentPlayer', {
+    get: function () {
+      return this.currentPlayer_yz191a$_0;
+    }
+  });
+  Object.defineProperty(AlysState.prototype, 'players', {
+    get: function () {
+      return this.players_4wz3pm$_0;
+    }
+  });
+  AlysState.prototype.confirmLegality_11rc$ = function (action) {
+    if (Kotlin.isType(action, AlysMoveAction))
+      return this.confirmMoveLegality_0(action);
+    if (Kotlin.isType(action, AlysCreateAction))
+      return this.confirmCreateLegality_0(action);
+    if (Kotlin.isType(action, AlysEndTurnAction))
+      return Result$Companion_getInstance().success();
+    return Result$Companion_getInstance().failure_ytbaoo$('Unknown action');
+  };
+  AlysState.prototype.confirmRules_byoodm$ = function (action, rules, info) {
+    var tmp$;
+    tmp$ = rules.iterator();
+    while (tmp$.hasNext()) {
+      var rule = tmp$.next();
+      if (!rule.isLegal(action, this, info))
+        return Result$Companion_getInstance().failure_ytbaoo$(rule.description);
+    }
+    return Result$Companion_getInstance().success();
+  };
+  AlysState.prototype.confirmMoveLegality_0 = function (action, previousInfo) {
+    if (previousInfo === void 0)
+      previousInfo = null;
+    var info = previousInfo != null ? previousInfo : new AlysActionInfo();
+    if (previousInfo == null) {
+      var $this = this.confirmRules_byoodm$(action, Alys$Companion_getInstance().commonRules, info);
+      if (Kotlin.isType($this, Failure)) {
+        return $this;
+      }
+       else
+        Kotlin.isType($this, Success) || throwCCE();
+    }
+    return this.confirmRules_byoodm$(action, Alys$Companion_getInstance().moveRules, info);
+  };
+  AlysState.prototype.confirmCreateLegality_0 = function (action) {
+    var info = new AlysActionInfo();
+    var $this = this.confirmRules_byoodm$(action, Alys$Companion_getInstance().commonRules, info);
+    if (Kotlin.isType($this, Failure)) {
+      return $this;
+    }
+     else
+      Kotlin.isType($this, Success) || throwCCE();
+    var $this_0 = this.confirmRules_byoodm$(action, Alys$Companion_getInstance().createRules, info);
+    if (Kotlin.isType($this_0, Failure)) {
+      return $this_0;
+    }
+     else
+      Kotlin.isType($this_0, Success) || throwCCE();
+    if (action.type === AlysType$Soldier_getInstance()) {
+      info.originPiece = new AlysPiece(AlysType$Soldier_getInstance());
+      return this.confirmMoveLegality_0(new AlysMoveAction(action.origin, action.destination), info);
+    }
+    return Result$Companion_getInstance().success();
+  };
+  var Math_0 = Math;
+  AlysState.prototype.defenseOf_i615cl$ = function (field) {
+    var tmp$, tmp$_0;
+    if (equals((tmp$ = field.piece) != null ? tmp$.type : null, AlysType$Soldier_getInstance())) {
+      var a = field.piece.strength;
+      return Math_0.min(a, 3);
+    }
+    if (equals((tmp$_0 = field.piece) != null ? tmp$_0.type : null, AlysType$Fort_getInstance()))
+      return 2;
+    if (field.treasury != null)
+      return 1;
+    return 0;
+  };
+  AlysState.prototype.possibleActions = function () {
+    var actions = ArrayList_init();
+    return toList(actions);
+  };
+  AlysState.prototype.nextState_11rc$ = function (action) {
+    var newBoard = this.board.copy_urw29u$();
+    if (Kotlin.isType(action, AlysMoveAction))
+      return this.nextStateFrom_0(action, newBoard);
+    if (Kotlin.isType(action, AlysCreateAction))
+      return this.nextStateFrom_1(action, newBoard);
+    if (Kotlin.isType(action, AlysEndTurnAction))
+      return this.nextStateFrom_2(action, newBoard);
+    return this.copy_gb7y5t$(void 0, void 0, void 0, newBoard);
+  };
+  AlysState.prototype.nextStateFrom_0 = function (action, newBoard) {
+    var tmp$, tmp$_0, tmp$_1, tmp$_2;
+    tmp$_0 = (tmp$ = newBoard.get_dfplqh$(action.origin)) != null ? tmp$.piece : null;
+    if (tmp$_0 == null) {
+      return this;
+    }
+    var piece = tmp$_0;
+    tmp$_1 = newBoard.get_dfplqh$(action.destination);
+    if (tmp$_1 == null) {
+      return this;
+    }
+    var destination = tmp$_1;
+    var newState = this.copy_gb7y5t$(void 0, void 0, void 0, newBoard);
+    if (destination.player !== this.currentPlayer)
+      this.invadeField_0(action.origin, action.destination, newState);
+    else {
+      var tmp$_3;
+      if (equals((tmp$_3 = destination.piece) != null ? tmp$_3.type : null, AlysType$Soldier_getInstance())) {
+        var tmp$_4 = action.destination;
+        var tmp$_5 = void 0;
+        var tmp$_6 = destination.piece;
+        var tmp$_7 = void 0;
+        var b = destination.piece.strength + piece.strength | 0;
+        newBoard.set_39d550$(tmp$_4, destination.copy_jcygvj$(tmp$_5, tmp$_6.copy_thel6g$(tmp$_7, Math_0.min(4, b))));
+      }
+       else {
+        var tmp$_8;
+        if (((tmp$_8 = destination.piece) != null ? tmp$_8.type : null) != null)
+          newBoard.set_39d550$(action.destination, new AlysField(this.currentPlayer, piece.copy_thel6g$(void 0, void 0, true)));
+        else
+          newBoard.set_39d550$(action.destination, new AlysField(this.currentPlayer, piece.copy_thel6g$()));
+      }
+    }
+    newBoard.set_39d550$(action.origin, (Kotlin.isType(tmp$_2 = newBoard.get_dfplqh$(action.origin), AlysField) ? tmp$_2 : throwCCE()).copy_jcygvj$(void 0, null));
+    return newState;
+  };
+  AlysState.prototype.invadeField_0 = function (origin, destination, newState) {
+    var tmp$, tmp$_0;
+    var piece = Kotlin.isType(tmp$_0 = (tmp$ = newState.board.get_dfplqh$(origin)) != null ? tmp$.piece : null, AlysPiece) ? tmp$_0 : throwCCE();
+    newState.board.set_39d550$(destination, new AlysField(this.currentPlayer, piece.copy_thel6g$(void 0, void 0, true)));
+    this.mergeAreas_0(destination, newState);
+    this.fixSplitAreas_0(destination, newState);
+  };
+  AlysState.prototype.mergeAreas_0 = function (mergePoint, newState) {
+    var tmp$, tmp$_0;
+    var area = AlysState$Companion_getInstance().connectedPositions_jwhin5$(mergePoint, newState.board);
+    var destination = ArrayList_init();
+    var tmp$_1;
+    tmp$_1 = area.iterator();
+    while (tmp$_1.hasNext()) {
+      var element = tmp$_1.next();
+      if (element.field.treasury != null)
+        destination.add_11rb$(element);
+    }
+    var bases = destination;
+    var tmp$_2;
+    var sum = 0;
+    tmp$_2 = bases.iterator();
+    while (tmp$_2.hasNext()) {
+      var element_0 = tmp$_2.next();
+      var tmp$_3;
+      sum = sum + ((tmp$_3 = element_0.field.treasury) != null ? tmp$_3 : 0) | 0;
+    }
+    var treasury = sum;
+    var maxBy$result;
+    maxBy$break: do {
+      var iterator = bases.iterator();
+      if (!iterator.hasNext()) {
+        maxBy$result = null;
+        break maxBy$break;
+      }
+      var maxElem = iterator.next();
+      var tmp$_4;
+      var maxValue = (tmp$_4 = maxElem.field.treasury) != null ? tmp$_4 : 0;
+      while (iterator.hasNext()) {
+        var e = iterator.next();
+        var tmp$_5;
+        var v = (tmp$_5 = e.field.treasury) != null ? tmp$_5 : 0;
+        if (Kotlin.compareTo(maxValue, v) < 0) {
+          maxElem = e;
+          maxValue = v;
+        }
+      }
+      maxBy$result = maxElem;
+    }
+     while (false);
+    tmp$ = maxBy$result;
+    if (tmp$ == null) {
+      return;
+    }
+    var biggestBase = tmp$;
+    tmp$_0 = bases.iterator();
+    while (tmp$_0.hasNext()) {
+      var base = tmp$_0.next();
+      newState.board.set_39d550$(base.position, base.field.copy_jcygvj$(void 0, void 0, null));
+    }
+    newState.board.set_39d550$(biggestBase.position, biggestBase.field.copy_jcygvj$(void 0, void 0, treasury));
+  };
+  AlysState.prototype.fixSplitAreas_0 = function (mergePoint, newState) {
+    var tmp$;
+    tmp$ = mergePoint.adjacentHexes().iterator();
+    loop_label: while (tmp$.hasNext()) {
+      var position = tmp$.next();
+      if (!newState.board.isWithinBounds_dfplqh$(position) || newState.board.get_dfplqh$(position) == null)
+        continue loop_label;
+      var area = AlysState$Companion_getInstance().connectedPositions_jwhin5$(position, newState.board);
+      if (area.size === 1) {
+        newState.board.set_39d550$(area.get_za3lpa$(0).position, area.get_za3lpa$(0).field.copy_jcygvj$(void 0, void 0, null));
+        continue loop_label;
+      }
+      var any$result;
+      any$break: do {
+        var tmp$_0;
+        if (Kotlin.isType(area, Collection) && area.isEmpty()) {
+          any$result = false;
+          break any$break;
+        }
+        tmp$_0 = area.iterator();
+        while (tmp$_0.hasNext()) {
+          var element = tmp$_0.next();
+          if (element.field.treasury != null) {
+            any$result = true;
+            break any$break;
+          }
+        }
+        any$result = false;
+      }
+       while (false);
+      if (any$result)
+        continue loop_label;
+      var destination = ArrayList_init();
+      var tmp$_1;
+      tmp$_1 = area.iterator();
+      while (tmp$_1.hasNext()) {
+        var element_0 = tmp$_1.next();
+        var tmp$_2, tmp$_3;
+        if (!equals((tmp$_2 = element_0.field.piece) != null ? tmp$_2.type : null, AlysType$Soldier_getInstance()) && !equals((tmp$_3 = element_0.field.piece) != null ? tmp$_3.type : null, AlysType$Fort_getInstance()))
+          destination.add_11rb$(element_0);
+      }
+      var emptyArea = destination;
+      var newBase = emptyArea.isEmpty() ? random(area, Random_0.Default) : random(emptyArea, Random_0.Default);
+      newState.board.set_39d550$(newBase.position, new AlysField(newBase.field.player, void 0, 0));
+    }
+  };
+  AlysState.prototype.nextStateFrom_1 = function (action, newBoard) {
+    var tmp$, tmp$_0, tmp$_1, tmp$_2, tmp$_3, tmp$_4;
+    tmp$ = newBoard.get_dfplqh$(action.origin);
+    if (tmp$ == null) {
+      return this;
+    }
+    var origin = tmp$;
+    if (action.type === AlysType$Soldier_getInstance()) {
+      tmp$_2 = action.origin;
+      tmp$_1 = (typeof (tmp$_0 = origin.treasury) === 'number' ? tmp$_0 : throwCCE()) - 10 | 0;
+      newBoard.set_39d550$(tmp$_2, origin.copy_jcygvj$(void 0, new AlysPiece(AlysType$Soldier_getInstance()), tmp$_1));
+      return this.nextStateFrom_0(new AlysMoveAction(action.origin, action.destination), newBoard);
+    }
+     else if (action.type === AlysType$Fort_getInstance()) {
+      newBoard.set_39d550$(action.origin, origin.copy_jcygvj$(void 0, void 0, (typeof (tmp$_3 = origin.treasury) === 'number' ? tmp$_3 : throwCCE()) - 15 | 0));
+      newBoard.set_39d550$(action.destination, (Kotlin.isType(tmp$_4 = newBoard.get_dfplqh$(action.destination), AlysField) ? tmp$_4 : throwCCE()).copy_jcygvj$(void 0, new AlysPiece(AlysType$Fort_getInstance())));
+      return this.copy_gb7y5t$(void 0, void 0, void 0, newBoard);
+    }
+    return this;
+  };
+  AlysState.prototype.nextStateFrom_2 = function (action, newBoard) {
+    var tmp$, tmp$_0, tmp$_1;
+    var $receiver = newBoard.positions();
+    var destination = ArrayList_init();
+    var tmp$_2;
+    tmp$_2 = $receiver.iterator();
+    while (tmp$_2.hasNext()) {
+      var element = tmp$_2.next();
+      var tmp$_3, tmp$_4;
+      if (((tmp$_3 = newBoard.get_dfplqh$(element)) != null ? tmp$_3.player : null) === this.currentPlayer && ((tmp$_4 = newBoard.get_dfplqh$(element)) != null ? tmp$_4.treasury : null) != null)
+        destination.add_11rb$(element);
+    }
+    var basePositions = destination;
+    tmp$ = basePositions.iterator();
+    while (tmp$.hasNext()) {
+      var position = tmp$.next();
+      var base = Kotlin.isType(tmp$_0 = newBoard.get_dfplqh$(position), AlysField) ? tmp$_0 : throwCCE();
+      var treasury = (typeof (tmp$_1 = base.treasury) === 'number' ? tmp$_1 : throwCCE()) + AlysState$Companion_getInstance().connectedPositions_jwhin5$(position, this.board).size | 0;
+      newBoard.set_39d550$(position, base.copy_jcygvj$(void 0, void 0, treasury));
+    }
+    var nextPlayer = this.currentPlayer + 1 | 0;
+    if (nextPlayer > this.playerCount) {
+      nextPlayer = 1;
+    }
+    this.beginTurn_0(nextPlayer, newBoard);
+    return this.copy_gb7y5t$(void 0, void 0, void 0, newBoard, nextPlayer);
+  };
+  AlysState.prototype.beginTurn_0 = function (player, newBoard) {
+    var tmp$, tmp$_0, tmp$_1, tmp$_2, tmp$_3, tmp$_4, tmp$_5, tmp$_6, tmp$_7;
+    var $receiver = newBoard.positionedFields();
+    var destination = ArrayList_init();
+    var tmp$_8;
+    tmp$_8 = $receiver.iterator();
+    while (tmp$_8.hasNext()) {
+      var element = tmp$_8.next();
+      var tmp$_9;
+      if (((tmp$_9 = element.field) != null ? tmp$_9.player : null) === player)
+        destination.add_11rb$(element);
+    }
+    var destination_0 = ArrayList_init_0(collectionSizeOrDefault(destination, 10));
+    var tmp$_10;
+    tmp$_10 = destination.iterator();
+    while (tmp$_10.hasNext()) {
+      var item = tmp$_10.next();
+      var tmp$_11;
+      destination_0.add_11rb$(new PositionedField(item.position, Kotlin.isType(tmp$_11 = item.field, AlysField) ? tmp$_11 : throwCCE()));
+    }
+    var playerArea = destination_0;
+    var newTrees = ArrayList_init();
+    tmp$ = playerArea.iterator();
+    while (tmp$.hasNext()) {
+      var place = tmp$.next();
+      if (place.field.piece == null && place.field.treasury == null) {
+        var $receiver_0 = place.position.adjacentHexes();
+        var destination_1 = ArrayList_init_0(collectionSizeOrDefault($receiver_0, 10));
+        var tmp$_12;
+        tmp$_12 = $receiver_0.iterator();
+        while (tmp$_12.hasNext()) {
+          var item_0 = tmp$_12.next();
+          destination_1.add_11rb$(newBoard.isWithinBounds_dfplqh$(item_0) ? newBoard.get_dfplqh$(item_0) : null);
+        }
+        var destination_2 = ArrayList_init();
+        var tmp$_13;
+        tmp$_13 = destination_1.iterator();
+        while (tmp$_13.hasNext()) {
+          var element_0 = tmp$_13.next();
+          var tmp$_14;
+          if (equals((tmp$_14 = element_0 != null ? element_0.piece : null) != null ? tmp$_14.type : null, AlysType$Tree_getInstance()))
+            destination_2.add_11rb$(element_0);
+        }
+        if (destination_2.size > 1)
+          newTrees.add_11rb$(place.position);
+      }
+    }
+    tmp$_0 = newTrees.iterator();
+    while (tmp$_0.hasNext()) {
+      var position = tmp$_0.next();
+      newBoard.set_39d550$(position, new AlysField(player, new AlysPiece(AlysType$Tree_getInstance())));
+    }
+    var destination_3 = ArrayList_init();
+    var tmp$_15;
+    tmp$_15 = playerArea.iterator();
+    while (tmp$_15.hasNext()) {
+      var element_1 = tmp$_15.next();
+      var tmp$_16;
+      if (equals((tmp$_16 = element_1.field.piece) != null ? tmp$_16.type : null, AlysType$Grave_getInstance()))
+        destination_3.add_11rb$(element_1);
+    }
+    tmp$_1 = destination_3.iterator();
+    while (tmp$_1.hasNext()) {
+      var place_0 = tmp$_1.next();
+      newBoard.set_39d550$(place_0.position, new AlysField(player, new AlysPiece(AlysType$Tree_getInstance())));
+    }
+    var destination_4 = ArrayList_init();
+    var tmp$_17;
+    tmp$_17 = playerArea.iterator();
+    while (tmp$_17.hasNext()) {
+      var element_2 = tmp$_17.next();
+      var tmp$_18;
+      var tmp$_19 = equals((tmp$_18 = element_2.field.piece) != null ? tmp$_18.type : null, AlysType$Soldier_getInstance());
+      if (tmp$_19) {
+        var $receiver_1 = element_2.position.adjacentHexes();
+        var destination_5 = ArrayList_init();
+        var tmp$_20;
+        tmp$_20 = $receiver_1.iterator();
+        while (tmp$_20.hasNext()) {
+          var element_3 = tmp$_20.next();
+          var tmp$_21;
+          if (newBoard.isWithinBounds_dfplqh$(element_3) && ((tmp$_21 = newBoard.get_dfplqh$(element_3)) != null ? tmp$_21.player : null) === player)
+            destination_5.add_11rb$(element_3);
+        }
+        tmp$_19 = destination_5.isEmpty();
+      }
+      if (tmp$_19)
+        destination_4.add_11rb$(element_2);
+    }
+    tmp$_2 = destination_4.iterator();
+    while (tmp$_2.hasNext()) {
+      var place_1 = tmp$_2.next();
+      newBoard.set_39d550$(place_1.position, new AlysField(player, new AlysPiece(AlysType$Grave_getInstance())));
+    }
+    var destination_6 = ArrayList_init();
+    var tmp$_22;
+    tmp$_22 = playerArea.iterator();
+    while (tmp$_22.hasNext()) {
+      var element_4 = tmp$_22.next();
+      if (element_4.field.player === player && element_4.field.treasury != null)
+        destination_6.add_11rb$(element_4);
+    }
+    var bases = destination_6;
+    tmp$_3 = bases.iterator();
+    while (tmp$_3.hasNext()) {
+      var base = tmp$_3.next();
+      var area = AlysState$Companion_getInstance().connectedPositions_jwhin5$(base.position, this.board);
+      var treasury = typeof (tmp$_4 = base.field.treasury) === 'number' ? tmp$_4 : throwCCE();
+      var destination_7 = ArrayList_init();
+      var tmp$_23;
+      tmp$_23 = area.iterator();
+      while (tmp$_23.hasNext()) {
+        var element_5 = tmp$_23.next();
+        var tmp$_24, tmp$_25;
+        if (!equals((tmp$_24 = element_5.field.piece) != null ? tmp$_24.type : null, AlysType$Tree_getInstance()) && !equals((tmp$_25 = element_5.field.piece) != null ? tmp$_25.type : null, AlysType$CoastTree_getInstance()))
+          destination_7.add_11rb$(element_5);
+      }
+      +destination_7.size;
+      var destination_8 = ArrayList_init();
+      var tmp$_26;
+      tmp$_26 = area.iterator();
+      while (tmp$_26.hasNext()) {
+        var element_6 = tmp$_26.next();
+        var tmp$_27;
+        if (equals((tmp$_27 = element_6.field.piece) != null ? tmp$_27.type : null, AlysType$Soldier_getInstance()))
+          destination_8.add_11rb$(element_6);
+      }
+      var soldiers = destination_8;
+      tmp$_5 = soldiers.iterator();
+      while (tmp$_5.hasNext()) {
+        var soldier = tmp$_5.next();
+        newBoard.set_39d550$(soldier.position, soldier.field.copy_jcygvj$(void 0, (tmp$_6 = soldier.field.piece) != null ? tmp$_6.copy_thel6g$(void 0, void 0, false) : null));
+      }
+      var destination_9 = ArrayList_init_0(collectionSizeOrDefault(soldiers, 10));
+      var tmp$_28;
+      tmp$_28 = soldiers.iterator();
+      while (tmp$_28.hasNext()) {
+        var item_1 = tmp$_28.next();
+        var tmp$_29, tmp$_30;
+        destination_9.add_11rb$(this.upkeepFor_0((tmp$_30 = (tmp$_29 = item_1.field.piece) != null ? tmp$_29.strength : null) != null ? tmp$_30 : 0));
+      }
+      var upkeep = sum(destination_9);
+      if (upkeep <= treasury)
+        newBoard.set_39d550$(base.position, base.field.copy_jcygvj$(void 0, void 0, treasury - upkeep | 0));
+      else {
+        tmp$_7 = soldiers.iterator();
+        while (tmp$_7.hasNext()) {
+          var soldier_0 = tmp$_7.next();
+          newBoard.set_39d550$(soldier_0.position, new AlysField(player, new AlysPiece(AlysType$Grave_getInstance())));
+        }
+      }
+    }
+  };
+  AlysState.prototype.upkeepFor_0 = function (strength) {
+    var tmp$;
+    switch (strength) {
+      case 1:
+        tmp$ = 2;
+        break;
+      case 2:
+        tmp$ = 6;
+        break;
+      case 3:
+        tmp$ = 18;
+        break;
+      case 4:
+        tmp$ = 54;
+        break;
+      default:tmp$ = 0;
+        break;
+    }
+    return tmp$;
+  };
+  AlysState.prototype.findWinner = function () {
+    return null;
+  };
+  AlysState.prototype.isConnected_vwqnnw$ = function (origin, destination) {
+    var tmp$;
+    var area = AlysState$Companion_getInstance().connectedPositions_jwhin5$(origin, this.board);
+    tmp$ = destination.adjacentHexes().iterator();
+    loop_label: while (tmp$.hasNext()) {
+      var pos = tmp$.next();
+      var any$result;
+      any$break: do {
+        var tmp$_0;
+        if (Kotlin.isType(area, Collection) && area.isEmpty()) {
+          any$result = false;
+          break any$break;
+        }
+        tmp$_0 = area.iterator();
+        while (tmp$_0.hasNext()) {
+          var element = tmp$_0.next();
+          var tmp$_1;
+          if ((tmp$_1 = element.position) != null ? tmp$_1.equals(pos) : null) {
+            any$result = true;
+            break any$break;
+          }
+        }
+        any$result = false;
+      }
+       while (false);
+      if (any$result)
+        return true;
+    }
+    return false;
+  };
+  function AlysState$Companion() {
+    AlysState$Companion_instance = this;
+  }
+  var emptyList = Kotlin.kotlin.collections.emptyList_287e2$;
+  AlysState$Companion.prototype.connectedPositions_jwhin5$ = function (origin, board) {
+    var tmp$;
+    tmp$ = board.get_dfplqh$(origin);
+    if (tmp$ == null) {
+      return emptyList();
+    }
+    var base = tmp$;
+    var front = mutableListOf([origin]);
+    var connected = mutableListOf([origin]);
+    while (!front.isEmpty()) {
+      var nextPosition = front.removeAt_za3lpa$(0);
+      var $receiver = nextPosition.adjacentHexes();
+      var destination = ArrayList_init();
+      var tmp$_0;
+      tmp$_0 = $receiver.iterator();
+      while (tmp$_0.hasNext()) {
+        var element = tmp$_0.next();
+        var tmp$_1;
+        if (board.isWithinBounds_dfplqh$(element) && ((tmp$_1 = board.get_dfplqh$(element)) != null ? tmp$_1.player : null) === base.player)
+          destination.add_11rb$(element);
+      }
+      var destination_0 = ArrayList_init();
+      var tmp$_2;
+      tmp$_2 = destination.iterator();
+      while (tmp$_2.hasNext()) {
+        var element_0 = tmp$_2.next();
+        if (!connected.contains_11rb$(element_0))
+          destination_0.add_11rb$(element_0);
+      }
+      var newConnected = destination_0;
+      connected.addAll_brywnq$(newConnected);
+      front.addAll_brywnq$(newConnected);
+    }
+    var destination_1 = ArrayList_init_0(collectionSizeOrDefault(connected, 10));
+    var tmp$_3;
+    tmp$_3 = connected.iterator();
+    while (tmp$_3.hasNext()) {
+      var item = tmp$_3.next();
+      var tmp$_4;
+      destination_1.add_11rb$(new PositionedField(item, Kotlin.isType(tmp$_4 = board.get_dfplqh$(item), AlysField) ? tmp$_4 : throwCCE()));
+    }
+    return destination_1;
+  };
+  AlysState$Companion.$metadata$ = {
+    kind: Kind_OBJECT,
+    simpleName: 'Companion',
+    interfaces: []
+  };
+  var AlysState$Companion_instance = null;
+  function AlysState$Companion_getInstance() {
+    if (AlysState$Companion_instance === null) {
+      new AlysState$Companion();
+    }
+    return AlysState$Companion_instance;
+  }
+  function AlysState_init$lambda(closure$playerCount) {
+    return function (x, y) {
+      return new AlysField(random_0(new IntRange(1, closure$playerCount), Random_0.Default));
+    };
+  }
+  AlysState.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'AlysState',
+    interfaces: [BoardGameState]
+  };
+  AlysState.prototype.component1 = function () {
+    return this.width;
+  };
+  AlysState.prototype.component2 = function () {
+    return this.height;
+  };
+  AlysState.prototype.component3 = function () {
+    return this.playerCount;
+  };
+  AlysState.prototype.component4 = function () {
+    return this.board;
+  };
+  AlysState.prototype.component5 = function () {
+    return this.currentPlayer;
+  };
+  AlysState.prototype.component6 = function () {
+    return this.players;
+  };
+  AlysState.prototype.copy_gb7y5t$ = function (width, height, playerCount, board, currentPlayer, players) {
+    return new AlysState(width === void 0 ? this.width : width, height === void 0 ? this.height : height, playerCount === void 0 ? this.playerCount : playerCount, board === void 0 ? this.board : board, currentPlayer === void 0 ? this.currentPlayer : currentPlayer, players === void 0 ? this.players : players);
+  };
+  AlysState.prototype.toString = function () {
+    return 'AlysState(width=' + Kotlin.toString(this.width) + (', height=' + Kotlin.toString(this.height)) + (', playerCount=' + Kotlin.toString(this.playerCount)) + (', board=' + Kotlin.toString(this.board)) + (', currentPlayer=' + Kotlin.toString(this.currentPlayer)) + (', players=' + Kotlin.toString(this.players)) + ')';
+  };
+  AlysState.prototype.hashCode = function () {
+    var result = 0;
+    result = result * 31 + Kotlin.hashCode(this.width) | 0;
+    result = result * 31 + Kotlin.hashCode(this.height) | 0;
+    result = result * 31 + Kotlin.hashCode(this.playerCount) | 0;
+    result = result * 31 + Kotlin.hashCode(this.board) | 0;
+    result = result * 31 + Kotlin.hashCode(this.currentPlayer) | 0;
+    result = result * 31 + Kotlin.hashCode(this.players) | 0;
+    return result;
+  };
+  AlysState.prototype.equals = function (other) {
+    return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.width, other.width) && Kotlin.equals(this.height, other.height) && Kotlin.equals(this.playerCount, other.playerCount) && Kotlin.equals(this.board, other.board) && Kotlin.equals(this.currentPlayer, other.currentPlayer) && Kotlin.equals(this.players, other.players)))));
+  };
   function BoardGame() {
     this.players = LinkedHashMap_init();
     this.winner = null;
@@ -3755,8 +3965,6 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     get: Alys$Companion_getInstance
   });
   _.Alys = Alys;
-  $$importsForInline$$.Tern = _;
-  _.AlysState = AlysState;
   _.AlysField = AlysField;
   _.AlysPiece = AlysPiece;
   Object.defineProperty(AlysType, 'Fort', {
@@ -3782,7 +3990,13 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   _.AlysEndTurnAction = AlysEndTurnAction;
   _.AlysRule = AlysRule;
   _.AlysActionInfo = AlysActionInfo;
+  _.AlysBoardCreator = AlysBoardCreator;
   _.AlysDisplay = AlysDisplay;
+  $$importsForInline$$.Tern = _;
+  Object.defineProperty(AlysState, 'Companion', {
+    get: AlysState$Companion_getInstance
+  });
+  _.AlysState = AlysState;
   _.BoardGame = BoardGame;
   _.BoardGameState = BoardGameState;
   Object.defineProperty(Result, 'Companion', {
