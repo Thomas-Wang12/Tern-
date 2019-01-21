@@ -44,3 +44,4 @@ abstract class Result<T> {
 class Success<T>(val value: T) : Result<T>()
 class Failure<T>(val error: String) : Result<T>()
 
+class Rule<S, A>(val description: String, val isLegal: (action: A, state: S) -> Boolean)

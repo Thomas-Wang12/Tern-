@@ -63,7 +63,7 @@ data class VirusState(
 	override fun confirmLegality(action: VirusAction): Result<Any?> {
 		for(rule in Virus.rules)
 			if(!rule.isLegal(action, this))
-				return Result.failure(rule.name)
+				return Result.failure(rule.description)
 		return Result.success()
 	}
 

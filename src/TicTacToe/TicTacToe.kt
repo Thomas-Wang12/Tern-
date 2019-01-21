@@ -21,7 +21,7 @@ data class TicTacToeState(
 	override fun confirmLegality(action: TicTacToeAction): Result<Any?> {
 		for(rule in TicTacToe.rules)
 			if(!rule.isLegal(action, this))
-				return Result.failure(rule.name)
+				return Result.failure(rule.description)
 		return Result.success()
 	}
 

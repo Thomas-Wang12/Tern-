@@ -31,23 +31,23 @@ class AlysDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameArea: 
 		}
 	}
 
-	override val draw = draw@{ context: CanvasRenderingContext2D, fieldSize: Double, piece: AlysField?, _: Int, _: Int ->
-		if (piece == null)
+	override val draw = draw@{ context: CanvasRenderingContext2D, fieldSize: Double, field: AlysField?, _: Int, _: Int ->
+		if (field == null)
 			return@draw
 		context.fillStyle = "black"
 		context.font = fieldSize.toString() + "px arial"
 		context.textBaseline = CanvasTextBaseline.TOP
-		if (piece.treasury != null)
-			context.fillText(piece.treasury.toString(), 0.0, 0.0)
-		else if (piece.piece?.type == AlysType.Fort)
+		if (field.treasury != null)
+			context.fillText(field.treasury.toString(), 0.0, 0.0)
+		else if (field.piece?.type == AlysType.Fort)
 			context.fillText("F", 0.0, 0.0)
-		else if (piece.piece?.type == AlysType.Soldier)
-			context.fillText("S", 0.0, 0.0)
-		else if (piece.piece?.type == AlysType.Tree)
+		else if (field.piece?.type == AlysType.Soldier)
+			context.fillText(if(field.piece.hasMoved) "S" else "S*", 0.0, 0.0)
+		else if (field.piece?.type == AlysType.Tree)
 			context.fillText("T", 0.0, 0.0)
-		else if (piece.piece?.type == AlysType.CoastTree)
+		else if (field.piece?.type == AlysType.CoastTree)
 			context.fillText("P", 0.0, 0.0)
-		else if (piece.piece?.type == AlysType.Grave)
+		else if (field.piece?.type == AlysType.Grave)
 			context.fillText("G", 0.0, 0.0)
 	}
 
@@ -90,8 +90,8 @@ class AlysDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameArea: 
 					if (selectedField.player != game.state.currentPlayer)
 						return@click
 					if (selectedField.piece?.type == AlysType.Soldier) {
-						if (selectedField.piece.hasMoved)
-							return@click
+						//if (selectedField.piece.hasMoved)
+						//	return@click
 						sourcePosition = it
 						updateDisplay(game.winner)
 						return@click
@@ -101,21 +101,20 @@ class AlysDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameArea: 
 					updateDisplay(game.winner)
 				} else {
 					sourcePosition = null
-					val sourceField = game.state.board[source] ?: return@click
-					if (source == it){
-						updateDisplay(game.winner)
-						return@click
-					}
-					if (sourceField.player != game.state.currentPlayer){
-						updateDisplay(game.winner)
-						return@click
-					}
+					val sourceField = game.state.board[source]// ?: return@click
+					//if (origin == it){
+					//	updateDisplay(game.winner)
+					//	return@click
+					//}
 					val type = buildType
 					buildType = null
-					if (sourceField.piece?.type == AlysType.Soldier)
+					if (sourceField?.piece?.type == AlysType.Soldier)
 						performAction(AlysMoveAction(source, it))
 					else if (type != null)
 						performAction(AlysCreateAction(type, source, it))
+					else {
+						updateDisplay(game.winner)
+					}
 				}
 			}
 		}
@@ -125,7 +124,7 @@ class AlysDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameArea: 
 		if (winner != null)
 			messageLine.textContent = winner + " has won!"
 		else
-			messageLine.textContent = "Current player: " + game.currentPlayer()
+			turnLine.textContent = "Current player: " + game.currentPlayer()
 		gridDisplay.display(game.state.board, getColor, draw)
 		updatePlayerList()
 		updateButtons()
