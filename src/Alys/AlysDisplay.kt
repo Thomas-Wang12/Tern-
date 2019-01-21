@@ -1,12 +1,16 @@
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.w3c.dom.*
 import org.w3c.dom.events.Event
 import kotlin.browser.document
+import kotlin.random.Random
 
 class AlysDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameArea: HTMLElement)
 	: GameDisplay<Alys, AlysState, AlysField?, AlysAction, Int>(canvas, playerArea, gameArea) {
 	override var game = Alys()
 
-	var sourcePosition: Position? = null
+	var originPosition: Position? = null
 	var buildType: AlysType? = null
 	//var selectedArea = listOf<Position>()
 	private val fortButton = document.createElement("button") as HTMLButtonElement
@@ -15,9 +19,11 @@ class AlysDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameArea: 
 	private val endTurnButton = document.createElement("button") as HTMLButtonElement
 	private val statusArea = document.createElement("div") as HTMLDivElement
 
+	val images = mutableMapOf<String, HTMLImageElement>()
+
 	override val getColor = getColor@{ _: AlysField?, x: Int, y: Int ->
-		val source = sourcePosition
-		if (source != null && source.x == x && source.y == y)
+		val origin = originPosition
+		if (origin != null && origin.x == x && origin.y == y)
 			return@getColor "darkgrey"
 		val piece = game.state.board[x, y] ?: return@getColor "transparent"
 		//if(Position(x,y) in selectedArea)
@@ -37,21 +43,55 @@ class AlysDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameArea: 
 		context.fillStyle = "black"
 		context.font = fieldSize.toString() + "px arial"
 		context.textBaseline = CanvasTextBaseline.TOP
-		if (field.treasury != null)
-			context.fillText(field.treasury.toString(), 0.0, 0.0)
-		else if (field.piece?.type == AlysType.Fort)
-			context.fillText("F", 0.0, 0.0)
-		else if (field.piece?.type == AlysType.Soldier)
-			context.fillText(if(field.piece.hasMoved) "S" else "S*", 0.0, 0.0)
-		else if (field.piece?.type == AlysType.Tree)
-			context.fillText("T", 0.0, 0.0)
-		else if (field.piece?.type == AlysType.CoastTree)
-			context.fillText("P", 0.0, 0.0)
-		else if (field.piece?.type == AlysType.Grave)
-			context.fillText("G", 0.0, 0.0)
+		val image = when (field.piece?.type) {
+			AlysType.Fort -> "F"
+			AlysType.Soldier -> soldierImage(field.piece, field.player == game.state.currentPlayer)
+			AlysType.Tree -> "T"
+			AlysType.CoastTree -> "C"
+			AlysType.Grave -> "G"
+			else -> if (field.treasury != null && field.treasury >= 10 && field.player == game.state.currentPlayer) "BR"
+			else if (field.treasury != null) "B"
+			else null
+		}
+		if(image != null)
+			context.drawImage(images[image], 0.0, 0.0, fieldSize, fieldSize)
+	}
+
+	fun soldierImage(piece: AlysPiece, showReady: Boolean): String {
+		val flag = if(piece.hasMoved || !showReady) "" else "R"
+		return when(piece.strength){
+			1 -> "S1$flag"
+			2 -> "S2$flag"
+			3 -> "S3$flag"
+			4 -> "S4$flag"
+			else -> "S1$flag"
+		}
+	}
+
+	fun addImage(name: String){
+		images[name] = document.createElement("img") as HTMLImageElement
+		images[name]?.src = "assets/$name.png"
 	}
 
 	init {
+		addImage("S1")
+		addImage("S1R")
+		addImage("S2")
+		addImage("S2R")
+		addImage("S3")
+		addImage("S3R")
+		addImage("S4")
+		addImage("S4R")
+		addImage("B")
+		addImage("BR")
+		addImage("F")
+		addImage("T")
+		addImage("C")
+		addImage("G")
+		GlobalScope.launch {
+			delay(500)
+			updateDisplay(null)
+		}
 		game.players[1] = "Player 1"
 		players["Player 1"] = Player()
 		game.players[2] = "Player 2"
@@ -60,7 +100,7 @@ class AlysDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameArea: 
 		players["Player 3"] = Player()
 		game.players[4] = "Player 4"
 		players["Player 4"] = Player()
-		game.state = game.state.newGame()
+		game.newGame(seed = (0..100000).random())
 		gridDisplay.gridColor = "blue"
 		gridDisplay.fieldSize = 39.0
 		gridDisplay.outerBorder = 50.0
@@ -84,24 +124,24 @@ class AlysDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameArea: 
 
 		gridDisplay.onClick = click@{
 			if (players[game.currentPlayer()] is Player && game.state.board.isWithinBounds(it)) {
-				val source = sourcePosition
-				if (source == null) {
+				val origin = originPosition
+				if (origin == null) {
 					val selectedField = game.state.board[it] ?: return@click
 					if (selectedField.player != game.state.currentPlayer)
 						return@click
 					if (selectedField.piece?.type == AlysType.Soldier) {
 						//if (selectedField.piece.hasMoved)
 						//	return@click
-						sourcePosition = it
+						originPosition = it
 						updateDisplay(game.winner)
 						return@click
 					}
-					val selectedArea = game.state.connectedPositions(it)
-					sourcePosition = selectedArea.find { it.field.treasury != null }?.position
+					val selectedArea = AlysState.connectedPositions(it, game.state.board)
+					originPosition = selectedArea.find { it.field.treasury != null }?.position
 					updateDisplay(game.winner)
 				} else {
-					sourcePosition = null
-					val sourceField = game.state.board[source]// ?: return@click
+					originPosition = null
+					val sourceField = game.state.board[origin]// ?: return@click
 					//if (origin == it){
 					//	updateDisplay(game.winner)
 					//	return@click
@@ -109,9 +149,9 @@ class AlysDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameArea: 
 					val type = buildType
 					buildType = null
 					if (sourceField?.piece?.type == AlysType.Soldier)
-						performAction(AlysMoveAction(source, it))
+						performAction(AlysMoveAction(origin, it))
 					else if (type != null)
-						performAction(AlysCreateAction(type, source, it))
+						performAction(AlysCreateAction(type, origin, it))
 					else {
 						updateDisplay(game.winner)
 					}
@@ -130,9 +170,9 @@ class AlysDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameArea: 
 		updateButtons()
 	}
 
-	private fun updateButtons(){
-		val source = sourcePosition
-		if(source != null && game.state.board[source]?.treasury != null){
+	private fun updateButtons() {
+		val source = originPosition
+		if (source != null && game.state.board[source]?.treasury != null) {
 			fortButton.disabled = buildType == AlysType.Fort
 			soldierButton.disabled = buildType == AlysType.Soldier
 		} else {
