@@ -66,16 +66,7 @@ class Alys(override var state: AlysState = AlysState())
 					val destinationField = info.destinationField ?: return@rule false
 					if (destinationField.player == state.currentPlayer) return@rule true
 					val strength = info.originPiece?.strength ?: return@rule false
-					var defense = state.defenseOf(destinationField)
-					val defenses = action.destination.adjacentHexes()
-							.filter { state.board.isWithinBounds(it) }
-							.map { state.board[it] }
-							.filter { it != null && it.player == destinationField.player }
-							.map { if (it == null) 0 else state.defenseOf(it) }
-					for (def in defenses)
-						if (def > defense)
-							defense = def
-					if (strength <= defense)
+					if (strength <= state.totalDefenseOf(PositionedField(action.destination, destinationField)))
 						return@rule false
 					return@rule true
 				})

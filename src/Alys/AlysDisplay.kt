@@ -97,11 +97,11 @@ class AlysDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameArea: 
 		game.players[1] = "Player 1"
 		players["Player 1"] = Player()
 		game.players[2] = "Player 2"
-		players["Player 2"] = Player()
+		players["Player 2"] = RandomAIPlayer<AlysState, AlysAction>()
 		game.players[3] = "Player 3"
-		players["Player 3"] = Player()
+		players["Player 3"] = RandomAIPlayer<AlysState, AlysAction>()
 		game.players[4] = "Player 4"
-		players["Player 4"] = Player()
+		players["Player 4"] = RandomAIPlayer<AlysState, AlysAction>()
 		game.newGame(seed = (0..100000).random())
 		gridDisplay.gridColor = "blue"
 		gridDisplay.fieldSize = 39.0
