@@ -4,6 +4,7 @@ import kotlinx.coroutines.launch
 import org.w3c.dom.*
 import org.w3c.dom.events.Event
 import kotlin.browser.document
+import kotlin.browser.window
 import kotlin.random.Random
 
 class AlysDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameArea: HTMLElement)
@@ -40,9 +41,6 @@ class AlysDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameArea: 
 	override val draw = draw@{ context: CanvasRenderingContext2D, fieldSize: Double, field: AlysField?, _: Int, _: Int ->
 		if (field == null)
 			return@draw
-		context.fillStyle = "black"
-		context.font = fieldSize.toString() + "px arial"
-		context.textBaseline = CanvasTextBaseline.TOP
 		val image = when (field.piece?.type) {
 			AlysType.Fort -> "F"
 			AlysType.Soldier -> soldierImage(field.piece, field.player == game.state.currentPlayer)
@@ -53,13 +51,13 @@ class AlysDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameArea: 
 			else if (field.treasury != null) "B"
 			else null
 		}
-		if(image != null)
+		if (image != null)
 			context.drawImage(images[image], 0.0, 0.0, fieldSize, fieldSize)
 	}
 
 	fun soldierImage(piece: AlysPiece, showReady: Boolean): String {
-		val flag = if(piece.hasMoved || !showReady) "" else "R"
-		return when(piece.strength){
+		val flag = if (piece.hasMoved || !showReady) "" else "R"
+		return when (piece.strength) {
 			1 -> "S1$flag"
 			2 -> "S2$flag"
 			3 -> "S3$flag"
@@ -68,9 +66,16 @@ class AlysDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameArea: 
 		}
 	}
 
-	fun addImage(name: String){
+	fun addImage(name: String) {
 		images[name] = document.createElement("img") as HTMLImageElement
 		images[name]?.src = "assets/$name.png"
+	}
+
+	fun resize(){
+		val scale = window.devicePixelRatio
+		val size = (((canvas.width / scale - gridDisplay.outerBorder*2) / game.state.width) - 1).toInt()
+		gridDisplay.fieldSize = (if (size % 2 == 0) size - 1 else size).toDouble()
+		gridDisplay.showHexagons()
 	}
 
 	init {
@@ -103,10 +108,10 @@ class AlysDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameArea: 
 		game.players[4] = "Player 4"
 		players["Player 4"] = RandomAIPlayer<AlysState, AlysAction>()
 		game.newGame(seed = (0..100000).random())
-		gridDisplay.gridColor = "blue"
-		gridDisplay.fieldSize = 31.0
+		aiDelay = 0
+		gridDisplay.gridColor = "#7df"
 		gridDisplay.outerBorder = 50.0
-		gridDisplay.showHexagons()
+		resize()
 
 		gameArea.appendChild(fortButton)
 		gameArea.appendChild(soldierButton)

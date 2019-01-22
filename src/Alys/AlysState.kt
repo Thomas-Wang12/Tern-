@@ -98,7 +98,7 @@ data class AlysState(
 					.map {
 						it as AlysMoveAction
 						AlysCreateAction(AlysType.Soldier, it.origin, it.destination)
-					} )
+					})
 		return actions
 	}
 
@@ -120,9 +120,9 @@ data class AlysState(
 		if (soldier.field.piece?.strength == 1)
 			for (otherSoldier in otherSoldiers.filter { (it.field.piece?.strength as Int) < 4 })
 				actions.add(AlysMoveAction(soldier.position, otherSoldier.position))
-		for(field in area.filter { it.field.piece?.type in listOf(AlysType.Tree, AlysType.Grave, AlysType.CoastTree) })
+		for (field in area.filter { it.field.piece?.type in listOf(AlysType.Tree, AlysType.Grave, AlysType.CoastTree) })
 			actions.add(AlysMoveAction(soldier.position, field.position))
-		for(field in neighbouringArea.filter { totalDefenseOf(it) < soldier.field.piece?.strength as Int })
+		for (field in neighbouringArea.filter { totalDefenseOf(it) < soldier.field.piece?.strength as Int })
 			actions.add(AlysMoveAction(soldier.position, field.position))
 		return actions
 	}
@@ -228,14 +228,26 @@ data class AlysState(
 		val newTrees = mutableListOf<Position>()
 		for (place in playerArea)
 			if (place.field.piece == null && place.field.treasury == null)
-				if (place.position.adjacentHexes()
-								.map { if (newBoard.isWithinBounds(it)) newBoard[it] else null }
-								.filter { it?.piece?.type == AlysType.Tree }.size > 1)
+				if (AlysState.adjacentFields(place.position, newBoard)
+								.filter { it.field.piece?.type == AlysType.Tree }.size > 1)
 					newTrees.add(place.position)
 		for (position in newTrees)
 			newBoard[position] = AlysField(player, AlysPiece(AlysType.Tree))
-		for (place in playerArea.filter { it.field.piece?.type == AlysType.Grave })
-			newBoard[place.position] = AlysField(player, AlysPiece(AlysType.Tree))
+		newTrees.clear()
+		for (place in playerArea)
+			if (place.field.piece == null && place.field.treasury == null) {
+				val adjacents = AlysState.adjacentFields(place.position, newBoard)
+				if (adjacents.size < 6 && adjacents.any { it.field.piece?.type == AlysType.CoastTree })
+					newTrees.add(place.position)
+			}
+		for (position in newTrees)
+			newBoard[position] = AlysField(player, AlysPiece(AlysType.CoastTree))
+		for (place in playerArea.filter { it.field.piece?.type == AlysType.Grave }) {
+			if (AlysState.adjacentFields(place.position, newBoard).size < 6)
+				newBoard[place.position] = AlysField(player, AlysPiece(AlysType.CoastTree))
+			else
+				newBoard[place.position] = AlysField(player, AlysPiece(AlysType.Tree))
+		}
 		for (place in playerArea.filter {
 			it.field.piece?.type == AlysType.Soldier
 					&& it.position.adjacentHexes().filter { newBoard.isWithinBounds(it) && newBoard[it]?.player == player }.isEmpty()

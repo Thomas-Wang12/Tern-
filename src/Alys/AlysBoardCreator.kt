@@ -4,7 +4,7 @@ import kotlin.random.Random
 class AlysBoardCreator(width: Int, height: Int, val seed: Int) {
 	val board: Grid<AlysField?> = Grid(width, height, { _, _ -> null })
 	var numberOfCenters: Int = 3
-	var landFraction: Double = 0.6
+	var landFraction: Double = 0.7
 
 	fun generateLand() {
 		val random = Random(seed)
