@@ -4,7 +4,7 @@ import kotlin.random.Random
 class AlysBoardCreator(width: Int, height: Int, val seed: Int) {
 	val board: Grid<AlysField?> = Grid(width, height, { _, _ -> null })
 	var numberOfCenters: Int = 3
-	var landFraction: Double = 0.8
+	var landFraction: Double = 0.6
 
 	fun generateLand() {
 		val random = Random(seed)
@@ -35,11 +35,18 @@ class AlysBoardCreator(width: Int, height: Int, val seed: Int) {
 	fun fillBoard(playerCount: Int) {
 		val random = Random(seed)
 		val remainingPositions = board.positionedFields().filter{ it.field != null }.map{it.position}.toMutableList()
+		val averageFields = 1 + remainingPositions.size / playerCount
+		var count = 0
 		while(remainingPositions.size>0){
 			for(player in 1..playerCount){
+				if(count > 0.7 * (averageFields + averageFields * player.toDouble()/playerCount.toDouble()))
+					continue
+				if(remainingPositions.size == 0)
+					break
 				val index = (0 until remainingPositions.size).random(random)
 				board[remainingPositions.removeAt(index)] = AlysField(player)
 			}
+			count++
 		}
 
 		val examinedArea = mutableListOf<PositionedField<AlysField>>()
@@ -52,6 +59,21 @@ class AlysBoardCreator(width: Int, height: Int, val seed: Int) {
 				continue
 			val base = area.random(random)
 			board[base.position] = base.field.copy(treasury = area.filter { it.field.piece == null }.size * 5)
+		}
+
+		val freeFields = board.positionedFields()
+				.filter { it.field != null && it.field.piece == null && it.field.treasury == null}
+				.map { PositionedField(it.position, it.field as AlysField) }
+				.toMutableList()
+		val trees = freeFields.size/10
+		for(i in 1..trees){
+			val bla = freeFields.random(random)
+			freeFields.remove(bla)
+			val piece = if(AlysState.adjacentFields(bla.position, board).size < 5)
+				AlysPiece(AlysType.CoastTree)
+			else
+				AlysPiece(AlysType.Tree)
+			board[bla.position] = bla.field.copy(piece = piece)
 		}
 	}
 }

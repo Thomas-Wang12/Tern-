@@ -104,7 +104,7 @@ class AlysDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameArea: 
 		players["Player 4"] = RandomAIPlayer<AlysState, AlysAction>()
 		game.newGame(seed = (0..100000).random())
 		gridDisplay.gridColor = "blue"
-		gridDisplay.fieldSize = 39.0
+		gridDisplay.fieldSize = 31.0
 		gridDisplay.outerBorder = 50.0
 		gridDisplay.showHexagons()
 

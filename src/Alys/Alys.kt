@@ -85,7 +85,7 @@ class Alys(override var state: AlysState = AlysState())
 				})
 	}
 
-	fun newGame(width: Int = 10, height: Int = 10, seed: Int = 1) {
+	fun newGame(width: Int = 15, height: Int = 15, seed: Int = 1) {
 		val creator = AlysBoardCreator(width, height, seed)
 		creator.generateLand()
 		creator.fillBoard(players.size)
