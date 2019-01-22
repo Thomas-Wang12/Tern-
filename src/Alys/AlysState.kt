@@ -219,7 +219,7 @@ data class AlysState(
 		val basePositions = newBoard.positions().filter { newBoard[it]?.player == player && newBoard[it]?.treasury != null }
 		for (position in basePositions) {
 			val base = newBoard[position] as AlysField
-			val treasury = (base.treasury as Int) + connectedPositions(position, board).size
+			val treasury = (base.treasury as Int) + incomeFor(position, newBoard)
 			newBoard[position] = base.copy(treasury = treasury)
 		}
 		val playerArea = newBoard.positionedFields()
@@ -261,7 +261,7 @@ data class AlysState(
 			val soldiers = area.filter { it.field.piece?.type == AlysType.Soldier }
 			for (soldier in soldiers)
 				newBoard[soldier.position] = soldier.field.copy(piece = soldier.field.piece?.copy(hasMoved = false))
-			val upkeep = soldiers.map { upkeepFor(it.field.piece?.strength ?: 0) }.sum()
+			val upkeep = soldiers.map { upkeepFor(it.field.piece as AlysPiece) }.sum()
 			if (upkeep <= treasury)
 				newBoard[base.position] = base.field.copy(treasury = treasury - upkeep)
 			else
@@ -270,8 +270,15 @@ data class AlysState(
 		}
 	}
 
-	private fun upkeepFor(strength: Int): Int {
-		return when (strength) {
+	fun incomeFor(basePosition: Position, newBoard: Grid<AlysField?>? = null): Int {
+		val board = newBoard ?: board
+		return connectedPositions(basePosition, board).filter{ it.field.piece?.type != AlysType.Tree && it.field.piece?.type != AlysType.CoastTree}.size
+	}
+
+	fun upkeepFor(piece: AlysPiece): Int {
+		if(piece.type != AlysType.Soldier)
+			return 0
+		return when (piece.strength) {
 			1 -> 2
 			2 -> 6
 			3 -> 18
@@ -282,8 +289,10 @@ data class AlysState(
 
 	override fun findWinner(): Int? {
 		var remainingPlayer: Int? = null
-		for (field in board.fields) {
-			val player = field?.player ?: continue
+		for (field in board.fields.filterNotNull()) {
+			if(field.treasury == null)
+				continue
+			val player = field.player
 			if (remainingPlayer == null)
 				remainingPlayer = player
 			else if (remainingPlayer != player)

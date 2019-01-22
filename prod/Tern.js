@@ -23,6 +23,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   var until = Kotlin.kotlin.ranges.until_dqglrj$;
   var random_0 = Kotlin.kotlin.ranges.random_xmiyix$;
   var throwCCE = Kotlin.throwCCE;
+  var toString = Kotlin.toString;
   var Unit = Kotlin.kotlin.Unit;
   var coroutines = $module$kotlinx_coroutines_core.kotlinx.coroutines;
   var L500 = Kotlin.Long.fromInt(500);
@@ -34,6 +35,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   var getCallableRef = Kotlin.getCallableRef;
   var contains = Kotlin.kotlin.collections.contains_2ws7j4$;
   var sum = Kotlin.kotlin.collections.sum_plj8ka$;
+  var filterNotNull = Kotlin.kotlin.collections.filterNotNull_m3lr2h$;
   var mutableListOf = Kotlin.kotlin.collections.mutableListOf_i5x0yv$;
   var defineInlineFunction = Kotlin.defineInlineFunction;
   var wrapFunction = Kotlin.wrapFunction;
@@ -85,7 +87,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   function Alys$Companion() {
     Alys$Companion_instance = this;
     this.commonRules = listOf([new AlysRule('Cannot place piece outside board', Alys$Companion$commonRules$lambda), new AlysRule('Destination and origin cannot be the same place', Alys$Companion$commonRules$lambda_0), new AlysRule('Must move from a field', Alys$Companion$commonRules$lambda_1), new AlysRule('Must move to a field', Alys$Companion$commonRules$lambda_2), new AlysRule('Origin must belong to current player', Alys$Companion$commonRules$lambda_3), new AlysRule('Can only move pieces within or next to its area', Alys$Companion$commonRules$lambda_4)]);
-    this.moveRules = listOf([new AlysRule('Must have a piece to move', Alys$Companion$moveRules$lambda), new AlysRule('Cannot move a piece more than once per turn', Alys$Companion$moveRules$lambda_0), new AlysRule('Can only move soldiers', Alys$Companion$moveRules$lambda_1), new AlysRule('Cannot move onto own forts', Alys$Companion$moveRules$lambda_2), new AlysRule('Cannot move onto own fully upgraded soldiers', Alys$Companion$moveRules$lambda_3), new AlysRule('Must be stronger than nearby pieces', Alys$Companion$moveRules$lambda_4)]);
+    this.moveRules = listOf([new AlysRule('Must have a piece to move', Alys$Companion$moveRules$lambda), new AlysRule('Cannot move a piece more than once per turn', Alys$Companion$moveRules$lambda_0), new AlysRule('Can only move soldiers', Alys$Companion$moveRules$lambda_1), new AlysRule('Cannot move onto own forts or bases', Alys$Companion$moveRules$lambda_2), new AlysRule('Cannot move onto own fully upgraded soldiers', Alys$Companion$moveRules$lambda_3), new AlysRule('Must be stronger than nearby pieces', Alys$Companion$moveRules$lambda_4)]);
     this.createRules = listOf([new AlysRule('Must have a base at origin', Alys$Companion$createRules$lambda), new AlysRule('Must be able to afford the piece', Alys$Companion$createRules$lambda_0), new AlysRule('Fort must be placed on a connected empty owned field', Alys$Companion$createRules$lambda_1)]);
   }
   Alys$Companion.prototype.priceOf_xryge9$ = function (type) {
@@ -167,8 +169,8 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     return equals((tmp$ = info.originPiece) != null ? tmp$.type : null, AlysType$Soldier_getInstance());
   }
   function Alys$Companion$moveRules$lambda_2(f, state, info) {
-    var tmp$, tmp$_0, tmp$_1;
-    return state.currentPlayer !== ((tmp$ = info.destinationField) != null ? tmp$.player : null) || !equals((tmp$_1 = (tmp$_0 = info.destinationField) != null ? tmp$_0.piece : null) != null ? tmp$_1.type : null, AlysType$Fort_getInstance());
+    var tmp$, tmp$_0, tmp$_1, tmp$_2;
+    return state.currentPlayer !== ((tmp$ = info.destinationField) != null ? tmp$.player : null) || !equals((tmp$_1 = (tmp$_0 = info.destinationField) != null ? tmp$_0.piece : null) != null ? tmp$_1.type : null, AlysType$Fort_getInstance()) || ((tmp$_2 = info.destinationField) != null ? tmp$_2.treasury : null) == null;
   }
   function Alys$Companion$moveRules$lambda_3(f, state, info) {
     var tmp$, tmp$_0;
@@ -802,9 +804,10 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     this.resize();
     gameArea.appendChild(this.fortButton_0);
     gameArea.appendChild(this.soldierButton_0);
+    gameArea.appendChild(this.statusArea_0);
     gameArea.appendChild(this.undoButton_0);
     gameArea.appendChild(this.endTurnButton_0);
-    gameArea.appendChild(this.statusArea_0);
+    this.statusArea_0.style.whiteSpace = 'pre';
     this.fortButton_0.textContent = 'Build fort';
     this.soldierButton_0.textContent = 'Hire soldier';
     this.undoButton_0.textContent = 'Undo';
@@ -876,11 +879,48 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     this.gridDisplay.fieldSize = size % 2 === 0 ? size - 1 | 0 : size;
     this.gridDisplay.showHexagons();
   };
+  var mapNotNullTo$lambda = wrapFunction(function () {
+    return function (closure$transform, closure$destination) {
+      return function (element) {
+        var tmp$;
+        if ((tmp$ = closure$transform(element)) != null) {
+          closure$destination.add_11rb$(tmp$);
+        }
+        return Unit;
+      };
+    };
+  });
   AlysDisplay.prototype.updateDisplay_pdl1vj$ = function (winner) {
+    var tmp$, tmp$_0;
     if (winner != null)
       this.messageLine.textContent = winner + ' has won!';
     else
       this.turnLine.textContent = 'Current player: ' + this.game.currentPlayer();
+    var origin = this.originPosition;
+    var selectedField = origin != null ? this.game.state.board.get_dfplqh$(origin) : null;
+    if ((selectedField != null ? selectedField.treasury : null) != null) {
+      tmp$_0 = this.statusArea_0;
+      var tmp$_1 = 'Treasury: ' + toString(selectedField.treasury) + '\nExpected income: ' + toString(this.game.state.incomeFor_maxfsy$(Kotlin.isType(tmp$ = origin, Position) ? tmp$ : throwCCE())) + '\nUpkeep: ';
+      var $receiver = AlysState$Companion_getInstance().connectedPositions_jwhin5$(origin, this.game.state.board);
+      var destination = ArrayList_init();
+      var tmp$_2;
+      tmp$_2 = $receiver.iterator();
+      while (tmp$_2.hasNext()) {
+        var element = tmp$_2.next();
+        var tmp$_0_0;
+        if ((tmp$_0_0 = element.field.piece) != null) {
+          destination.add_11rb$(tmp$_0_0);
+        }
+      }
+      var tmp$_3;
+      var sum = 0;
+      tmp$_3 = destination.iterator();
+      while (tmp$_3.hasNext()) {
+        var element_0 = tmp$_3.next();
+        sum = sum + this.game.state.upkeepFor_ibj32h$(element_0) | 0;
+      }
+      tmp$_0.textContent = tmp$_1 + toString(sum);
+    }
     this.gridDisplay.display_31tjs9$(this.game.state.board, this.getColor, this.draw);
     this.updatePlayerList();
     this.updateButtons_0();
@@ -1035,6 +1075,8 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
           if (selectedField.player !== this$AlysDisplay.game.state.currentPlayer)
             return;
           if (equals((tmp$_0 = selectedField.piece) != null ? tmp$_0.type : null, AlysType$Soldier_getInstance())) {
+            if (selectedField.piece.hasMoved)
+              return;
             this$AlysDisplay.originPosition = it;
             this$AlysDisplay.updateDisplay_pdl1vj$(this$AlysDisplay.game.winner);
             return;
@@ -1059,17 +1101,24 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
           this$AlysDisplay.updateDisplay_pdl1vj$(this$AlysDisplay.game.winner);
         }
          else {
-          this$AlysDisplay.originPosition = null;
+          if (equals(origin, it)) {
+            this$AlysDisplay.buildType = null;
+            this$AlysDisplay.originPosition = null;
+            this$AlysDisplay.updateDisplay_pdl1vj$(this$AlysDisplay.game.winner);
+            return;
+          }
           var sourceField = this$AlysDisplay.game.state.board.get_dfplqh$(origin);
           var type = this$AlysDisplay.buildType;
-          this$AlysDisplay.buildType = null;
+          var success = false;
           if (equals((tmp$_2 = sourceField != null ? sourceField.piece : null) != null ? tmp$_2.type : null, AlysType$Soldier_getInstance()))
-            this$AlysDisplay.performAction_11re$(new AlysMoveAction(origin, it));
+            success = this$AlysDisplay.performAction_11re$(new AlysMoveAction(origin, it));
           else if (type != null)
-            this$AlysDisplay.performAction_11re$(new AlysCreateAction(type, origin, it));
-          else {
-            this$AlysDisplay.updateDisplay_pdl1vj$(this$AlysDisplay.game.winner);
+            success = this$AlysDisplay.performAction_11re$(new AlysCreateAction(type, origin, it));
+          if (success) {
+            this$AlysDisplay.buildType = null;
+            this$AlysDisplay.originPosition = null;
           }
+          this$AlysDisplay.updateDisplay_pdl1vj$(this$AlysDisplay.game.winner);
         }
       }
       return Unit;
@@ -1570,7 +1619,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     while (tmp$.hasNext()) {
       var position = tmp$.next();
       var base = Kotlin.isType(tmp$_0 = newBoard.get_dfplqh$(position), AlysField) ? tmp$_0 : throwCCE();
-      var treasury = (typeof (tmp$_1 = base.treasury) === 'number' ? tmp$_1 : throwCCE()) + AlysState$Companion_getInstance().connectedPositions_jwhin5$(position, this.board).size | 0;
+      var treasury = (typeof (tmp$_1 = base.treasury) === 'number' ? tmp$_1 : throwCCE()) + this.incomeFor_maxfsy$(position, newBoard) | 0;
       newBoard.set_39d550$(position, base.copy_jcygvj$(void 0, void 0, treasury));
     }
     var $receiver_0 = newBoard.positionedFields();
@@ -1743,8 +1792,8 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
       tmp$_38 = soldiers.iterator();
       while (tmp$_38.hasNext()) {
         var item_0 = tmp$_38.next();
-        var tmp$_39, tmp$_40;
-        destination_9.add_11rb$(this.upkeepFor_0((tmp$_40 = (tmp$_39 = item_0.field.piece) != null ? tmp$_39.strength : null) != null ? tmp$_40 : 0));
+        var tmp$_39;
+        destination_9.add_11rb$(this.upkeepFor_ibj32h$(Kotlin.isType(tmp$_39 = item_0.field.piece, AlysPiece) ? tmp$_39 : throwCCE()));
       }
       var upkeep = sum(destination_9);
       if (upkeep <= treasury_0)
@@ -1758,9 +1807,27 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
       }
     }
   };
-  AlysState.prototype.upkeepFor_0 = function (strength) {
+  AlysState.prototype.incomeFor_maxfsy$ = function (basePosition, newBoard) {
+    if (newBoard === void 0)
+      newBoard = null;
+    var board = newBoard != null ? newBoard : this.board;
+    var $receiver = AlysState$Companion_getInstance().connectedPositions_jwhin5$(basePosition, board);
+    var destination = ArrayList_init();
     var tmp$;
-    switch (strength) {
+    tmp$ = $receiver.iterator();
+    while (tmp$.hasNext()) {
+      var element = tmp$.next();
+      var tmp$_0, tmp$_1;
+      if (!equals((tmp$_0 = element.field.piece) != null ? tmp$_0.type : null, AlysType$Tree_getInstance()) && !equals((tmp$_1 = element.field.piece) != null ? tmp$_1.type : null, AlysType$CoastTree_getInstance()))
+        destination.add_11rb$(element);
+    }
+    return destination.size;
+  };
+  AlysState.prototype.upkeepFor_ibj32h$ = function (piece) {
+    var tmp$;
+    if (piece.type !== AlysType$Soldier_getInstance())
+      return 0;
+    switch (piece.strength) {
       case 1:
         tmp$ = 2;
         break;
@@ -1779,16 +1846,14 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     return tmp$;
   };
   AlysState.prototype.findWinner = function () {
-    var tmp$, tmp$_0;
+    var tmp$;
     var remainingPlayer = null;
-    tmp$ = this.board.fields.iterator();
+    tmp$ = filterNotNull(this.board.fields).iterator();
     while (tmp$.hasNext()) {
       var field = tmp$.next();
-      tmp$_0 = field != null ? field.player : null;
-      if (tmp$_0 == null) {
+      if (field.treasury == null)
         continue;
-      }
-      var player = tmp$_0;
+      var player = field.player;
       if (remainingPlayer == null)
         remainingPlayer = player;
       else if (remainingPlayer !== player)
@@ -3043,17 +3108,18 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     if (Kotlin.isType($this, Failure)) {
       this.messageLine.textContent = $this.error;
       this.updateDisplay_pdl1vj$(this.game.winner);
-      return;
+      return false;
     }
      else
       Kotlin.isType($this, Success) || throwCCE();
     this.updateDisplay_pdl1vj$(this.game.winner);
     if (this.game.winner != null || this.game.state.possibleActions().isEmpty())
-      return;
+      return true;
     var $receiver = this.players;
     var key = this.game.currentPlayer();
     var tmp$;
     this.awaitActionFrom_s8jyv4$((Kotlin.isType(tmp$ = $receiver, Map) ? tmp$ : throwCCE()).get_11rb$(key));
+    return true;
   };
   GameDisplay.prototype.updateDisplay_pdl1vj$ = function (winner) {
     if (winner != null)
@@ -3099,7 +3165,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
           case 1:
             throw this.exception_0;
           case 2:
-            return this.local$this$GameDisplay.performAction_11re$(this.local$closure$player.requestAction_11rb$(this.local$this$GameDisplay.game.state)), Unit;
+            return this.local$this$GameDisplay.performAction_11re$(this.local$closure$player.requestAction_11rb$(this.local$this$GameDisplay.game.state));
           default:this.state_0 = 1;
             throw new Error('State Machine Unreachable execution');
         }

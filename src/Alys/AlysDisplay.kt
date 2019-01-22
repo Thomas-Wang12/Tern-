@@ -71,9 +71,9 @@ class AlysDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameArea: 
 		images[name]?.src = "assets/$name.png"
 	}
 
-	fun resize(){
+	fun resize() {
 		val scale = window.devicePixelRatio
-		val size = (((canvas.width / scale - gridDisplay.outerBorder*2) / game.state.width) - 1).toInt()
+		val size = (((canvas.width / scale - gridDisplay.outerBorder * 2) / game.state.width) - 1).toInt()
 		gridDisplay.fieldSize = (if (size % 2 == 0) size - 1 else size).toDouble()
 		gridDisplay.showHexagons()
 	}
@@ -115,9 +115,10 @@ class AlysDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameArea: 
 
 		gameArea.appendChild(fortButton)
 		gameArea.appendChild(soldierButton)
+		gameArea.appendChild(statusArea)
 		gameArea.appendChild(undoButton)
 		gameArea.appendChild(endTurnButton)
-		gameArea.appendChild(statusArea)
+		statusArea.style.whiteSpace = "pre"
 		fortButton.textContent = "Build fort"
 		soldierButton.textContent = "Hire soldier"
 		undoButton.textContent = "Undo"
@@ -137,8 +138,8 @@ class AlysDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameArea: 
 					if (selectedField.player != game.state.currentPlayer)
 						return@click
 					if (selectedField.piece?.type == AlysType.Soldier) {
-						//if (selectedField.piece.hasMoved)
-						//	return@click
+						if (selectedField.piece.hasMoved)
+							return@click
 						originPosition = it
 						updateDisplay(game.winner)
 						return@click
@@ -147,21 +148,24 @@ class AlysDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameArea: 
 					originPosition = selectedArea.find { it.field.treasury != null }?.position
 					updateDisplay(game.winner)
 				} else {
-					originPosition = null
-					val sourceField = game.state.board[origin]// ?: return@click
-					//if (origin == it){
-					//	updateDisplay(game.winner)
-					//	return@click
-					//}
-					val type = buildType
-					buildType = null
-					if (sourceField?.piece?.type == AlysType.Soldier)
-						performAction(AlysMoveAction(origin, it))
-					else if (type != null)
-						performAction(AlysCreateAction(type, origin, it))
-					else {
+					if (origin == it){
+						buildType = null
+						originPosition = null
 						updateDisplay(game.winner)
+						return@click
 					}
+					val sourceField = game.state.board[origin]
+					val type = buildType
+					var success = false
+					if (sourceField?.piece?.type == AlysType.Soldier)
+						success = performAction(AlysMoveAction(origin, it))
+					else if (type != null)
+						success = performAction(AlysCreateAction(type, origin, it))
+					if(success){
+						buildType = null
+						originPosition = null
+					}
+					updateDisplay(game.winner)
 				}
 			}
 		}
@@ -172,6 +176,15 @@ class AlysDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameArea: 
 			messageLine.textContent = winner + " has won!"
 		else
 			turnLine.textContent = "Current player: " + game.currentPlayer()
+		val origin = originPosition
+		val selectedField = if (origin != null) game.state.board[origin] else null
+		if (selectedField?.treasury != null) {
+			statusArea.textContent = "Treasury: " + selectedField.treasury +
+					"\nExpected income: " + game.state.incomeFor(origin as Position) +
+					"\nUpkeep: " + AlysState.connectedPositions(origin, game.state.board)
+					.mapNotNull { it.field.piece }
+					.sumBy { game.state.upkeepFor(it) }
+		}
 		gridDisplay.display(game.state.board, getColor, draw)
 		updatePlayerList()
 		updateButtons()

@@ -28,16 +28,17 @@ abstract class GameDisplay<G : BoardGame<S, T, A, P>, S : BoardGameState<T, A, P
 		playerArea.appendChild(messageLine)
 	}
 
-	fun performAction(action: A) {
+	fun performAction(action: A): Boolean {
 		game.performAction(action).onFailure {
 			messageLine.textContent = it.error
 			updateDisplay(game.winner)
-			return
+			return false
 		}
 		updateDisplay(game.winner)
 		if (game.winner != null || game.state.possibleActions().isEmpty())
-			return
+			return true
 		awaitActionFrom(players[game.currentPlayer()])
+		return true
 	}
 
 	open fun updateDisplay(winner: String?) {
