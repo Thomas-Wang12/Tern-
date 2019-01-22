@@ -7,8 +7,8 @@ import kotlin.browser.document
 import kotlin.browser.window
 import kotlin.random.Random
 
-class AlysDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameArea: HTMLElement)
-	: GameDisplay<Alys, AlysState, AlysField?, AlysAction, Int>(canvas, playerArea, gameArea) {
+class AlysDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameAreaTop: HTMLElement, gameAreaRight: HTMLElement)
+	: GameDisplay<Alys, AlysState, AlysField?, AlysAction, Int>(canvas, playerArea, gameAreaTop, gameAreaRight) {
 	override var game = Alys()
 
 	var originPosition: Position? = null
@@ -113,14 +113,15 @@ class AlysDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameArea: 
 		gridDisplay.outerBorder = 50.0
 		resize()
 
-		gameArea.appendChild(fortButton)
-		gameArea.appendChild(soldierButton)
-		gameArea.appendChild(statusArea)
-		gameArea.appendChild(undoButton)
-		gameArea.appendChild(endTurnButton)
-		statusArea.style.whiteSpace = "pre"
-		fortButton.textContent = "Build fort"
-		soldierButton.textContent = "Hire soldier"
+		gameAreaTop.appendChild(undoButton)
+		gameAreaTop.appendChild(soldierButton)
+		gameAreaTop.appendChild(fortButton)
+		gameAreaRight.appendChild(statusArea)
+		gameAreaRight.appendChild(endTurnButton)
+		statusArea.className = "status-area"
+		statusArea.textContent = "Nothing selected"
+		fortButton.textContent = "Build fort (15)"
+		soldierButton.textContent = "Hire soldier (10)"
 		undoButton.textContent = "Undo"
 		endTurnButton.textContent = "End turn"
 		fortButton.addEventListener("click", ::buildFort)
@@ -161,6 +162,14 @@ class AlysDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameArea: 
 						success = performAction(AlysMoveAction(origin, it))
 					else if (type != null)
 						success = performAction(AlysCreateAction(type, origin, it))
+					else if(sourceField?.treasury != 0){
+						val destination =game.state.board[it]
+						if(destination?.player == game.state.currentPlayer && destination.treasury != null){
+							originPosition = it
+							updateDisplay(game.winner)
+							return@click
+						}
+					}
 					if(success){
 						buildType = null
 						originPosition = null
@@ -185,6 +194,9 @@ class AlysDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameArea: 
 					.mapNotNull { it.field.piece }
 					.sumBy { game.state.upkeepFor(it) }
 		}
+		else {
+			statusArea.textContent = "No base selected"
+		}
 		gridDisplay.display(game.state.board, getColor, draw)
 		updatePlayerList()
 		updateButtons()
@@ -192,9 +204,10 @@ class AlysDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameArea: 
 
 	private fun updateButtons() {
 		val source = originPosition
-		if (source != null && game.state.board[source]?.treasury != null) {
-			fortButton.disabled = buildType == AlysType.Fort
-			soldierButton.disabled = buildType == AlysType.Soldier
+		val base = if(source!= null) game.state.board[source] else null
+		if (base?.treasury != null) {
+			fortButton.disabled = buildType == AlysType.Fort || base.treasury < 15
+			soldierButton.disabled = buildType == AlysType.Soldier || base.treasury < 10
 		} else {
 			fortButton.disabled = true
 			soldierButton.disabled = true

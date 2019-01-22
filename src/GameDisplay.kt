@@ -5,7 +5,8 @@ import kotlin.browser.document
 abstract class GameDisplay<G : BoardGame<S, T, A, P>, S : BoardGameState<T, A, P>, T, A, P>(
 		val canvas: HTMLCanvasElement,
 		val playerArea: HTMLElement,
-		val gameArea: HTMLElement
+		val gameAreaTop: HTMLElement,
+		val gameAreaRight: HTMLElement
 ) {
 	abstract var game: G
 	val gridDisplay = GridDisplay(canvas)
@@ -20,7 +21,8 @@ abstract class GameDisplay<G : BoardGame<S, T, A, P>, S : BoardGameState<T, A, P
 
 	init {
 		playerArea.innerHTML = ""
-		gameArea.innerHTML = ""
+		gameAreaTop.innerHTML = ""
+		gameAreaRight.innerHTML = ""
 		turnLine.className = "message-line"
 		messageLine.className = "message-line"
 		playerArea.appendChild(playerList)

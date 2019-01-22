@@ -738,8 +738,8 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   };
   var LinkedHashMap_init = Kotlin.kotlin.collections.LinkedHashMap_init_q3lmfv$;
   var Random_0 = Kotlin.kotlin.random.Random;
-  function AlysDisplay(canvas, playerArea, gameArea) {
-    GameDisplay.call(this, canvas, playerArea, gameArea);
+  function AlysDisplay(canvas, playerArea, gameAreaTop, gameAreaRight) {
+    GameDisplay.call(this, canvas, playerArea, gameAreaTop, gameAreaRight);
     this.game_6mofcn$_0 = new Alys();
     this.originPosition = null;
     this.buildType = null;
@@ -802,14 +802,15 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     this.gridDisplay.gridColor = '#7df';
     this.gridDisplay.outerBorder = 50.0;
     this.resize();
-    gameArea.appendChild(this.fortButton_0);
-    gameArea.appendChild(this.soldierButton_0);
-    gameArea.appendChild(this.statusArea_0);
-    gameArea.appendChild(this.undoButton_0);
-    gameArea.appendChild(this.endTurnButton_0);
-    this.statusArea_0.style.whiteSpace = 'pre';
-    this.fortButton_0.textContent = 'Build fort';
-    this.soldierButton_0.textContent = 'Hire soldier';
+    gameAreaTop.appendChild(this.undoButton_0);
+    gameAreaTop.appendChild(this.soldierButton_0);
+    gameAreaTop.appendChild(this.fortButton_0);
+    gameAreaRight.appendChild(this.statusArea_0);
+    gameAreaRight.appendChild(this.endTurnButton_0);
+    this.statusArea_0.className = 'status-area';
+    this.statusArea_0.textContent = 'Nothing selected';
+    this.fortButton_0.textContent = 'Build fort (15)';
+    this.soldierButton_0.textContent = 'Hire soldier (10)';
     this.undoButton_0.textContent = 'Undo';
     this.endTurnButton_0.textContent = 'End turn';
     this.fortButton_0.addEventListener('click', getCallableRef('buildFort', function ($receiver, event) {
@@ -921,16 +922,19 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
       }
       tmp$_0.textContent = tmp$_1 + toString(sum);
     }
+     else {
+      this.statusArea_0.textContent = 'No base selected';
+    }
     this.gridDisplay.display_31tjs9$(this.game.state.board, this.getColor, this.draw);
     this.updatePlayerList();
     this.updateButtons_0();
   };
   AlysDisplay.prototype.updateButtons_0 = function () {
-    var tmp$;
     var source = this.originPosition;
-    if (source != null && ((tmp$ = this.game.state.board.get_dfplqh$(source)) != null ? tmp$.treasury : null) != null) {
-      this.fortButton_0.disabled = equals(this.buildType, AlysType$Fort_getInstance());
-      this.soldierButton_0.disabled = equals(this.buildType, AlysType$Soldier_getInstance());
+    var base = source != null ? this.game.state.board.get_dfplqh$(source) : null;
+    if ((base != null ? base.treasury : null) != null) {
+      this.fortButton_0.disabled = equals(this.buildType, AlysType$Fort_getInstance()) || base.treasury < 15;
+      this.soldierButton_0.disabled = equals(this.buildType, AlysType$Soldier_getInstance()) || base.treasury < 10;
     }
      else {
       this.fortButton_0.disabled = true;
@@ -1114,6 +1118,14 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
             success = this$AlysDisplay.performAction_11re$(new AlysMoveAction(origin, it));
           else if (type != null)
             success = this$AlysDisplay.performAction_11re$(new AlysCreateAction(type, origin, it));
+          else if ((sourceField != null ? sourceField.treasury : null) !== 0) {
+            var destination = this$AlysDisplay.game.state.board.get_dfplqh$(it);
+            if ((destination != null ? destination.player : null) === this$AlysDisplay.game.state.currentPlayer && destination.treasury != null) {
+              this$AlysDisplay.originPosition = it;
+              this$AlysDisplay.updateDisplay_pdl1vj$(this$AlysDisplay.game.winner);
+              return;
+            }
+          }
           if (success) {
             this$AlysDisplay.buildType = null;
             this$AlysDisplay.originPosition = null;
@@ -2562,8 +2574,8 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     }
   }
   ChessPlayer.valueOf_61zpoe$ = ChessPlayer$valueOf;
-  function ChessDisplay(canvas, playerArea, gameArea) {
-    GameDisplay.call(this, canvas, playerArea, gameArea);
+  function ChessDisplay(canvas, playerArea, gameAreaTop, gameAreaRight) {
+    GameDisplay.call(this, canvas, playerArea, gameAreaTop, gameAreaRight);
     this.game_vohlt0$_0 = new Chess();
     this.sourcePosition = null;
     this.getColor_tn0utd$_0 = ChessDisplay$getColor$lambda(this);
@@ -3084,10 +3096,11 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   ChessPiece.prototype.equals = function (other) {
     return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.type, other.type) && Kotlin.equals(this.player, other.player) && Kotlin.equals(this.hasMoved, other.hasMoved)))));
   };
-  function GameDisplay(canvas, playerArea, gameArea) {
+  function GameDisplay(canvas, playerArea, gameAreaTop, gameAreaRight) {
     this.canvas = canvas;
     this.playerArea = playerArea;
-    this.gameArea = gameArea;
+    this.gameAreaTop = gameAreaTop;
+    this.gameAreaRight = gameAreaRight;
     this.gridDisplay = new GridDisplay(this.canvas);
     this.aiDelay = L200;
     this.players = LinkedHashMap_init();
@@ -3096,7 +3109,8 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     this.turnLine = Kotlin.isType(tmp$_0 = document.createElement('div'), HTMLDivElement) ? tmp$_0 : throwCCE();
     this.messageLine = Kotlin.isType(tmp$_1 = document.createElement('div'), HTMLDivElement) ? tmp$_1 : throwCCE();
     this.playerArea.innerHTML = '';
-    this.gameArea.innerHTML = '';
+    this.gameAreaTop.innerHTML = '';
+    this.gameAreaRight.innerHTML = '';
     this.turnLine.className = 'message-line';
     this.messageLine.className = 'message-line';
     this.playerArea.appendChild(this.playerList);
@@ -3474,33 +3488,34 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     simpleName: 'GridDisplay',
     interfaces: []
   };
-  function main$addButton$lambda(closure$game, closure$name, closure$header, closure$gameDisplay, closure$canvas, closure$playerArea, closure$gameArea) {
+  function main$addButton$lambda(closure$game, closure$name, closure$header, closure$gameDisplay, closure$canvas, closure$playerArea, closure$gameAreaTop, closure$gameAreaRight) {
     return function (it) {
       var tmp$;
       (tmp$ = closure$game.v) != null ? (tmp$.end(), Unit) : null;
       closure$header.textContent = closure$name;
-      closure$game.v = closure$gameDisplay(closure$canvas, closure$playerArea, closure$gameArea);
+      closure$game.v = closure$gameDisplay(closure$canvas, closure$playerArea, closure$gameAreaTop, closure$gameAreaRight);
       return Unit;
     };
   }
-  function main$addButton(closure$game, closure$header, closure$canvas, closure$playerArea, closure$gameArea) {
+  function main$addButton(closure$game, closure$header, closure$canvas, closure$playerArea, closure$gameAreaTop, closure$gameAreaRight) {
     return function (gameDisplay, name, navElement) {
       var tmp$;
       var button = Kotlin.isType(tmp$ = document.createElement('button'), HTMLButtonElement) ? tmp$ : throwCCE();
       button.textContent = name;
       navElement.appendChild(button);
-      button.addEventListener('click', main$addButton$lambda(closure$game, name, closure$header, gameDisplay, closure$canvas, closure$playerArea, closure$gameArea));
+      button.addEventListener('click', main$addButton$lambda(closure$game, name, closure$header, gameDisplay, closure$canvas, closure$playerArea, closure$gameAreaTop, closure$gameAreaRight));
     };
   }
   function main(args) {
-    var tmp$, tmp$_0, tmp$_1, tmp$_2, tmp$_3, tmp$_4, tmp$_5;
+    var tmp$, tmp$_0, tmp$_1, tmp$_2, tmp$_3, tmp$_4, tmp$_5, tmp$_6;
     var header = Kotlin.isType(tmp$ = document.getElementById('header'), HTMLElement) ? tmp$ : throwCCE();
     var navigation = Kotlin.isType(tmp$_0 = document.getElementById('navigation'), HTMLElement) ? tmp$_0 : throwCCE();
     var playerArea = Kotlin.isType(tmp$_1 = document.getElementById('player-area'), HTMLElement) ? tmp$_1 : throwCCE();
-    var gameArea = Kotlin.isType(tmp$_2 = document.getElementById('game-area'), HTMLElement) ? tmp$_2 : throwCCE();
-    var canvas = Kotlin.isType(tmp$_3 = document.getElementById('canvas'), HTMLCanvasElement) ? tmp$_3 : throwCCE();
+    var gameAreaTop = Kotlin.isType(tmp$_2 = document.getElementById('game-area-top'), HTMLElement) ? tmp$_2 : throwCCE();
+    var gameAreaRight = Kotlin.isType(tmp$_3 = document.getElementById('game-area-right'), HTMLElement) ? tmp$_3 : throwCCE();
+    var canvas = Kotlin.isType(tmp$_4 = document.getElementById('canvas'), HTMLCanvasElement) ? tmp$_4 : throwCCE();
     var dpr = window.devicePixelRatio;
-    var element = Kotlin.isType(tmp$_4 = canvas.parentElement, HTMLElement) ? tmp$_4 : throwCCE();
+    var element = Kotlin.isType(tmp$_5 = canvas.parentElement, HTMLElement) ? tmp$_5 : throwCCE();
     var a = element.clientWidth;
     var b = window.innerHeight - navigation.clientHeight | 0;
     var styleSize = Math_0.min(a, b);
@@ -3509,21 +3524,22 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     canvas.style.height = styleSize.toString() + 'px';
     canvas.width = size;
     canvas.height = size;
-    var context = Kotlin.isType(tmp$_5 = canvas.getContext('2d'), CanvasRenderingContext2D) ? tmp$_5 : throwCCE();
+    var context = Kotlin.isType(tmp$_6 = canvas.getContext('2d'), CanvasRenderingContext2D) ? tmp$_6 : throwCCE();
     context.scale(dpr, dpr);
+    header.textContent = 'Select a game';
     var game = {v: null};
-    var addButton = main$addButton(game, header, canvas, playerArea, gameArea);
-    addButton(getCallableRef('AlysDisplay', function (canvas, playerArea, gameArea) {
-      return new AlysDisplay(canvas, playerArea, gameArea);
+    var addButton = main$addButton(game, header, canvas, playerArea, gameAreaTop, gameAreaRight);
+    addButton(getCallableRef('AlysDisplay', function (canvas, playerArea, gameAreaTop, gameAreaRight) {
+      return new AlysDisplay(canvas, playerArea, gameAreaTop, gameAreaRight);
     }), 'Alys', navigation);
-    addButton(getCallableRef('ChessDisplay', function (canvas, playerArea, gameArea) {
-      return new ChessDisplay(canvas, playerArea, gameArea);
+    addButton(getCallableRef('ChessDisplay', function (canvas, playerArea, gameAreaTop, gameAreaRight) {
+      return new ChessDisplay(canvas, playerArea, gameAreaTop, gameAreaRight);
     }), 'Chess', navigation);
-    addButton(getCallableRef('VirusDisplay', function (canvas, playerArea, gameArea) {
-      return new VirusDisplay(canvas, playerArea, gameArea);
+    addButton(getCallableRef('VirusDisplay', function (canvas, playerArea, gameAreaTop, gameAreaRight) {
+      return new VirusDisplay(canvas, playerArea, gameAreaTop, gameAreaRight);
     }), 'Virus', navigation);
-    addButton(getCallableRef('TicTacToeDisplay', function (canvas, playerArea, gameArea) {
-      return new TicTacToeDisplay(canvas, playerArea, gameArea);
+    addButton(getCallableRef('TicTacToeDisplay', function (canvas, playerArea, gameAreaTop, gameAreaRight) {
+      return new TicTacToeDisplay(canvas, playerArea, gameAreaTop, gameAreaRight);
     }), 'Tic Tac Toe', navigation);
   }
   function Position(x, y) {
@@ -3808,8 +3824,8 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   TicTacToeAction.prototype.equals = function (other) {
     return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.piece, other.piece) && Kotlin.equals(this.x, other.x) && Kotlin.equals(this.y, other.y)))));
   };
-  function TicTacToeDisplay(canvas, playerArea, gameArea) {
-    GameDisplay.call(this, canvas, playerArea, gameArea);
+  function TicTacToeDisplay(canvas, playerArea, gameAreaTop, gameAreaRight) {
+    GameDisplay.call(this, canvas, playerArea, gameAreaTop, gameAreaRight);
     this.game_p4bo12$_0 = new TicTacToe();
     this.getColor_fajsqn$_0 = null;
     this.draw_p5ofi0$_0 = TicTacToeDisplay$draw$lambda;
@@ -4268,8 +4284,8 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   VirusAction.prototype.equals = function (other) {
     return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.source, other.source) && Kotlin.equals(this.destination, other.destination)))));
   };
-  function VirusDisplay(canvas, playerArea, gameArea) {
-    GameDisplay.call(this, canvas, playerArea, gameArea);
+  function VirusDisplay(canvas, playerArea, gameAreaTop, gameAreaRight) {
+    GameDisplay.call(this, canvas, playerArea, gameAreaTop, gameAreaRight);
     this.game_rcjipt$_0 = new Virus();
     this.getColor_csj3a4$_0 = VirusDisplay$getColor$lambda;
     this.draw_rdwa6r$_0 = null;

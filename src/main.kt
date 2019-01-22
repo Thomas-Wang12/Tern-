@@ -8,7 +8,8 @@ fun main(args: Array<String>) {
 	val header = document.getElementById("header") as HTMLElement
 	val navigation = document.getElementById("navigation") as HTMLElement
 	val playerArea = document.getElementById("player-area") as HTMLElement
-	val gameArea = document.getElementById("game-area") as HTMLElement
+	val gameAreaTop = document.getElementById("game-area-top") as HTMLElement
+	val gameAreaRight = document.getElementById("game-area-right") as HTMLElement
 	val canvas = document.getElementById("canvas") as HTMLCanvasElement
 
 	val dpr = window.devicePixelRatio
@@ -21,11 +22,12 @@ fun main(args: Array<String>) {
 	canvas.height = size
 	val context: CanvasRenderingContext2D = canvas.getContext("2d") as CanvasRenderingContext2D
 	context.scale(dpr, dpr)
+	header.textContent = "Select a game"
 
 	var game: GameDisplay<*, *, *, *, *>? = null
 
 	fun addButton(
-			gameDisplay: (HTMLCanvasElement, HTMLElement, HTMLElement) -> GameDisplay<*,*,*,*,*>,
+			gameDisplay: (HTMLCanvasElement, HTMLElement, HTMLElement, HTMLElement) -> GameDisplay<*,*,*,*,*>,
 			name: String,
 			navElement: HTMLElement
 	) {
@@ -35,7 +37,7 @@ fun main(args: Array<String>) {
 		button.addEventListener("click", {
 			game?.end()
 			header.textContent = name
-			game = gameDisplay(canvas, playerArea, gameArea)
+			game = gameDisplay(canvas, playerArea, gameAreaTop, gameAreaRight)
 		})
 	}
 

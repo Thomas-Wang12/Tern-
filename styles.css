@@ -1,23 +1,25 @@
 @media (max-width: 900px){
 	.grid{
-		grid-template-rows: 4rem 3rem auto auto auto;
+		grid-template-rows: 4rem 3rem auto 3rem auto auto;
 		grid-template-columns: auto;
 		grid-template-areas:
 		"header"
 		"navigation"
 		"player"
+		"game-top"
 		"canvas"
-		"game";
+		"game-right";
 	}
 }
 @media (min-width: 900px){
 	.grid{
-		grid-template-rows: 4rem 3rem auto;
+		grid-template-rows: 4rem 3rem 3rem auto;
 		grid-template-columns: 20rem calc(100% - 40rem) 20rem;
 		grid-template-areas:
 		"header header header"
 		"navigation navigation navigation"
-		"player canvas game";
+		"player game-top game-right"
+		"player canvas game-right";
 	}
 }
 
@@ -52,14 +54,19 @@ nav button {
 	padding: 0.5rem;
 }
 
-#game-area {
-	grid-area: game;
+#game-area-top {
+	grid-area: game-top;
+	padding: 0.5rem;
+	display: flex;
+}
+
+#game-area-right {
+	grid-area: game-right;
 	padding: 0.5rem;
 }
 
 .canvas {
 	grid-area: canvas;
-	padding-top: 0.5rem;
 	text-align: center;
 }
 
@@ -70,4 +77,14 @@ canvas {
 button {
 	width: 100%;
 	line-height: 2rem;
+	font-size: 1.2rem;
+}
+
+#game-area-top button {
+	margin: 0 0.5rem;
+}
+
+.status-area {
+	padding: 0.5rem;
+	white-space: pre;
 }
