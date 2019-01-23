@@ -46,7 +46,7 @@ nav button {
 	flex-grow: 1;
 	flex-basis: 0;
 	font-size: 1.5rem;
-	background-color: #9ac;
+	background-color: #78b;
 }
 
 #player-area {
@@ -78,13 +78,50 @@ button {
 	width: 100%;
 	line-height: 2rem;
 	font-size: 1.2rem;
+	background-color: #78b;
+	color: white;
+	transition: 0.3s ease;
+}
+button:disabled {
+	background-color: #aab;
+	color: grey;
+}
+button:hover {
+	background-color: #89c;
+	transition: 0.3s ease;
+}
+
+.new-game {
+	margin: 0.5rem 0;
 }
 
 #game-area-top button {
 	margin: 0 0.5rem;
 }
 
-.status-area {
+.status-area, .message-line {
 	padding: 0.5rem;
 	white-space: pre;
+}
+
+input {
+	padding: 0 0.2rem;
+}
+
+.player {
+	display: flex;
+	padding: 0.5rem;
+}
+
+.player-name {
+	width: 7rem;
+}
+
+.player-type {
+	width: 7rem;
+	margin: 0 0.5rem;
+}
+
+.player-color {
+	width: 4rem;
 }

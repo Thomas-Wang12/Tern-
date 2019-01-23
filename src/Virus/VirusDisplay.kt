@@ -4,28 +4,24 @@ class VirusDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameAreaT
 	: GameDisplay<Virus, VirusState, Int, VirusAction, Int>(canvas, playerArea, gameAreaTop, gameAreaRight) {
 	override var game = Virus()
 
-	override val getColor = { piece: Int, _: Int, _: Int ->
-		when (piece) {
-			0 -> "white"
-			1 -> "yellow"
-			2 -> "red"
-			else -> "green"
-		}
+	override val getColor = getColor@{ piece: Int, _: Int, _: Int ->
+		val player = game.players[piece]
+		if (player != null)
+			return@getColor player.color
+		return@getColor "white"
 	}
 	override val draw = null
 
 	init {
-		game.players[1] = "Player 1"
-		players["Player 1"] = Player()
-		game.players[2] = "Player 2"
-		players["Player 2"] = RandomAIPlayer<VirusState, VirusAction>()
+		game.players[1] = HumanPlayer("Player 1", "yellow")
+		game.players[2] = RandomAIPlayer<VirusState, VirusAction>("Player 2", "red")
 
-		updateDisplay(null)
+		updateDisplay()
 
 		var sourcePosition: Position? = null
 
 		gridDisplay.onClick = {
-			if (players[game.currentPlayer()] is Player && it.x >= 0 && it.y >= 0 && it.x < game.state.width && it.y < game.state.height) {
+			if (game.currentPlayer() is Player && it.x >= 0 && it.y >= 0 && it.x < game.state.width && it.y < game.state.height) {
 				val source = sourcePosition
 				if (source == null) {
 					sourcePosition = Position(it.x, it.y)
@@ -35,5 +31,9 @@ class VirusDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameAreaT
 				}
 			}
 		}
+	}
+
+	override fun startNewGame(){
+
 	}
 }

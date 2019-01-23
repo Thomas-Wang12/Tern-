@@ -11,8 +11,12 @@ abstract class GameDisplay<G : BoardGame<S, T, A, P>, S : BoardGameState<T, A, P
 	abstract var game: G
 	val gridDisplay = GridDisplay(canvas)
 	var aiDelay = 200L
-	val players: MutableMap<String, Any> = mutableMapOf()
+	val playerTypes = mutableListOf<PlayerType>(HumanPlayerType())
+	val players = mutableListOf<Player>()
+	var maxPlayers = 8
 	val playerList = document.createElement("div") as HTMLDivElement
+	val newGameButton = document.createElement("button") as HTMLButtonElement
+	val newPlayerButton = document.createElement("button") as HTMLButtonElement
 	val turnLine = document.createElement("div") as HTMLDivElement
 	val messageLine = document.createElement("div") as HTMLDivElement
 
@@ -25,35 +29,53 @@ abstract class GameDisplay<G : BoardGame<S, T, A, P>, S : BoardGameState<T, A, P
 		gameAreaRight.innerHTML = ""
 		turnLine.className = "message-line"
 		messageLine.className = "message-line"
+		newGameButton.className = "new-game"
+		newGameButton.textContent = "Start new game"
+		newGameButton.onclick = {
+			startNewGame()
+		}
+		newPlayerButton.textContent = "Add player"
+		newPlayerButton.onclick = {
+			if(players.size < maxPlayers)
+				players.add(HumanPlayer())
+			if(players.size >= maxPlayers)
+				newPlayerButton.disabled = true
+			updateDisplay()
+		}
 		playerArea.appendChild(playerList)
+		playerArea.appendChild(newPlayerButton)
+		playerArea.appendChild(newGameButton)
 		playerArea.appendChild(turnLine)
 		playerArea.appendChild(messageLine)
 	}
 
+	abstract fun startNewGame()
+
 	fun performAction(action: A): Boolean {
 		game.performAction(action).onFailure {
 			messageLine.textContent = it.error
-			updateDisplay(game.winner)
+			updateDisplay()
 			return false
 		}
-		updateDisplay(game.winner)
+		updateDisplay()
 		if (game.winner != null || game.state.possibleActions().isEmpty())
 			return true
-		awaitActionFrom(players[game.currentPlayer()])
+		awaitActionFrom(game.currentPlayer())
 		return true
 	}
 
-	open fun updateDisplay(winner: String?) {
+	open fun updateDisplay() {
+		val winner = game.winner
 		if (winner != null)
-			messageLine.textContent = winner + " has won!"
+			messageLine.textContent = winner.name + " has won!"
 		else
-			turnLine.textContent = "Current player: " + game.currentPlayer()
+			turnLine.textContent = "Current player: " + game.currentPlayer()?.name
 		gridDisplay.display(game.state.board, getColor, draw)
 		updatePlayerList()
 	}
 
 	fun awaitActionFrom(player: Any?) {
-		if (player is AIPlayer<*, *>){
+		if (player is AIPlayer<*, *>) {
 			player as AIPlayer<BoardGameState<T, A, P>, A>
 			GlobalScope.launch {
 				delay(aiDelay)
@@ -66,31 +88,104 @@ abstract class GameDisplay<G : BoardGame<S, T, A, P>, S : BoardGameState<T, A, P
 		gridDisplay.end()
 	}
 
-	fun updatePlayerList(){
+	fun updatePlayerList() {
 		playerList.innerHTML = ""
-		for(player in players.keys){
+		for (i in 0 until players.size) {
+			val player = players[i]
 			val playerElement = document.createElement("div") as HTMLDivElement
+			val playerName = document.createElement("input") as HTMLInputElement
+			val playerType = document.createElement("select") as HTMLSelectElement
+			val playerColor = document.createElement("input") as HTMLInputElement
+			playerElement.append(playerName, playerType, playerColor)
+			setupNameInput(player, playerName)
+			setupTypeSelect(player, i, playerType)
+			setupColorInput(player, playerColor)
 			playerElement.className = "player"
-			playerElement.textContent = player
+			playerElement.style.backgroundColor = player.color
 			playerList.appendChild(playerElement)
+		}
+	}
+
+	fun setupTypeSelect(player: Player, index: Int, element: HTMLSelectElement) {
+		element.className = "player-type"
+		for (type in playerTypes) {
+			val option = document.createElement("option") as HTMLOptionElement
+			option.value = type.name
+			option.text = type.name
+			if (type.isOfType(player))
+				option.selected = true
+			element.appendChild(option)
+		}
+		val option = document.createElement("option") as HTMLOptionElement
+		option.value = "delete"
+		option.text = "No player"
+		element.appendChild(option)
+		element.onchange = event@{event ->
+			val value = (event.target as HTMLSelectElement).value
+			if(value == "delete"){
+				players.removeAt(index)
+				if(players.size < maxPlayers)
+					newPlayerButton.disabled = false
+				updateDisplay()
+				return@event null
+			}
+			val playerType = playerTypes.find { it.name == value } as PlayerType
+			players[index] = playerType.getNew(player.name, player.color)
+			updateDisplay()
+			return@event null
+		}
+	}
+
+	fun setupNameInput(player: Player, element: HTMLInputElement) {
+		element.className = "player-name"
+		element.value = player.name
+		element.onchange = event@{
+			player.name = (it.target as HTMLInputElement).value
+			updateDisplay()
+			return@event null
+		}
+	}
+
+	fun setupColorInput(player: Player, element: HTMLInputElement) {
+		element.className = "player-color"
+		element.value = player.color
+		element.onchange = event@{
+			player.color = (it.target as HTMLInputElement).value
+			updateDisplay()
+			return@event null
 		}
 	}
 }
 
-class Player {
+abstract class Player(var name: String = "Player", var color: String = "purple")
 
-}
+class HumanPlayer(name: String = "Player", color: String = "purple") : Player(name, color)
 
 interface AIPlayer<S, A> {
 	fun requestAction(state: S): A
 	fun endGame(state: S, won: Boolean)
 }
 
-class RandomAIPlayer<S: BoardGameState<*, A, *>, A>() : AIPlayer<S, A> {
+class RandomAIPlayer<S : BoardGameState<*, A, *>, A>(name: String = "Player", color: String = "purple") : Player(name, color), AIPlayer<S, A> {
 	override fun requestAction(state: S): A {
 		val actions = state.possibleActions()
 		return actions[(0 until actions.size).random()]
 	}
 
-	override fun endGame(state: S, won: Boolean) { }
+	override fun endGame(state: S, won: Boolean) {}
+}
+
+abstract class PlayerType(val name: String) {
+	abstract fun isOfType(player: Player): Boolean
+	abstract fun getNew(name: String, color: String): Player
+}
+
+class HumanPlayerType() : PlayerType("Human") {
+	override fun isOfType(player: Player): Boolean = player is HumanPlayer
+	override fun getNew(name: String, color: String) = HumanPlayer(name, color)
+}
+
+class RandomAIPlayerType<S : BoardGameState<*, A, *>, A> : PlayerType("CPU - Worst") {
+	override fun isOfType(player: Player): Boolean = player is RandomAIPlayer<*, *>
+	override fun getNew(name: String, color: String) = RandomAIPlayer<S, A>(name, color)
 }

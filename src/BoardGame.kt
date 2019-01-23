@@ -1,7 +1,7 @@
 abstract class BoardGame<S : BoardGameState<T, A, P>, T, A, P> {
 	abstract var state: S
-	val players: MutableMap<P, String> = mutableMapOf()
-	var winner: String? = null
+	val players: MutableMap<P, Player> = mutableMapOf()
+	var winner: Player? = null
 
 	fun performAction(action: A): Result<*> {
 		state.confirmLegality(action).onFailure { return it }
@@ -10,7 +10,7 @@ abstract class BoardGame<S : BoardGameState<T, A, P>, T, A, P> {
 		return Result.success()
 	}
 
-	fun currentPlayer(): String? = players[state.currentPlayer]
+	fun currentPlayer(): Player? = players[state.currentPlayer]
 }
 
 interface BoardGameState<T, A, P> {

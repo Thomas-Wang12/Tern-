@@ -16,17 +16,19 @@ class TicTacToeDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameA
 	}
 
 	init {
-		game.players[TicTacToePiece.Cross] = "Cross"
-		players["Cross"] = Player()
-		game.players[TicTacToePiece.Circle] = "Circle"
-		players["Circle"] = RandomAIPlayer<TicTacToeState, TicTacToeAction>()
+		game.players[TicTacToePiece.Cross] = HumanPlayer("Cross")
+		game.players[TicTacToePiece.Circle] = RandomAIPlayer<TicTacToeState, TicTacToeAction>("Circle")
 		gridDisplay.outerBorder = 0.0
 
-		updateDisplay(null)
+		updateDisplay()
 
 		gridDisplay.onClick = {
-			if (players[game.currentPlayer()] is Player && it.x >= 0 && it.y >= 0 && it.x < 3 && it.y < 3)
+			if (game.currentPlayer() is Player && it.x >= 0 && it.y >= 0 && it.x < 3 && it.y < 3)
 				performAction(TicTacToeAction(game.state.currentPlayer, it.x, it.y))
 		}
+	}
+
+	override fun startNewGame(){
+
 	}
 }

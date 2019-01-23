@@ -29,13 +29,10 @@ class AlysDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameAreaTo
 		val piece = game.state.board[x, y] ?: return@getColor "transparent"
 		//if(Position(x,y) in selectedArea)
 		//	return@getColor "red"
-		return@getColor when (piece.player) {
-			1 -> "yellow"
-			2 -> "green"
-			3 -> "lightgreen"
-			4 -> "orange"
-			else -> "white"
-		}
+		val player = game.players[piece.player]
+		if(player != null)
+			return@getColor player.color
+		return@getColor "white"
 	}
 
 	override val draw = draw@{ context: CanvasRenderingContext2D, fieldSize: Double, field: AlysField?, _: Int, _: Int ->
@@ -97,21 +94,11 @@ class AlysDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameAreaTo
 		addImage("G")
 		GlobalScope.launch {
 			delay(500)
-			updateDisplay(null)
+			updateDisplay()
 		}
-		game.players[1] = "Player 1"
-		players["Player 1"] = Player()
-		game.players[2] = "Player 2"
-		players["Player 2"] = RandomAIPlayer<AlysState, AlysAction>()
-		game.players[3] = "Player 3"
-		players["Player 3"] = RandomAIPlayer<AlysState, AlysAction>()
-		game.players[4] = "Player 4"
-		players["Player 4"] = RandomAIPlayer<AlysState, AlysAction>()
-		game.newGame(seed = (0..100000).random())
 		aiDelay = 0
 		gridDisplay.gridColor = "#7df"
 		gridDisplay.outerBorder = 50.0
-		resize()
 
 		gameAreaTop.appendChild(undoButton)
 		gameAreaTop.appendChild(soldierButton)
@@ -129,10 +116,17 @@ class AlysDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameAreaTo
 		undoButton.addEventListener("click", ::undo)
 		endTurnButton.addEventListener("click", ::endTurn)
 
-		updateDisplay(null)
+		playerTypes.add(RandomAIPlayerType<AlysState, AlysAction>())
+		players.add(HumanPlayer("Player 1", "#0b9"))
+		players.add(RandomAIPlayer<AlysState, AlysAction>("Player 2", "green"))
+		players.add(RandomAIPlayer<AlysState, AlysAction>("Player 3", "yellowgreen"))
+		players.add(RandomAIPlayer<AlysState, AlysAction>("Player 4", "yellow"))
+		players.add(RandomAIPlayer<AlysState, AlysAction>("Player 5", "orange"))
+
+		startNewGame()
 
 		gridDisplay.onClick = click@{
-			if (players[game.currentPlayer()] is Player && game.state.board.isWithinBounds(it)) {
+			if (game.currentPlayer() is Player && game.state.board.isWithinBounds(it)) {
 				val origin = originPosition
 				if (origin == null) {
 					val selectedField = game.state.board[it] ?: return@click
@@ -142,17 +136,17 @@ class AlysDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameAreaTo
 						if (selectedField.piece.hasMoved)
 							return@click
 						originPosition = it
-						updateDisplay(game.winner)
+						updateDisplay()
 						return@click
 					}
 					val selectedArea = AlysState.connectedPositions(it, game.state.board)
 					originPosition = selectedArea.find { it.field.treasury != null }?.position
-					updateDisplay(game.winner)
+					updateDisplay()
 				} else {
 					if (origin == it){
 						buildType = null
 						originPosition = null
-						updateDisplay(game.winner)
+						updateDisplay()
 						return@click
 					}
 					val sourceField = game.state.board[origin]
@@ -166,7 +160,7 @@ class AlysDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameAreaTo
 						val destination =game.state.board[it]
 						if(destination?.player == game.state.currentPlayer && destination.treasury != null){
 							originPosition = it
-							updateDisplay(game.winner)
+							updateDisplay()
 							return@click
 						}
 					}
@@ -174,17 +168,27 @@ class AlysDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameAreaTo
 						buildType = null
 						originPosition = null
 					}
-					updateDisplay(game.winner)
+					updateDisplay()
 				}
 			}
 		}
 	}
 
-	override fun updateDisplay(winner: String?) {
+	override fun startNewGame(){
+		game.players.clear()
+		for(i in 1..players.size)
+			game.players[i] = players[i-1]
+		game.newGame(seed = (0..100000).random())
+		resize()
+		updateDisplay()
+	}
+
+	override fun updateDisplay() {
+		val winner = game.winner
 		if (winner != null)
-			messageLine.textContent = winner + " has won!"
+			messageLine.textContent = winner.name + " has won!"
 		else
-			turnLine.textContent = "Current player: " + game.currentPlayer()
+			turnLine.textContent = "Current player: " + game.currentPlayer()?.name
 		val origin = originPosition
 		val selectedField = if (origin != null) game.state.board[origin] else null
 		if (selectedField?.treasury != null) {

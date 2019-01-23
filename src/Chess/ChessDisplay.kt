@@ -33,24 +33,26 @@ class ChessDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameAreaT
 	}
 
 	init {
-		game.players[ChessPlayer.White] = "White"
-		players["White"] = Player()
-		game.players[ChessPlayer.Black] = "Black"
-		players["Black"] = RandomAIPlayer<ChessState, ChessAction>()
+		game.players[ChessPlayer.White] = HumanPlayer("White", "white")
+		game.players[ChessPlayer.Black] = RandomAIPlayer<ChessState, ChessAction>("Black", "black")
 
-		updateDisplay(null)
+		updateDisplay()
 
 		gridDisplay.onClick = {
-			if (players[game.currentPlayer()] is Player && it.x >= 0 && it.y >= 0 && it.x < 8 && it.y < 8) {
+			if (game.currentPlayer() is Player && it.x >= 0 && it.y >= 0 && it.x < 8 && it.y < 8) {
 				val source = sourcePosition
 				if (source == null) {
 					sourcePosition = Position(it.x, it.y)
-					updateDisplay(game.winner)
+					updateDisplay()
 				} else {
 					sourcePosition = null
 					performAction(ChessAction(source, Position(it.x, it.y)))
 				}
 			}
 		}
+	}
+
+	override fun startNewGame(){
+
 	}
 }
