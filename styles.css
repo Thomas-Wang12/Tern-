@@ -1,6 +1,6 @@
 @media (max-width: 900px){
 	.grid{
-		grid-template-rows: 4rem 3rem auto 3rem auto auto;
+		grid-template-rows: 4rem 3rem auto 3rem auto auto 3rem;
 		grid-template-columns: auto;
 		grid-template-areas:
 		"header"
@@ -8,18 +8,20 @@
 		"player"
 		"game-top"
 		"canvas"
-		"game-right";
+		"game-right"
+		"footer";
 	}
 }
 @media (min-width: 900px){
 	.grid{
-		grid-template-rows: 4rem 3rem 3rem auto;
+		grid-template-rows: 4rem 3rem 3rem auto 3rem;
 		grid-template-columns: 20rem calc(100% - 40rem) 20rem;
 		grid-template-areas:
 		"header header header"
 		"navigation navigation navigation"
 		"player game-top game-right"
-		"player canvas game-right";
+		"player canvas game-right"
+		"footer footer footer";
 	}
 }
 
@@ -72,6 +74,18 @@ nav button {
 
 canvas {
 	display: inline-block;
+}
+
+footer {
+	grid-area: footer;
+	line-height: 3rem;
+	text-align: center;
+	color: white;
+	background-color: #258;
+}
+
+footer a {
+	margin: 0 0.5rem;
 }
 
 button {
