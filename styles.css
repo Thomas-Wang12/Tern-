@@ -98,7 +98,7 @@ button {
 	color: white;
 	transition: 0.3s ease;
 }
-button:disabled {
+button:disabled, button:disabled:hover {
 	background-color: #ccc;
 	color: #999;
 }

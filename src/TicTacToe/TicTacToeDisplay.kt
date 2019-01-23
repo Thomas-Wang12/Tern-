@@ -35,6 +35,7 @@ class TicTacToeDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameA
 		game = TicTacToe()
 		game.players[TicTacToePiece.Cross] = players[0]
 		game.players[TicTacToePiece.Circle] = players[1]
+		awaitActionFrom(game.currentPlayer())
 		updateDisplay()
 	}
 }

@@ -33,6 +33,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   var launch = $module$kotlinx_coroutines_core.kotlinx.coroutines.launch_s496o7$;
   var L0 = Kotlin.Long.ZERO;
   var getCallableRef = Kotlin.getCallableRef;
+  var min = Kotlin.kotlin.collections.min_exjks8$;
   var contains = Kotlin.kotlin.collections.contains_2ws7j4$;
   var sum = Kotlin.kotlin.collections.sum_plj8ka$;
   var filterNotNull = Kotlin.kotlin.collections.filterNotNull_m3lr2h$;
@@ -811,9 +812,15 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     this.playerTypes.add_11rb$(new RandomAIPlayerType());
     this.playerTypes.add_11rb$(new SimpleAlysAIPlayerType());
     this.players.add_11rb$(new HumanPlayer('Player 1', '#0b9'));
-    this.players.add_11rb$(new RandomAIPlayer('Player 2', 'green'));
-    this.players.add_11rb$(new RandomAIPlayer('Player 3', 'yellowgreen'));
-    this.players.add_11rb$(new RandomAIPlayer('Player 4', 'yellow'));
+    this.players.add_11rb$(new SimpleAIPlayer('Player 2', 'green', getCallableRef('alysUtility', function (state, action) {
+      return alysUtility(state, action);
+    })));
+    this.players.add_11rb$(new SimpleAIPlayer('Player 3', 'yellowgreen', getCallableRef('alysUtility', function (state, action) {
+      return alysUtility(state, action);
+    })));
+    this.players.add_11rb$(new SimpleAIPlayer('Player 4', 'yellow', getCallableRef('alysUtility', function (state, action) {
+      return alysUtility(state, action);
+    })));
     this.players.add_11rb$(new SimpleAIPlayer('Player 5', 'orange', getCallableRef('alysUtility', function (state, action) {
       return alysUtility(state, action);
     })));
@@ -884,6 +891,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     }
     this.game.newGame_qt1dr2$(void 0, void 0, random_0(new IntRange(0, 100000), Random_0.Default));
     this.resize();
+    this.awaitActionFrom_s8jyv4$(this.game.currentPlayer());
     this.updateDisplay();
   };
   var mapNotNullTo$lambda = wrapFunction(function () {
@@ -901,7 +909,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     var tmp$, tmp$_0, tmp$_1;
     var winner = this.game.winner;
     if (winner != null)
-      this.messageLine.textContent = winner.name + ' has won!';
+      this.messageLine.textContent = winner.name + ' has won after ' + toString(this.game.state.round) + ' rounds!';
     else {
       this.turnLine.textContent = 'Current player: ' + ((tmp$ = this.game.currentPlayer()) != null ? tmp$.name : null);
     }
@@ -1141,7 +1149,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     interfaces: [GameDisplay]
   };
   function SimpleAlysAIPlayerType() {
-    PlayerType.call(this, 'CPU - Eh');
+    PlayerType.call(this, 'CPU - So-so');
   }
   SimpleAlysAIPlayerType.prototype.isOfType_vgc0e7$ = function (player) {
     return Kotlin.isType(player, SimpleAIPlayer);
@@ -1160,12 +1168,213 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     if (Kotlin.isType(action, AlysEndTurnAction))
       return 0;
     if (Kotlin.isType(action, AlysMoveAction))
-      return 2;
-    if (Kotlin.isType(action, AlysCreateAction) && action.type === AlysType$Soldier_getInstance())
-      return 3;
+      return utilityFor(state, action);
+    if (Kotlin.isType(action, AlysCreateAction))
+      return utilityFor_0(state, action);
     return 1;
   }
-  function AlysState(width, height, playerCount, board, currentPlayer, players) {
+  function utilityFor(state, action) {
+    var tmp$, tmp$_0;
+    var destination = Kotlin.isType(tmp$ = state.board.get_dfplqh$(action.destination), AlysField) ? tmp$ : throwCCE();
+    if (destination.piece != null) {
+      if (destination.player === state.currentPlayer) {
+        switch (destination.piece.type.name) {
+          case 'Soldier':
+            tmp$_0 = isUpgradeWanted(state, new PositionedField(action.destination, destination)) ? 10 : -1;
+            break;
+          case 'Tree':
+            tmp$_0 = 3;
+            break;
+          case 'CoastTree':
+            tmp$_0 = 10;
+            break;
+          default:tmp$_0 = 1;
+            break;
+        }
+      }
+       else {
+        switch (destination.piece.type.name) {
+          case 'Soldier':
+            tmp$_0 = 5;
+            break;
+          case 'CoastTree':
+            tmp$_0 = 9;
+            break;
+          case 'Fort':
+            tmp$_0 = 5;
+            break;
+          default:tmp$_0 = 1;
+            break;
+        }
+      }
+      return tmp$_0;
+    }
+    return 0;
+  }
+  function isUpgradeWanted(state, place) {
+    var tmp$, tmp$_0, tmp$_1;
+    tmp$_0 = (tmp$ = place.field.piece) != null ? tmp$.strength : null;
+    if (tmp$_0 == null) {
+      return false;
+    }
+    var strength = tmp$_0;
+    if (place.field.piece.hasMoved)
+      return false;
+    var area = AlysState$Companion_getInstance().connectedPositions_jwhin5$(place.position, state.board);
+    if (!canAffordUpgrade(state, area, strength))
+      return false;
+    var $receiver = AlysState$Companion_getInstance().neighbouringPositions_9rximq$(area, state.board);
+    var destination = ArrayList_init_0(collectionSizeOrDefault($receiver, 10));
+    var tmp$_2;
+    tmp$_2 = $receiver.iterator();
+    while (tmp$_2.hasNext()) {
+      var item = tmp$_2.next();
+      destination.add_11rb$(state.totalDefenseOf_qx8qel$(item));
+    }
+    tmp$_1 = min(destination);
+    if (tmp$_1 == null) {
+      return false;
+    }
+    var smallestDefense = tmp$_1;
+    if (strength <= smallestDefense)
+      return true;
+    return false;
+  }
+  var mapNotNullTo$lambda_0 = wrapFunction(function () {
+    return function (closure$transform, closure$destination) {
+      return function (element) {
+        var tmp$;
+        if ((tmp$ = closure$transform(element)) != null) {
+          closure$destination.add_11rb$(tmp$);
+        }
+        return Unit;
+      };
+    };
+  });
+  function canAffordUpgrade(state, area, strength) {
+    var tmp$, tmp$_0;
+    var oldUpkeep = state.upkeepFor_za3lpa$(strength);
+    var newUpkeep = state.upkeepFor_za3lpa$(strength + 1 | 0);
+    var firstOrNull$result;
+    firstOrNull$break: do {
+      var tmp$_1;
+      tmp$_1 = area.iterator();
+      while (tmp$_1.hasNext()) {
+        var element = tmp$_1.next();
+        if (element.field.treasury != null) {
+          firstOrNull$result = element;
+          break firstOrNull$break;
+        }
+      }
+      firstOrNull$result = null;
+    }
+     while (false);
+    tmp$ = firstOrNull$result;
+    if (tmp$ == null) {
+      return false;
+    }
+    var base = tmp$;
+    var income = state.incomeFor_maxfsy$(base.position);
+    var tmp$_2 = newUpkeep - oldUpkeep - 2;
+    var destination = ArrayList_init();
+    var tmp$_3;
+    tmp$_3 = area.iterator();
+    while (tmp$_3.hasNext()) {
+      var element_0 = tmp$_3.next();
+      var tmp$_0_0;
+      if ((tmp$_0_0 = element_0.field.piece) != null) {
+        destination.add_11rb$(tmp$_0_0);
+      }
+    }
+    var tmp$_4;
+    var sum = 0;
+    tmp$_4 = destination.iterator();
+    while (tmp$_4.hasNext()) {
+      var element_1 = tmp$_4.next();
+      sum = sum + state.upkeepFor_ibj32h$(element_1) | 0;
+    }
+    var totalUpkeep = tmp$_2 + sum | 0;
+    return (income + ((tmp$_0 = base.field.treasury) != null ? tmp$_0 : 0) | 0) >= totalUpkeep;
+  }
+  function utilityFor_0(state, action) {
+    if (action.type === AlysType$Soldier_getInstance())
+      return utilityFor(state, new AlysMoveAction(action.origin, action.destination));
+    var adjacents = AlysState$Companion_getInstance().adjacentFields_jwhin5$(action.destination, state.board);
+    var destination = ArrayList_init();
+    var tmp$;
+    tmp$ = adjacents.iterator();
+    while (tmp$.hasNext()) {
+      var element = tmp$.next();
+      if (element.field.player === state.currentPlayer)
+        destination.add_11rb$(element);
+    }
+    var any$result;
+    any$break: do {
+      var tmp$_0;
+      if (Kotlin.isType(destination, Collection) && destination.isEmpty()) {
+        any$result = false;
+        break any$break;
+      }
+      tmp$_0 = destination.iterator();
+      while (tmp$_0.hasNext()) {
+        var element_0 = tmp$_0.next();
+        var tmp$_1;
+        if (equals((tmp$_1 = element_0.field.piece) != null ? tmp$_1.type : null, AlysType$Fort_getInstance())) {
+          any$result = true;
+          break any$break;
+        }
+      }
+      any$result = false;
+    }
+     while (false);
+    var fortNearby = any$result;
+    if (fortNearby)
+      return -1;
+    var any$result_0;
+    any$break: do {
+      var tmp$_2;
+      if (Kotlin.isType(adjacents, Collection) && adjacents.isEmpty()) {
+        any$result_0 = false;
+        break any$break;
+      }
+      tmp$_2 = adjacents.iterator();
+      while (tmp$_2.hasNext()) {
+        var element_1 = tmp$_2.next();
+        if (element_1.field.player !== state.currentPlayer) {
+          any$result_0 = true;
+          break any$break;
+        }
+      }
+      any$result_0 = false;
+    }
+     while (false);
+    var tmp$_3 = any$result_0;
+    if (!tmp$_3) {
+      var $receiver = AlysState$Companion_getInstance().neighbouringPositions_9rximq$(adjacents, state.board);
+      var any$result_1;
+      any$break: do {
+        var tmp$_4;
+        if (Kotlin.isType($receiver, Collection) && $receiver.isEmpty()) {
+          any$result_1 = false;
+          break any$break;
+        }
+        tmp$_4 = $receiver.iterator();
+        while (tmp$_4.hasNext()) {
+          var element_2 = tmp$_4.next();
+          if (element_2.field.player !== state.currentPlayer) {
+            any$result_1 = true;
+            break any$break;
+          }
+        }
+        any$result_1 = false;
+      }
+       while (false);
+      tmp$_3 = any$result_1;
+    }
+    var enemyNearby = tmp$_3;
+    return enemyNearby ? 3 : -1;
+  }
+  function AlysState(width, height, playerCount, board, currentPlayer, players, round) {
     AlysState$Companion_getInstance();
     if (width === void 0)
       width = 10;
@@ -1179,12 +1388,15 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
       currentPlayer = 1;
     if (players === void 0)
       players = toList(new IntRange(1, playerCount));
+    if (round === void 0)
+      round = 0;
     this.width = width;
     this.height = height;
     this.playerCount = playerCount;
     this.board_312tuy$_0 = board;
     this.currentPlayer_yz191a$_0 = currentPlayer;
     this.players_4wz3pm$_0 = players;
+    this.round = round;
   }
   Object.defineProperty(AlysState.prototype, 'board', {
     get: function () {
@@ -1464,7 +1676,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
       return this.nextStateFrom_1(action, newBoard);
     if (Kotlin.isType(action, AlysEndTurnAction))
       return this.nextStateFrom_2(action, newBoard);
-    return this.copy_gb7y5t$(void 0, void 0, void 0, newBoard);
+    return this.copy_plq8x$(void 0, void 0, void 0, newBoard);
   };
   AlysState.prototype.nextStateFrom_0 = function (action, newBoard) {
     var tmp$, tmp$_0, tmp$_1, tmp$_2;
@@ -1478,7 +1690,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
       return this;
     }
     var destination = tmp$_1;
-    var newState = this.copy_gb7y5t$(void 0, void 0, void 0, newBoard);
+    var newState = this.copy_plq8x$(void 0, void 0, void 0, newBoard);
     if (destination.player !== this.currentPlayer)
       this.invadeField_0(action.origin, action.destination, newState);
     else {
@@ -1626,17 +1838,19 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
      else if (action.type === AlysType$Fort_getInstance()) {
       newBoard.set_39d550$(action.origin, origin.copy_jcygvj$(void 0, void 0, (typeof (tmp$_3 = origin.treasury) === 'number' ? tmp$_3 : throwCCE()) - 15 | 0));
       newBoard.set_39d550$(action.destination, (Kotlin.isType(tmp$_4 = newBoard.get_dfplqh$(action.destination), AlysField) ? tmp$_4 : throwCCE()).copy_jcygvj$(void 0, new AlysPiece(AlysType$Fort_getInstance())));
-      return this.copy_gb7y5t$(void 0, void 0, void 0, newBoard);
+      return this.copy_plq8x$(void 0, void 0, void 0, newBoard);
     }
     return this;
   };
   AlysState.prototype.nextStateFrom_2 = function (action, newBoard) {
+    var newRound = this.round;
     var nextPlayer = this.currentPlayer + 1 | 0;
     if (nextPlayer > this.playerCount) {
       nextPlayer = 1;
+      newRound = newRound + 1 | 0;
     }
     this.beginTurn_0(nextPlayer, newBoard);
-    return this.copy_gb7y5t$(void 0, void 0, void 0, newBoard, nextPlayer);
+    return this.copy_plq8x$(void 0, void 0, void 0, newBoard, nextPlayer, void 0, newRound);
   };
   AlysState.prototype.beginTurn_0 = function (player, newBoard) {
     var tmp$, tmp$_0, tmp$_1, tmp$_2, tmp$_3, tmp$_4, tmp$_5, tmp$_6, tmp$_7, tmp$_8, tmp$_9, tmp$_10, tmp$_11, tmp$_12;
@@ -1860,10 +2074,13 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     return destination.size;
   };
   AlysState.prototype.upkeepFor_ibj32h$ = function (piece) {
-    var tmp$;
     if (piece.type !== AlysType$Soldier_getInstance())
       return 0;
-    switch (piece.strength) {
+    return this.upkeepFor_za3lpa$(piece.strength);
+  };
+  AlysState.prototype.upkeepFor_za3lpa$ = function (strength) {
+    var tmp$;
+    switch (strength) {
       case 1:
         tmp$ = 2;
         break;
@@ -2099,11 +2316,14 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   AlysState.prototype.component6 = function () {
     return this.players;
   };
-  AlysState.prototype.copy_gb7y5t$ = function (width, height, playerCount, board, currentPlayer, players) {
-    return new AlysState(width === void 0 ? this.width : width, height === void 0 ? this.height : height, playerCount === void 0 ? this.playerCount : playerCount, board === void 0 ? this.board : board, currentPlayer === void 0 ? this.currentPlayer : currentPlayer, players === void 0 ? this.players : players);
+  AlysState.prototype.component7 = function () {
+    return this.round;
+  };
+  AlysState.prototype.copy_plq8x$ = function (width, height, playerCount, board, currentPlayer, players, round) {
+    return new AlysState(width === void 0 ? this.width : width, height === void 0 ? this.height : height, playerCount === void 0 ? this.playerCount : playerCount, board === void 0 ? this.board : board, currentPlayer === void 0 ? this.currentPlayer : currentPlayer, players === void 0 ? this.players : players, round === void 0 ? this.round : round);
   };
   AlysState.prototype.toString = function () {
-    return 'AlysState(width=' + Kotlin.toString(this.width) + (', height=' + Kotlin.toString(this.height)) + (', playerCount=' + Kotlin.toString(this.playerCount)) + (', board=' + Kotlin.toString(this.board)) + (', currentPlayer=' + Kotlin.toString(this.currentPlayer)) + (', players=' + Kotlin.toString(this.players)) + ')';
+    return 'AlysState(width=' + Kotlin.toString(this.width) + (', height=' + Kotlin.toString(this.height)) + (', playerCount=' + Kotlin.toString(this.playerCount)) + (', board=' + Kotlin.toString(this.board)) + (', currentPlayer=' + Kotlin.toString(this.currentPlayer)) + (', players=' + Kotlin.toString(this.players)) + (', round=' + Kotlin.toString(this.round)) + ')';
   };
   AlysState.prototype.hashCode = function () {
     var result = 0;
@@ -2113,10 +2333,11 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     result = result * 31 + Kotlin.hashCode(this.board) | 0;
     result = result * 31 + Kotlin.hashCode(this.currentPlayer) | 0;
     result = result * 31 + Kotlin.hashCode(this.players) | 0;
+    result = result * 31 + Kotlin.hashCode(this.round) | 0;
     return result;
   };
   AlysState.prototype.equals = function (other) {
-    return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.width, other.width) && Kotlin.equals(this.height, other.height) && Kotlin.equals(this.playerCount, other.playerCount) && Kotlin.equals(this.board, other.board) && Kotlin.equals(this.currentPlayer, other.currentPlayer) && Kotlin.equals(this.players, other.players)))));
+    return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.width, other.width) && Kotlin.equals(this.height, other.height) && Kotlin.equals(this.playerCount, other.playerCount) && Kotlin.equals(this.board, other.board) && Kotlin.equals(this.currentPlayer, other.currentPlayer) && Kotlin.equals(this.players, other.players) && Kotlin.equals(this.round, other.round)))));
   };
   function BoardGame() {
     this.players = LinkedHashMap_init();
@@ -2641,6 +2862,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     var key_0 = ChessPlayer$Black_getInstance();
     var value_0 = this.players.get_za3lpa$(1);
     $receiver_0.put_xwzc9p$(key_0, value_0);
+    this.awaitActionFrom_s8jyv4$(this.game.currentPlayer());
     this.updateDisplay();
   };
   function ChessDisplay$getColor$lambda(this$ChessDisplay) {
@@ -4113,6 +4335,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     var key_0 = TicTacToePiece$Circle_getInstance();
     var value_0 = this.players.get_za3lpa$(1);
     $receiver_0.put_xwzc9p$(key_0, value_0);
+    this.awaitActionFrom_s8jyv4$(this.game.currentPlayer());
     this.updateDisplay();
   };
   function TicTacToeDisplay$draw$lambda(context, fieldSize, piece, f, f_0) {
@@ -4574,6 +4797,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
       $receiver.put_xwzc9p$(i, value);
     }
     this.game.state = new VirusState(8, 8, this.players.size);
+    this.awaitActionFrom_s8jyv4$(this.game.currentPlayer());
     this.updateDisplay();
   };
   function VirusDisplay$getColor$lambda(this$VirusDisplay) {
@@ -4636,7 +4860,6 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   _.AlysBoardCreator = AlysBoardCreator;
   _.AlysDisplay = AlysDisplay;
   _.SimpleAlysAIPlayerType = SimpleAlysAIPlayerType;
-  _.alysUtility_hk9xj9$ = alysUtility;
   $$importsForInline$$.Tern = _;
   Object.defineProperty(AlysState, 'Companion', {
     get: AlysState$Companion_getInstance

@@ -120,9 +120,9 @@ class AlysDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameAreaTo
 		playerTypes.add(RandomAIPlayerType<AlysState, AlysAction>())
 		playerTypes.add(SimpleAlysAIPlayerType())
 		players.add(HumanPlayer("Player 1", "#0b9"))
-		players.add(RandomAIPlayer<AlysState, AlysAction>("Player 2", "green"))
-		players.add(RandomAIPlayer<AlysState, AlysAction>("Player 3", "yellowgreen"))
-		players.add(RandomAIPlayer<AlysState, AlysAction>("Player 4", "yellow"))
+		players.add(SimpleAIPlayer("Player 2", "green", ::alysUtility))
+		players.add(SimpleAIPlayer("Player 3", "yellowgreen", ::alysUtility))
+		players.add(SimpleAIPlayer("Player 4", "yellow", ::alysUtility))
 		players.add(SimpleAIPlayer("Player 5", "orange", ::alysUtility))
 
 		startNewGame()
@@ -185,13 +185,14 @@ class AlysDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameAreaTo
 			game.players[i] = players[i - 1]
 		game.newGame(seed = (0..100000).random())
 		resize()
+		awaitActionFrom(game.currentPlayer())
 		updateDisplay()
 	}
 
 	override fun updateDisplay() {
 		val winner = game.winner
 		if (winner != null)
-			messageLine.textContent = winner.name + " has won!"
+			messageLine.textContent = winner.name + " has won after " + game.state.round + " rounds!"
 		else
 			turnLine.textContent = "Current player: " + game.currentPlayer()?.name
 		val origin = originPosition
@@ -220,7 +221,7 @@ class AlysDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameAreaTo
 			fortButton.disabled = true
 			soldierButton.disabled = true
 		}
-		if(previousState?.currentPlayer != game.state.currentPlayer)
+		if (previousState?.currentPlayer != game.state.currentPlayer)
 			previousStates.clear()
 		undoButton.disabled = previousStates.isEmpty()
 	}
@@ -245,17 +246,76 @@ class AlysDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameAreaTo
 	}
 }
 
-class SimpleAlysAIPlayerType : PlayerType("CPU - Eh") {
+class SimpleAlysAIPlayerType : PlayerType("CPU - So-so") {
 	override fun isOfType(player: Player): Boolean = player is SimpleAIPlayer<*, *>
 	override fun getNew(name: String, color: String) = SimpleAIPlayer(name, color, ::alysUtility)
 }
 
-fun alysUtility(state: AlysState, action: AlysAction): Int {
-	if(action is AlysEndTurnAction)
+private fun alysUtility(state: AlysState, action: AlysAction): Int {
+	if (action is AlysEndTurnAction)
 		return 0
-	if(action is AlysMoveAction)
-		return 2
-	if(action is AlysCreateAction && action.type == AlysType.Soldier)
-		return 3
+	if (action is AlysMoveAction)
+		return utilityFor(state, action)
+	if (action is AlysCreateAction)
+		return utilityFor(state, action)
 	return 1
+}
+
+private fun utilityFor(state: AlysState, action: AlysMoveAction): Int {
+	val destination = state.board[action.destination] as AlysField
+	if (destination.piece != null) {
+		return if (destination.player == state.currentPlayer) {
+			when (destination.piece.type) {
+				AlysType.Soldier -> if (isUpgradeWanted(state, PositionedField(action.destination, destination))) 10 else -1
+				AlysType.Tree -> 3
+				AlysType.CoastTree -> 10
+				else -> 1
+			}
+		} else when (destination.piece.type) {
+			AlysType.Soldier -> 5
+			AlysType.CoastTree -> 9
+			AlysType.Fort -> 5
+			else -> 1
+		}
+	}
+	return 0
+}
+
+private fun isUpgradeWanted(state: AlysState, place: PositionedField<AlysField>): Boolean {
+	val strength = place.field.piece?.strength ?: return false
+	if (place.field.piece.hasMoved)
+		return false
+	val area = AlysState.connectedPositions(place.position, state.board)
+	if (!canAffordUpgrade(state, area, strength))
+		return false
+	val smallestDefense = AlysState.neighbouringPositions(area, state.board).map { state.totalDefenseOf(it) }.min()
+			?: return false
+	if (strength <= smallestDefense)
+		return true
+	return false
+}
+
+private fun canAffordUpgrade(state: AlysState, area: List<PositionedField<AlysField>>, strength: Int): Boolean {
+	val oldUpkeep = state.upkeepFor(strength)
+	val newUpkeep = state.upkeepFor(strength + 1)
+	val base = area.find { it.field.treasury != null } ?: return false
+	val income = state.incomeFor(base.position)
+	val totalUpkeep = newUpkeep - oldUpkeep - 2 + area
+			.mapNotNull { it.field.piece }
+			.sumBy { state.upkeepFor(it) }
+	return income + (base.field.treasury ?: 0) >= totalUpkeep
+}
+
+private fun utilityFor(state: AlysState, action: AlysCreateAction): Int {
+	if (action.type == AlysType.Soldier)
+		return utilityFor(state, AlysMoveAction(action.origin, action.destination))
+	val adjacents = AlysState.adjacentFields(action.destination, state.board)
+	val fortNearby = adjacents
+			.filter { it.field.player == state.currentPlayer }
+			.any { it.field.piece?.type == AlysType.Fort }
+	if(fortNearby)
+		return -1
+	val enemyNearby = adjacents.any { it.field.player != state.currentPlayer } ||
+			AlysState.neighbouringPositions(adjacents, state.board).any { it.field.player != state.currentPlayer }
+	return if (enemyNearby) 3 else -1
 }

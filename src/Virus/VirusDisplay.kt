@@ -40,6 +40,7 @@ class VirusDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameAreaT
 		for(i in 1..players.size)
 			game.players[i] = players[i-1]
 		game.state = VirusState(8, 8, players.size)
+		awaitActionFrom(game.currentPlayer())
 		updateDisplay()
 	}
 }

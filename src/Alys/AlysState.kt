@@ -7,7 +7,8 @@ data class AlysState(
 			AlysField((1..playerCount).random())
 		}),
 		override val currentPlayer: Int = 1,
-		override val players: List<Int> = (1..playerCount).toList()
+		override val players: List<Int> = (1..playerCount).toList(),
+		val round: Int = 0
 ) : BoardGameState<AlysField?, AlysAction, Int> {
 
 	override fun confirmLegality(action: AlysAction): Result<Any?> {
@@ -207,12 +208,14 @@ data class AlysState(
 	}
 
 	private fun nextStateFrom(action: AlysEndTurnAction, newBoard: Grid<AlysField?>): AlysState {
+		var newRound = round
 		var nextPlayer = currentPlayer + 1
 		if (nextPlayer > playerCount) {
 			nextPlayer = 1
+			newRound++
 		}
 		beginTurn(nextPlayer, newBoard)
-		return this.copy(board = newBoard, currentPlayer = nextPlayer)
+		return this.copy(board = newBoard, currentPlayer = nextPlayer, round = newRound)
 	}
 
 	private fun beginTurn(player: Int, newBoard: Grid<AlysField?>) {
@@ -278,7 +281,11 @@ data class AlysState(
 	fun upkeepFor(piece: AlysPiece): Int {
 		if(piece.type != AlysType.Soldier)
 			return 0
-		return when (piece.strength) {
+		return upkeepFor(piece.strength)
+	}
+
+	fun upkeepFor(strength: Int): Int {
+		return when (strength) {
 			1 -> 2
 			2 -> 6
 			3 -> 18

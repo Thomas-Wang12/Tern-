@@ -59,6 +59,7 @@ class ChessDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameAreaT
 		game = Chess()
 		game.players[ChessPlayer.White] = players[0]
 		game.players[ChessPlayer.Black] = players[1]
+		awaitActionFrom(game.currentPlayer())
 		updateDisplay()
 	}
 }
