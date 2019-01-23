@@ -13,10 +13,12 @@ class VirusDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameAreaT
 	override val draw = null
 
 	init {
-		game.players[1] = HumanPlayer("Player 1", "yellow")
-		game.players[2] = RandomAIPlayer<VirusState, VirusAction>("Player 2", "red")
+		playerTypes.add(RandomAIPlayerType<VirusState, VirusAction>())
+		players.add(HumanPlayer("Player 1", "yellow"))
+		players.add(RandomAIPlayer<VirusState, VirusAction>("Player 2", "red"))
+		maxPlayers = 4
 
-		updateDisplay()
+		startNewGame()
 
 		var sourcePosition: Position? = null
 
@@ -34,6 +36,10 @@ class VirusDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameAreaT
 	}
 
 	override fun startNewGame(){
-
+		game.players.clear()
+		for(i in 1..players.size)
+			game.players[i] = players[i-1]
+		game.state = VirusState(8, 8, players.size)
+		updateDisplay()
 	}
 }

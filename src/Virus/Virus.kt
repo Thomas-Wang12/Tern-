@@ -23,7 +23,7 @@ class Virus(override var state: VirusState = VirusState())
 }
 
 data class VirusState(
-		val width: Int = 5, val height: Int = 5,
+		val width: Int = 8, val height: Int = 8,
 		val playerCount: Int = 2,
 		override val board: Grid<Int> = Grid(width, height, { x, y ->
 			if (x == 0 && y == 0) {

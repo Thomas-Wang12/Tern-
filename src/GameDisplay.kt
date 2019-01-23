@@ -13,6 +13,7 @@ abstract class GameDisplay<G : BoardGame<S, T, A, P>, S : BoardGameState<T, A, P
 	var aiDelay = 200L
 	val playerTypes = mutableListOf<PlayerType>(HumanPlayerType())
 	val players = mutableListOf<Player>()
+	var minPlayers = 2
 	var maxPlayers = 8
 	val playerList = document.createElement("div") as HTMLDivElement
 	val newGameButton = document.createElement("button") as HTMLButtonElement
@@ -116,10 +117,12 @@ abstract class GameDisplay<G : BoardGame<S, T, A, P>, S : BoardGameState<T, A, P
 				option.selected = true
 			element.appendChild(option)
 		}
-		val option = document.createElement("option") as HTMLOptionElement
-		option.value = "delete"
-		option.text = "No player"
-		element.appendChild(option)
+		if(players.size > minPlayers) {
+			val option = document.createElement("option") as HTMLOptionElement
+			option.value = "delete"
+			option.text = "No player"
+			element.appendChild(option)
+		}
 		element.onchange = event@{event ->
 			val value = (event.target as HTMLSelectElement).value
 			if(value == "delete"){
@@ -157,7 +160,7 @@ abstract class GameDisplay<G : BoardGame<S, T, A, P>, S : BoardGameState<T, A, P
 	}
 }
 
-abstract class Player(var name: String = "Player", var color: String = "purple")
+abstract class Player(var name: String = "Player", var color: String = "blue")
 
 class HumanPlayer(name: String = "Player", color: String = "purple") : Player(name, color)
 
