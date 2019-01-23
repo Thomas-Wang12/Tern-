@@ -13,6 +13,7 @@ class AlysDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameAreaTo
 
 	var originPosition: Position? = null
 	var buildType: AlysType? = null
+	val previousStates = mutableListOf<AlysState>()
 	//var selectedArea = listOf<Position>()
 	private val fortButton = document.createElement("button") as HTMLButtonElement
 	private val soldierButton = document.createElement("button") as HTMLButtonElement
@@ -30,7 +31,7 @@ class AlysDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameAreaTo
 		//if(Position(x,y) in selectedArea)
 		//	return@getColor "red"
 		val player = game.players[piece.player]
-		if(player != null)
+		if (player != null)
 			return@getColor player.color
 		return@getColor "white"
 	}
@@ -143,7 +144,7 @@ class AlysDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameAreaTo
 					originPosition = selectedArea.find { it.field.treasury != null }?.position
 					updateDisplay()
 				} else {
-					if (origin == it){
+					if (origin == it) {
 						buildType = null
 						originPosition = null
 						updateDisplay()
@@ -156,17 +157,20 @@ class AlysDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameAreaTo
 						success = performAction(AlysMoveAction(origin, it))
 					else if (type != null)
 						success = performAction(AlysCreateAction(type, origin, it))
-					else if(sourceField?.treasury != 0){
-						val destination =game.state.board[it]
-						if(destination?.player == game.state.currentPlayer && destination.treasury != null){
+					else if (sourceField?.treasury != 0) {
+						val destination = game.state.board[it]
+						if (destination?.player == game.state.currentPlayer && destination.treasury != null) {
 							originPosition = it
 							updateDisplay()
 							return@click
 						}
 					}
-					if(success){
+					if (success) {
 						buildType = null
 						originPosition = null
+						val state = previousState
+						if (state != null)
+							previousStates.add(state)
 					}
 					updateDisplay()
 				}
@@ -174,10 +178,10 @@ class AlysDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameAreaTo
 		}
 	}
 
-	override fun startNewGame(){
+	override fun startNewGame() {
 		game.players.clear()
-		for(i in 1..players.size)
-			game.players[i] = players[i-1]
+		for (i in 1..players.size)
+			game.players[i] = players[i - 1]
 		game.newGame(seed = (0..100000).random())
 		resize()
 		updateDisplay()
@@ -197,8 +201,7 @@ class AlysDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameAreaTo
 					"\nUpkeep: " + AlysState.connectedPositions(origin, game.state.board)
 					.mapNotNull { it.field.piece }
 					.sumBy { game.state.upkeepFor(it) }
-		}
-		else {
+		} else {
 			statusArea.textContent = "No base selected"
 		}
 		gridDisplay.display(game.state.board, getColor, draw)
@@ -208,7 +211,7 @@ class AlysDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameAreaTo
 
 	private fun updateButtons() {
 		val source = originPosition
-		val base = if(source!= null) game.state.board[source] else null
+		val base = if (source != null) game.state.board[source] else null
 		if (base?.treasury != null) {
 			fortButton.disabled = buildType == AlysType.Fort || base.treasury < 15
 			soldierButton.disabled = buildType == AlysType.Soldier || base.treasury < 10
@@ -216,7 +219,9 @@ class AlysDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameAreaTo
 			fortButton.disabled = true
 			soldierButton.disabled = true
 		}
-		undoButton.disabled = true
+		if(previousState?.currentPlayer != game.state.currentPlayer)
+			previousStates.clear()
+		undoButton.disabled = previousStates.isEmpty()
 	}
 
 	private fun hireSoldier(event: Event) {
@@ -230,7 +235,8 @@ class AlysDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameAreaTo
 	}
 
 	private fun undo(event: Event) {
-
+		game.state = previousStates.removeAt(previousStates.size - 1)
+		updateDisplay()
 	}
 
 	private fun endTurn(event: Event) {

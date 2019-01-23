@@ -750,6 +750,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     this.game_6mofcn$_0 = new Alys();
     this.originPosition = null;
     this.buildType = null;
+    this.previousStates = ArrayList_init();
     var tmp$, tmp$_0, tmp$_1, tmp$_2, tmp$_3, tmp$_4;
     this.fortButton_0 = Kotlin.isType(tmp$ = document.createElement('button'), HTMLButtonElement) ? tmp$ : throwCCE();
     this.soldierButton_0 = Kotlin.isType(tmp$_0 = document.createElement('button'), HTMLButtonElement) ? tmp$_0 : throwCCE();
@@ -929,6 +930,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     this.updateButtons_0();
   };
   AlysDisplay.prototype.updateButtons_0 = function () {
+    var tmp$;
     var source = this.originPosition;
     var base = source != null ? this.game.state.board.get_dfplqh$(source) : null;
     if ((base != null ? base.treasury : null) != null) {
@@ -939,7 +941,9 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
       this.fortButton_0.disabled = true;
       this.soldierButton_0.disabled = true;
     }
-    this.undoButton_0.disabled = true;
+    if (((tmp$ = this.previousState) != null ? tmp$.currentPlayer : null) !== this.game.state.currentPlayer)
+      this.previousStates.clear();
+    this.undoButton_0.disabled = this.previousStates.isEmpty();
   };
   AlysDisplay.prototype.hireSoldier_0 = function (event) {
     this.buildType = AlysType$Soldier_getInstance();
@@ -950,6 +954,8 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     this.updateButtons_0();
   };
   AlysDisplay.prototype.undo_0 = function (event) {
+    this.game.state = this.previousStates.removeAt_za3lpa$(this.previousStates.size - 1 | 0);
+    this.updateDisplay();
   };
   AlysDisplay.prototype.endTurn_0 = function (event) {
     this.performAction_11re$(new AlysEndTurnAction());
@@ -1111,6 +1117,9 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
           if (success) {
             this$AlysDisplay.buildType = null;
             this$AlysDisplay.originPosition = null;
+            var state = this$AlysDisplay.previousState;
+            if (state != null)
+              this$AlysDisplay.previousStates.add_11rb$(state);
           }
           this$AlysDisplay.updateDisplay();
         }
@@ -3098,6 +3107,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     this.newPlayerButton = Kotlin.isType(tmp$_1 = document.createElement('button'), HTMLButtonElement) ? tmp$_1 : throwCCE();
     this.turnLine = Kotlin.isType(tmp$_2 = document.createElement('div'), HTMLDivElement) ? tmp$_2 : throwCCE();
     this.messageLine = Kotlin.isType(tmp$_3 = document.createElement('div'), HTMLDivElement) ? tmp$_3 : throwCCE();
+    this.previousState = null;
     this.playerArea.innerHTML = '';
     this.gameAreaTop.innerHTML = '';
     this.gameAreaRight.innerHTML = '';
@@ -3115,6 +3125,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     this.playerArea.appendChild(this.messageLine);
   }
   GameDisplay.prototype.performAction_11re$ = function (action) {
+    var state = this.game.state;
     var $this = this.game.performAction_11rd$(action);
     if (Kotlin.isType($this, Failure)) {
       this.messageLine.textContent = $this.error;
@@ -3123,6 +3134,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     }
      else
       Kotlin.isType($this, Success) || throwCCE();
+    this.previousState = state;
     this.updateDisplay();
     if (this.game.winner != null || this.game.state.possibleActions().isEmpty())
       return true;

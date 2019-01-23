@@ -20,6 +20,7 @@ abstract class GameDisplay<G : BoardGame<S, T, A, P>, S : BoardGameState<T, A, P
 	val newPlayerButton = document.createElement("button") as HTMLButtonElement
 	val turnLine = document.createElement("div") as HTMLDivElement
 	val messageLine = document.createElement("div") as HTMLDivElement
+	var previousState: S? = null
 
 	abstract val getColor: ((T, x: Int, y: Int) -> String)?
 	abstract val draw: ((context: CanvasRenderingContext2D, fieldSize: Double, field: T, x: Int, y: Int) -> Unit)?
@@ -53,11 +54,13 @@ abstract class GameDisplay<G : BoardGame<S, T, A, P>, S : BoardGameState<T, A, P
 	abstract fun startNewGame()
 
 	fun performAction(action: A): Boolean {
+		val state = game.state
 		game.performAction(action).onFailure {
 			messageLine.textContent = it.error
 			updateDisplay()
 			return false
 		}
+		previousState = state
 		updateDisplay()
 		if (game.winner != null || game.state.possibleActions().isEmpty())
 			return true
