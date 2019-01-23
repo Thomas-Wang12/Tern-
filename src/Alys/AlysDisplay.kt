@@ -118,11 +118,12 @@ class AlysDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameAreaTo
 		endTurnButton.addEventListener("click", ::endTurn)
 
 		playerTypes.add(RandomAIPlayerType<AlysState, AlysAction>())
+		playerTypes.add(SimpleAlysAIPlayerType())
 		players.add(HumanPlayer("Player 1", "#0b9"))
 		players.add(RandomAIPlayer<AlysState, AlysAction>("Player 2", "green"))
 		players.add(RandomAIPlayer<AlysState, AlysAction>("Player 3", "yellowgreen"))
 		players.add(RandomAIPlayer<AlysState, AlysAction>("Player 4", "yellow"))
-		players.add(RandomAIPlayer<AlysState, AlysAction>("Player 5", "orange"))
+		players.add(SimpleAIPlayer("Player 5", "orange", ::alysUtility))
 
 		startNewGame()
 
@@ -242,4 +243,19 @@ class AlysDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameAreaTo
 	private fun endTurn(event: Event) {
 		performAction(AlysEndTurnAction())
 	}
+}
+
+class SimpleAlysAIPlayerType : PlayerType("CPU - Eh") {
+	override fun isOfType(player: Player): Boolean = player is SimpleAIPlayer<*, *>
+	override fun getNew(name: String, color: String) = SimpleAIPlayer(name, color, ::alysUtility)
+}
+
+fun alysUtility(state: AlysState, action: AlysAction): Int {
+	if(action is AlysEndTurnAction)
+		return 0
+	if(action is AlysMoveAction)
+		return 2
+	if(action is AlysCreateAction && action.type == AlysType.Soldier)
+		return 3
+	return 1
 }

@@ -41,12 +41,15 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   var wrapFunction = Kotlin.wrapFunction;
   var abs = Kotlin.kotlin.math.abs_za3lpa$;
   var L200 = Kotlin.Long.fromInt(200);
+  var max = Kotlin.kotlin.collections.max_exjks8$;
   Alys.prototype = Object.create(BoardGame.prototype);
   Alys.prototype.constructor = Alys;
   AlysType.prototype = Object.create(Enum.prototype);
   AlysType.prototype.constructor = AlysType;
   AlysDisplay.prototype = Object.create(GameDisplay.prototype);
   AlysDisplay.prototype.constructor = AlysDisplay;
+  SimpleAlysAIPlayerType.prototype = Object.create(PlayerType.prototype);
+  SimpleAlysAIPlayerType.prototype.constructor = SimpleAlysAIPlayerType;
   Success.prototype = Object.create(Result.prototype);
   Success.prototype.constructor = Success;
   Failure.prototype = Object.create(Result.prototype);
@@ -63,6 +66,8 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   HumanPlayer.prototype.constructor = HumanPlayer;
   RandomAIPlayer.prototype = Object.create(Player.prototype);
   RandomAIPlayer.prototype.constructor = RandomAIPlayer;
+  SimpleAIPlayer.prototype = Object.create(Player.prototype);
+  SimpleAIPlayer.prototype.constructor = SimpleAIPlayer;
   HumanPlayerType.prototype = Object.create(PlayerType.prototype);
   HumanPlayerType.prototype.constructor = HumanPlayerType;
   RandomAIPlayerType.prototype = Object.create(PlayerType.prototype);
@@ -804,11 +809,14 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
       return $receiver.endTurn_0(event), Unit;
     }.bind(null, this)));
     this.playerTypes.add_11rb$(new RandomAIPlayerType());
+    this.playerTypes.add_11rb$(new SimpleAlysAIPlayerType());
     this.players.add_11rb$(new HumanPlayer('Player 1', '#0b9'));
     this.players.add_11rb$(new RandomAIPlayer('Player 2', 'green'));
     this.players.add_11rb$(new RandomAIPlayer('Player 3', 'yellowgreen'));
     this.players.add_11rb$(new RandomAIPlayer('Player 4', 'yellow'));
-    this.players.add_11rb$(new RandomAIPlayer('Player 5', 'orange'));
+    this.players.add_11rb$(new SimpleAIPlayer('Player 5', 'orange', getCallableRef('alysUtility', function (state, action) {
+      return alysUtility(state, action);
+    })));
     this.startNewGame();
     this.gridDisplay.onClick = AlysDisplay_init$lambda_0(this);
   }
@@ -1132,6 +1140,31 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     simpleName: 'AlysDisplay',
     interfaces: [GameDisplay]
   };
+  function SimpleAlysAIPlayerType() {
+    PlayerType.call(this, 'CPU - Eh');
+  }
+  SimpleAlysAIPlayerType.prototype.isOfType_vgc0e7$ = function (player) {
+    return Kotlin.isType(player, SimpleAIPlayer);
+  };
+  SimpleAlysAIPlayerType.prototype.getNew_puj7f4$ = function (name, color) {
+    return new SimpleAIPlayer(name, color, getCallableRef('alysUtility', function (state, action) {
+      return alysUtility(state, action);
+    }));
+  };
+  SimpleAlysAIPlayerType.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'SimpleAlysAIPlayerType',
+    interfaces: [PlayerType]
+  };
+  function alysUtility(state, action) {
+    if (Kotlin.isType(action, AlysEndTurnAction))
+      return 0;
+    if (Kotlin.isType(action, AlysMoveAction))
+      return 2;
+    if (Kotlin.isType(action, AlysCreateAction) && action.type === AlysType$Soldier_getInstance())
+      return 3;
+    return 1;
+  }
   function AlysState(width, height, playerCount, board, currentPlayer, players) {
     AlysState$Companion_getInstance();
     if (width === void 0)
@@ -3375,13 +3408,57 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   }
   RandomAIPlayer.prototype.requestAction_11rb$ = function (state) {
     var actions = state.possibleActions();
-    return actions.get_za3lpa$(random_0(until(0, actions.size), Random_0.Default));
+    return random(actions, Random_0.Default);
   };
   RandomAIPlayer.prototype.endGame_iuyhfk$ = function (state, won) {
   };
   RandomAIPlayer.$metadata$ = {
     kind: Kind_CLASS,
     simpleName: 'RandomAIPlayer',
+    interfaces: [AIPlayer, Player]
+  };
+  function SimpleAIPlayer(name, color, utility) {
+    if (name === void 0)
+      name = 'Player';
+    if (color === void 0)
+      color = 'purple';
+    if (utility === void 0)
+      utility = SimpleAIPlayer_init$lambda;
+    Player.call(this, name, color);
+    this.utility = utility;
+  }
+  var checkIndexOverflow = Kotlin.kotlin.collections.checkIndexOverflow_za3lpa$;
+  SimpleAIPlayer.prototype.requestAction_11rb$ = function (state) {
+    var tmp$;
+    var actions = state.possibleActions();
+    var destination = ArrayList_init_0(collectionSizeOrDefault(actions, 10));
+    var tmp$_0;
+    tmp$_0 = actions.iterator();
+    while (tmp$_0.hasNext()) {
+      var item = tmp$_0.next();
+      destination.add_11rb$(this.utility(state, item));
+    }
+    var utilities = destination;
+    var max_0 = (tmp$ = max(utilities)) != null ? tmp$ : random(actions, Random_0.Default);
+    var destination_0 = ArrayList_init();
+    var tmp$_1, tmp$_0_0;
+    var index = 0;
+    tmp$_1 = actions.iterator();
+    while (tmp$_1.hasNext()) {
+      var item_0 = tmp$_1.next();
+      if (equals(utilities.get_za3lpa$(checkIndexOverflow((tmp$_0_0 = index, index = tmp$_0_0 + 1 | 0, tmp$_0_0))), max_0))
+        destination_0.add_11rb$(item_0);
+    }
+    return random(destination_0, Random_0.Default);
+  };
+  SimpleAIPlayer.prototype.endGame_iuyhfk$ = function (state, won) {
+  };
+  function SimpleAIPlayer_init$lambda(f, f_0) {
+    return 1;
+  }
+  SimpleAIPlayer.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'SimpleAIPlayer',
     interfaces: [AIPlayer, Player]
   };
   function PlayerType(name) {
@@ -4558,6 +4635,8 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   _.AlysActionInfo = AlysActionInfo;
   _.AlysBoardCreator = AlysBoardCreator;
   _.AlysDisplay = AlysDisplay;
+  _.SimpleAlysAIPlayerType = SimpleAlysAIPlayerType;
+  _.alysUtility_hk9xj9$ = alysUtility;
   $$importsForInline$$.Tern = _;
   Object.defineProperty(AlysState, 'Companion', {
     get: AlysState$Companion_getInstance
@@ -4608,6 +4687,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   _.HumanPlayer = HumanPlayer;
   _.AIPlayer = AIPlayer;
   _.RandomAIPlayer = RandomAIPlayer;
+  _.SimpleAIPlayer = SimpleAIPlayer;
   _.PlayerType = PlayerType;
   _.HumanPlayerType = HumanPlayerType;
   _.RandomAIPlayerType = RandomAIPlayerType;

@@ -38,9 +38,9 @@ abstract class GameDisplay<G : BoardGame<S, T, A, P>, S : BoardGameState<T, A, P
 		}
 		newPlayerButton.textContent = "Add player"
 		newPlayerButton.onclick = {
-			if(players.size < maxPlayers)
+			if (players.size < maxPlayers)
 				players.add(HumanPlayer())
-			if(players.size >= maxPlayers)
+			if (players.size >= maxPlayers)
 				newPlayerButton.disabled = true
 			updateDisplay()
 		}
@@ -120,17 +120,17 @@ abstract class GameDisplay<G : BoardGame<S, T, A, P>, S : BoardGameState<T, A, P
 				option.selected = true
 			element.appendChild(option)
 		}
-		if(players.size > minPlayers) {
+		if (players.size > minPlayers) {
 			val option = document.createElement("option") as HTMLOptionElement
 			option.value = "delete"
 			option.text = "No player"
 			element.appendChild(option)
 		}
-		element.onchange = event@{event ->
+		element.onchange = event@{ event ->
 			val value = (event.target as HTMLSelectElement).value
-			if(value == "delete"){
+			if (value == "delete") {
 				players.removeAt(index)
-				if(players.size < maxPlayers)
+				if (players.size < maxPlayers)
 					newPlayerButton.disabled = false
 				updateDisplay()
 				return@event null
@@ -175,7 +175,18 @@ interface AIPlayer<S, A> {
 class RandomAIPlayer<S : BoardGameState<*, A, *>, A>(name: String = "Player", color: String = "purple") : Player(name, color), AIPlayer<S, A> {
 	override fun requestAction(state: S): A {
 		val actions = state.possibleActions()
-		return actions[(0 until actions.size).random()]
+		return actions.random()
+	}
+
+	override fun endGame(state: S, won: Boolean) {}
+}
+
+class SimpleAIPlayer<S : BoardGameState<*, A, *>, A>(name: String = "Player", color: String = "purple", val utility: (S, A) -> Int = {_,_ -> 1}) : Player(name, color), AIPlayer<S, A> {
+	override fun requestAction(state: S): A {
+		val actions = state.possibleActions()
+		val utilities = actions.map { utility(state, it) }
+		val max = utilities.max() ?: actions.random()
+		return actions.filterIndexed { i, _ -> utilities[i] == max }.random()
 	}
 
 	override fun endGame(state: S, won: Boolean) {}
@@ -186,7 +197,7 @@ abstract class PlayerType(val name: String) {
 	abstract fun getNew(name: String, color: String): Player
 }
 
-class HumanPlayerType() : PlayerType("Human") {
+class HumanPlayerType : PlayerType("Human") {
 	override fun isOfType(player: Player): Boolean = player is HumanPlayer
 	override fun getNew(name: String, color: String) = HumanPlayer(name, color)
 }
