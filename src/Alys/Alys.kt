@@ -54,7 +54,7 @@ class Alys(override var state: AlysState = AlysState())
 				},
 				AlysRule("Cannot move onto own forts or bases") { _, state, info ->
 					state.currentPlayer != info.destinationField?.player ||
-							info.destinationField?.piece?.type != AlysType.Fort ||
+							info.destinationField?.piece?.type != AlysType.Fort &&
 							info.destinationField?.treasury == null
 				},
 				AlysRule("Cannot move onto own fully upgraded soldiers") rule@{ _, state, info ->

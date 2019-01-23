@@ -158,9 +158,10 @@ class AlysDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameAreaTo
 						success = performAction(AlysMoveAction(origin, it))
 					else if (type != null)
 						success = performAction(AlysCreateAction(type, origin, it))
-					else if (sourceField?.treasury != 0) {
+					else if (sourceField?.treasury != null) {
 						val destination = game.state.board[it]
-						if (destination?.player == game.state.currentPlayer && destination.treasury != null) {
+						if (destination?.player == game.state.currentPlayer &&
+								(destination.treasury != null || destination.piece?.type == AlysType.Soldier)) {
 							originPosition = it
 							updateDisplay()
 							return@click

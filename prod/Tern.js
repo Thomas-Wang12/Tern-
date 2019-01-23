@@ -184,7 +184,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   }
   function Alys$Companion$moveRules$lambda_2(f, state, info) {
     var tmp$, tmp$_0, tmp$_1, tmp$_2;
-    return state.currentPlayer !== ((tmp$ = info.destinationField) != null ? tmp$.player : null) || !equals((tmp$_1 = (tmp$_0 = info.destinationField) != null ? tmp$_0.piece : null) != null ? tmp$_1.type : null, AlysType$Fort_getInstance()) || ((tmp$_2 = info.destinationField) != null ? tmp$_2.treasury : null) == null;
+    return state.currentPlayer !== ((tmp$ = info.destinationField) != null ? tmp$.player : null) || (!equals((tmp$_1 = (tmp$_0 = info.destinationField) != null ? tmp$_0.piece : null) != null ? tmp$_1.type : null, AlysType$Fort_getInstance()) && ((tmp$_2 = info.destinationField) != null ? tmp$_2.treasury : null) == null);
   }
   function Alys$Companion$moveRules$lambda_3(f, state, info) {
     var tmp$, tmp$_0;
@@ -1071,7 +1071,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   };
   function AlysDisplay_init$lambda_0(this$AlysDisplay) {
     return function (it) {
-      var tmp$, tmp$_0, tmp$_1, tmp$_2;
+      var tmp$, tmp$_0, tmp$_1, tmp$_2, tmp$_3;
       if (Kotlin.isType(this$AlysDisplay.game.currentPlayer(), Player) && this$AlysDisplay.game.state.board.isWithinBounds_dfplqh$(it)) {
         var origin = this$AlysDisplay.originPosition;
         if (origin == null) {
@@ -1090,13 +1090,13 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
             return;
           }
           var selectedArea = AlysState$Companion_getInstance().connectedPositions_jwhin5$(it, this$AlysDisplay.game.state.board);
-          var tmp$_3 = this$AlysDisplay;
+          var tmp$_4 = this$AlysDisplay;
           var firstOrNull$result;
           firstOrNull$break: do {
-            var tmp$_4;
-            tmp$_4 = selectedArea.iterator();
-            while (tmp$_4.hasNext()) {
-              var element = tmp$_4.next();
+            var tmp$_5;
+            tmp$_5 = selectedArea.iterator();
+            while (tmp$_5.hasNext()) {
+              var element = tmp$_5.next();
               if (element.field.treasury != null) {
                 firstOrNull$result = element;
                 break firstOrNull$break;
@@ -1105,7 +1105,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
             firstOrNull$result = null;
           }
            while (false);
-          tmp$_3.originPosition = (tmp$_1 = firstOrNull$result) != null ? tmp$_1.position : null;
+          tmp$_4.originPosition = (tmp$_1 = firstOrNull$result) != null ? tmp$_1.position : null;
           this$AlysDisplay.updateDisplay();
         }
          else {
@@ -1122,9 +1122,9 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
             success = this$AlysDisplay.performAction_11re$(new AlysMoveAction(origin, it));
           else if (type != null)
             success = this$AlysDisplay.performAction_11re$(new AlysCreateAction(type, origin, it));
-          else if ((sourceField != null ? sourceField.treasury : null) !== 0) {
+          else if ((sourceField != null ? sourceField.treasury : null) != null) {
             var destination = this$AlysDisplay.game.state.board.get_dfplqh$(it);
-            if ((destination != null ? destination.player : null) === this$AlysDisplay.game.state.currentPlayer && destination.treasury != null) {
+            if ((destination != null ? destination.player : null) === this$AlysDisplay.game.state.currentPlayer && (destination.treasury != null || equals((tmp$_3 = destination.piece) != null ? tmp$_3.type : null, AlysType$Soldier_getInstance()))) {
               this$AlysDisplay.originPosition = it;
               this$AlysDisplay.updateDisplay();
               return;
