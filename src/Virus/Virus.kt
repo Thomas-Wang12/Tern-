@@ -14,7 +14,7 @@ class Virus(override var state: VirusState = VirusState())
 					state.board[action.source.x, action.source.y] == state.currentPlayer
 				},
 				Rule("Can only place pieces on empty fields") { action, state ->
-					state.board[action.destination.x, action.destination.y] != 0
+					state.board[action.destination.x, action.destination.y] == 0
 				},
 				Rule("Cannot move farther than two squares") { action, state ->
 					abs(action.source.x - action.destination.x) > 2 || abs(action.source.y - action.destination.y) <= 2
