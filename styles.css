@@ -120,8 +120,14 @@ button:hover {
 }
 
 .status-area, .message-line {
+	font-size: 1.2rem;
 	padding: 0.5rem;
-	white-space: pre;
+	white-space: pre-line;
+}
+
+.message-line.away {
+	opacity: 0;
+	transition: 1s ease;
 }
 
 .rules-area {

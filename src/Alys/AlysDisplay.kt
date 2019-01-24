@@ -191,12 +191,16 @@ class AlysDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameAreaTo
 					val sourceField = game.state.board[origin]
 					val type = buildType
 					var success = false
-					if (sourceField?.piece?.type == AlysType.Soldier)
+					val destination = game.state.board[it]
+					if (sourceField?.piece?.type == AlysType.Soldier && destination?.treasury != null && destination.player == sourceField.player) {
+						originPosition = it
+						updateDisplay()
+						return@click
+					} else if (sourceField?.piece?.type == AlysType.Soldier)
 						success = performAction(AlysMoveAction(origin, it))
 					else if (type != null)
 						success = performAction(AlysCreateAction(type, origin, it))
 					else if (sourceField?.treasury != null) {
-						val destination = game.state.board[it]
 						if (destination?.player == game.state.currentPlayer &&
 								(destination.treasury != null || destination.piece?.type == AlysType.Soldier)) {
 							originPosition = it
@@ -224,15 +228,18 @@ class AlysDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameAreaTo
 		game.newGame(seed = (0..100000).random())
 		resize()
 		awaitActionFrom(game.currentPlayer())
+		messageLine.textContent = ""
 		updateDisplay()
 	}
 
 	override fun updateDisplay() {
 		val winner = game.winner
-		if (winner != null)
+		if (winner != null) {
 			messageLine.textContent = winner.name + " has won after " + game.state.round + " rounds!"
-		else
+			messageLine.className = "message-line"
+		} else {
 			turnLine.textContent = "Current player: " + game.currentPlayer()?.name
+		}
 		val origin = originPosition
 		val selectedField = if (origin != null) game.state.board[origin] else null
 		if (selectedField?.treasury != null) {

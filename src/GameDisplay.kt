@@ -57,6 +57,12 @@ abstract class GameDisplay<G : BoardGame<S, T, A, P>, S : BoardGameState<T, A, P
 		val state = game.state
 		game.performAction(action).onFailure {
 			messageLine.textContent = it.error
+			messageLine.className = "message-line"
+			GlobalScope.launch {
+				delay(4000)
+				if(messageLine.className == "message-line")
+					messageLine.className = "message-line away"
+			}
 			updateDisplay()
 			return false
 		}
@@ -70,10 +76,12 @@ abstract class GameDisplay<G : BoardGame<S, T, A, P>, S : BoardGameState<T, A, P
 
 	open fun updateDisplay() {
 		val winner = game.winner
-		if (winner != null)
+		if (winner != null) {
+			messageLine.className = "message-line"
 			messageLine.textContent = winner.name + " has won!"
-		else
+		} else {
 			turnLine.textContent = "Current player: " + game.currentPlayer()?.name
+		}
 		gridDisplay.display(game.state.board, getColor, draw)
 		updatePlayerList()
 	}
@@ -165,14 +173,14 @@ abstract class GameDisplay<G : BoardGame<S, T, A, P>, S : BoardGameState<T, A, P
 
 abstract class Player(var name: String = "Player", var color: String = "blue")
 
-class HumanPlayer(name: String = "Player", color: String = "purple") : Player(name, color)
+class HumanPlayer(name: String = "Player", color: String = "blue") : Player(name, color)
 
 interface AIPlayer<S, A> {
 	fun requestAction(state: S): A
 	fun endGame(state: S, won: Boolean)
 }
 
-class RandomAIPlayer<S : BoardGameState<*, A, *>, A>(name: String = "Player", color: String = "purple") : Player(name, color), AIPlayer<S, A> {
+class RandomAIPlayer<S : BoardGameState<*, A, *>, A>(name: String = "Player", color: String = "blue") : Player(name, color), AIPlayer<S, A> {
 	override fun requestAction(state: S): A {
 		val actions = state.possibleActions()
 		return actions.random()
@@ -181,7 +189,7 @@ class RandomAIPlayer<S : BoardGameState<*, A, *>, A>(name: String = "Player", co
 	override fun endGame(state: S, won: Boolean) {}
 }
 
-class SimpleAIPlayer<S : BoardGameState<*, A, *>, A>(name: String = "Player", color: String = "purple", val utility: (S, A) -> Int = {_,_ -> 1}) : Player(name, color), AIPlayer<S, A> {
+class SimpleAIPlayer<S : BoardGameState<*, A, *>, A>(name: String = "Player", color: String = "blue", val utility: (S, A) -> Int = {_,_ -> 1}) : Player(name, color), AIPlayer<S, A> {
 	override fun requestAction(state: S): A {
 		val actions = state.possibleActions()
 		val utilities = actions.map { utility(state, it) }
