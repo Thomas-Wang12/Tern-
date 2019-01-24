@@ -115,9 +115,34 @@ button:hover {
 	margin: 0 0.5rem;
 }
 
+#game-area-right button {
+	margin-top: 0.5rem;
+}
+
 .status-area, .message-line {
 	padding: 0.5rem;
 	white-space: pre;
+}
+
+.rules-area {
+	box-sizing: border-box;
+	padding: 0.5rem;
+	white-space: pre-line;
+	overflow: hidden;
+	background-color: #eef;
+	max-height: 60rem;
+	transition: 0.3s ease;
+}
+
+.rules-area.hidden {
+	max-height: 0;
+	padding: 0 0.5rem;
+	transition: 0.3s ease;
+}
+
+.rules-area img {
+	width: 4rem;
+	image-rendering: pixelated;
 }
 
 input {

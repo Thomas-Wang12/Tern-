@@ -20,6 +20,8 @@ class AlysDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameAreaTo
 	private val undoButton = document.createElement("button") as HTMLButtonElement
 	private val endTurnButton = document.createElement("button") as HTMLButtonElement
 	private val statusArea = document.createElement("div") as HTMLDivElement
+	private val rulesButton = document.createElement("button") as HTMLButtonElement
+	private val rulesArea = document.createElement("div") as HTMLDivElement
 
 	val images = mutableMapOf<String, HTMLImageElement>()
 
@@ -106,16 +108,51 @@ class AlysDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameAreaTo
 		gameAreaTop.appendChild(fortButton)
 		gameAreaRight.appendChild(statusArea)
 		gameAreaRight.appendChild(endTurnButton)
+		gameAreaRight.appendChild(rulesButton)
+		gameAreaRight.appendChild(rulesArea)
+		rulesArea.className = "rules-area hidden"
 		statusArea.className = "status-area"
 		statusArea.textContent = "Nothing selected"
 		fortButton.textContent = "Build fort (15)"
 		soldierButton.textContent = "Hire soldier (10)"
 		undoButton.textContent = "Undo"
 		endTurnButton.textContent = "End turn"
+		rulesButton.textContent = "Rules"
 		fortButton.addEventListener("click", ::buildFort)
 		soldierButton.addEventListener("click", ::hireSoldier)
 		undoButton.addEventListener("click", ::undo)
 		endTurnButton.addEventListener("click", ::endTurn)
+		rulesButton.onclick = {
+			if(rulesArea.classList.length > 1)
+				rulesArea.className = "rules-area"
+			else
+				rulesArea.className = "rules-area hidden"
+		}
+		rulesArea.innerHTML = """Alys is a game about conquering an island.
+			|
+			|You expand your territory by recruiting soldiers in town and using them to take new fields. Towns, forts and soldiers all protect the fields next to them, which means you need stronger soldiers to take them.
+			|<img src="assets/B.png" /> <img src="assets/BR.png" />
+			|Towns collect money from the surrounding area every turn, and allow you to buy soldier and forts. When it has enough money to buy something, it'll notify you with a flag.
+			|<img src="assets/S1.png" /> <img src="assets/S1R.png" />
+			|Soldiers can take territory from other players, and come in several types. They can only do something once per turn, and will show you a flag when they're ready.
+			|<img src="assets/F.png" />
+			|Forts can be build on empty fields in your area, and provide better protection than towns.
+			|<img src="assets/S1.png" /> <img src="assets/S2.png" /> <img src="assets/S3.png" /> <img src="assets/S4.png" />
+			|Soldiers have four ranks, with increasing upkeep:
+			|
+			|Recruits (2) are able to take undefended fields.
+			|
+			|Veterans (6) can take fields defended by towns and recruits.
+			|
+			|Elites (18) can take fields defended by forts and lower rank soldiers.
+			|
+			|Generals (54) can take anything.
+			|
+			|You upgrade soldiers by moving one soldier onto another. Upkeep is paid at the beginning of each turn, and if the town in the area doesn't have enough money, the soldiers will die and turn into graves.
+			|<img src="assets/G.png" /> <img src="assets/T.png" /> <img src="assets/C.png" />
+			|Graves turn into trees or bushes. Overgrown fields provide no money to the town in the area, but can be removed by soldiers.
+			|Bushes expand to nearby coastal fields every turn, while new trees appear in fields next to two existing trees.
+		""".trimMargin()
 
 		playerTypes.add(RandomAIPlayerType<AlysState, AlysAction>())
 		playerTypes.add(SimpleAlysAIPlayerType())
