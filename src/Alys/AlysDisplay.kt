@@ -20,8 +20,6 @@ class AlysDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameAreaTo
 	private val undoButton = document.createElement("button") as HTMLButtonElement
 	private val endTurnButton = document.createElement("button") as HTMLButtonElement
 	private val statusArea = document.createElement("div") as HTMLDivElement
-	private val rulesButton = document.createElement("button") as HTMLButtonElement
-	private val rulesArea = document.createElement("div") as HTMLDivElement
 
 	val images = mutableMapOf<String, HTMLImageElement>()
 
@@ -108,27 +106,17 @@ class AlysDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameAreaTo
 		gameAreaTop.appendChild(fortButton)
 		gameAreaRight.appendChild(statusArea)
 		gameAreaRight.appendChild(endTurnButton)
-		gameAreaRight.appendChild(rulesButton)
-		gameAreaRight.appendChild(rulesArea)
-		rulesArea.className = "rules-area hidden"
 		statusArea.className = "status-area"
 		statusArea.textContent = "Nothing selected"
 		fortButton.textContent = "Build fort (15)"
 		soldierButton.textContent = "Hire soldier (10)"
 		undoButton.textContent = "Undo"
 		endTurnButton.textContent = "End turn"
-		rulesButton.textContent = "Rules"
 		fortButton.addEventListener("click", ::buildFort)
 		soldierButton.addEventListener("click", ::hireSoldier)
 		undoButton.addEventListener("click", ::undo)
 		endTurnButton.addEventListener("click", ::endTurn)
-		rulesButton.onclick = {
-			if(rulesArea.classList.length > 1)
-				rulesArea.className = "rules-area"
-			else
-				rulesArea.className = "rules-area hidden"
-		}
-		rulesArea.innerHTML = """Alys is a game about conquering an island.
+		createRuleArea(gameAreaRight, """Alys is a game about conquering an island.
 			|
 			|You expand your territory by recruiting soldiers in town and using them to take new fields. Towns, forts and soldiers all protect the fields next to them, which means you need stronger soldiers to take them.
 			|<img src="assets/B.png" /> <img src="assets/BR.png" />
@@ -152,7 +140,14 @@ class AlysDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameAreaTo
 			|<img src="assets/G.png" /> <img src="assets/T.png" /> <img src="assets/C.png" />
 			|Graves turn into trees or bushes. Overgrown fields provide no money to the town in the area, but can be removed by soldiers.
 			|Bushes expand to nearby coastal fields every turn, while new trees appear in fields next to two existing trees.
-		""".trimMargin()
+		""".trimMargin(),
+				listOf(
+						/*RuleSection("Soldiers", "ja hej du"),
+						RuleSection("Towns", "ja hej du"),
+						RuleSection("Defense", "ja hej du"),
+						RuleSection("Plants", "ja hej du")*/
+				)
+		)
 
 		playerTypes.add(RandomAIPlayerType<AlysState, AlysAction>())
 		playerTypes.add(SimpleAlysAIPlayerType())
@@ -249,7 +244,7 @@ class AlysDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameAreaTo
 					.mapNotNull { it.field.piece }
 					.sumBy { game.state.upkeepFor(it) }
 		} else {
-			statusArea.textContent = "No base selected"
+			statusArea.textContent = "No town selected"
 		}
 		gridDisplay.display(game.state.board, getColor, draw)
 		updatePlayerList()
@@ -358,7 +353,7 @@ private fun utilityFor(state: AlysState, action: AlysCreateAction): Int {
 	val fortNearby = adjacents
 			.filter { it.field.player == state.currentPlayer }
 			.any { it.field.piece?.type == AlysType.Fort }
-	if(fortNearby)
+	if (fortNearby)
 		return -1
 	val enemyNearby = adjacents.any { it.field.player != state.currentPlayer } ||
 			AlysState.neighbouringPositions(adjacents, state.board).any { it.field.player != state.currentPlayer }

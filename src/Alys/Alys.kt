@@ -60,6 +60,7 @@ class Alys(override var state: AlysState = AlysState())
 				AlysRule("Cannot move onto own fully upgraded soldiers") rule@{ _, state, info ->
 					val piece = info.destinationPiece ?: return@rule true
 					state.currentPlayer != info.destinationField?.player ||
+							piece.type != AlysType.Soldier ||
 							(piece.type == AlysType.Soldier &&
 							piece.strength < 4)
 				},
