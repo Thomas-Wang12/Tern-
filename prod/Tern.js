@@ -33,6 +33,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   var launch = $module$kotlinx_coroutines_core.kotlinx.coroutines.launch_s496o7$;
   var L0 = Kotlin.Long.ZERO;
   var getCallableRef = Kotlin.getCallableRef;
+  var trimMargin = Kotlin.kotlin.text.trimMargin_rjktp$;
   var min = Kotlin.kotlin.collections.min_exjks8$;
   var contains = Kotlin.kotlin.collections.contains_2ws7j4$;
   var sum = Kotlin.kotlin.collections.sum_plj8ka$;
@@ -757,16 +758,18 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     this.originPosition = null;
     this.buildType = null;
     this.previousStates = ArrayList_init();
-    var tmp$, tmp$_0, tmp$_1, tmp$_2, tmp$_3, tmp$_4;
+    var tmp$, tmp$_0, tmp$_1, tmp$_2, tmp$_3, tmp$_4, tmp$_5, tmp$_6;
     this.fortButton_0 = Kotlin.isType(tmp$ = document.createElement('button'), HTMLButtonElement) ? tmp$ : throwCCE();
     this.soldierButton_0 = Kotlin.isType(tmp$_0 = document.createElement('button'), HTMLButtonElement) ? tmp$_0 : throwCCE();
     this.undoButton_0 = Kotlin.isType(tmp$_1 = document.createElement('button'), HTMLButtonElement) ? tmp$_1 : throwCCE();
     this.endTurnButton_0 = Kotlin.isType(tmp$_2 = document.createElement('button'), HTMLButtonElement) ? tmp$_2 : throwCCE();
     this.statusArea_0 = Kotlin.isType(tmp$_3 = document.createElement('div'), HTMLDivElement) ? tmp$_3 : throwCCE();
+    this.rulesButton_0 = Kotlin.isType(tmp$_4 = document.createElement('button'), HTMLButtonElement) ? tmp$_4 : throwCCE();
+    this.rulesArea_0 = Kotlin.isType(tmp$_5 = document.createElement('div'), HTMLDivElement) ? tmp$_5 : throwCCE();
     this.images = LinkedHashMap_init();
     this.getColor_vm40yk$_0 = AlysDisplay$getColor$lambda(this);
     this.draw_6lbnvp$_0 = AlysDisplay$draw$lambda(this);
-    var context = Kotlin.isType(tmp$_4 = canvas.getContext('2d'), CanvasRenderingContext2D) ? tmp$_4 : throwCCE();
+    var context = Kotlin.isType(tmp$_6 = canvas.getContext('2d'), CanvasRenderingContext2D) ? tmp$_6 : throwCCE();
     context.imageSmoothingEnabled = false;
     this.addImage_61zpoe$('S1');
     this.addImage_61zpoe$('S1R');
@@ -791,12 +794,16 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     gameAreaTop.appendChild(this.fortButton_0);
     gameAreaRight.appendChild(this.statusArea_0);
     gameAreaRight.appendChild(this.endTurnButton_0);
+    gameAreaRight.appendChild(this.rulesButton_0);
+    gameAreaRight.appendChild(this.rulesArea_0);
+    this.rulesArea_0.className = 'rules-area hidden';
     this.statusArea_0.className = 'status-area';
     this.statusArea_0.textContent = 'Nothing selected';
     this.fortButton_0.textContent = 'Build fort (15)';
     this.soldierButton_0.textContent = 'Hire soldier (10)';
     this.undoButton_0.textContent = 'Undo';
     this.endTurnButton_0.textContent = 'End turn';
+    this.rulesButton_0.textContent = 'Rules';
     this.fortButton_0.addEventListener('click', getCallableRef('buildFort', function ($receiver, event) {
       return $receiver.buildFort_0(event), Unit;
     }.bind(null, this)));
@@ -809,6 +816,8 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     this.endTurnButton_0.addEventListener('click', getCallableRef('endTurn', function ($receiver, event) {
       return $receiver.endTurn_0(event), Unit;
     }.bind(null, this)));
+    this.rulesButton_0.onclick = AlysDisplay_init$lambda_0(this);
+    this.rulesArea_0.innerHTML = trimMargin('Alys is a game about conquering an island.\n\t\t\t|\n\t\t\t|You expand your territory by recruiting soldiers in town and using them to take new fields. Towns, forts and soldiers all protect the fields next to them, which means you need stronger soldiers to take them.\n\t\t\t|<img src="assets/B.png" /> <img src="assets/BR.png" />\n\t\t\t|Towns collect money from the surrounding area every turn, and allow you to buy soldier and forts. When it has enough money to buy something, it\'ll notify you with a flag.\n\t\t\t|<img src="assets/S1.png" /> <img src="assets/S1R.png" />\n\t\t\t|Soldiers can take territory from other players, and come in several types. They can only do something once per turn, and will show you a flag when they\'re ready.\n\t\t\t|<img src="assets/F.png" />\n\t\t\t|Forts can be build on empty fields in your area, and provide better protection than towns.\n\t\t\t|<img src="assets/S1.png" /> <img src="assets/S2.png" /> <img src="assets/S3.png" /> <img src="assets/S4.png" />\n\t\t\t|Soldiers have four ranks, with increasing upkeep:\n\t\t\t|\n\t\t\t|Recruits (2) are able to take undefended fields.\n\t\t\t|\n\t\t\t|Veterans (6) can take fields defended by towns and recruits.\n\t\t\t|\n\t\t\t|Elites (18) can take fields defended by forts and lower rank soldiers.\n\t\t\t|\n\t\t\t|Generals (54) can take anything.\n\t\t\t|\n\t\t\t|You upgrade soldiers by moving one soldier onto another. Upkeep is paid at the beginning of each turn, and if the town in the area doesn\'t have enough money, the soldiers will die and turn into graves.\n\t\t\t|<img src="assets/G.png" /> <img src="assets/T.png" /> <img src="assets/C.png" />\n\t\t\t|Graves turn into trees or bushes. Overgrown fields provide no money to the town in the area, but can be removed by soldiers.\n\t\t\t|Bushes expand to nearby coastal fields every turn, while new trees appear in fields next to two existing trees.\n\t\t');
     this.playerTypes.add_11rb$(new RandomAIPlayerType());
     this.playerTypes.add_11rb$(new SimpleAlysAIPlayerType());
     this.players.add_11rb$(new HumanPlayer('Player 1', '#0b9'));
@@ -825,7 +834,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
       return alysUtility(state, action);
     })));
     this.startNewGame();
-    this.gridDisplay.onClick = AlysDisplay_init$lambda_0(this);
+    this.gridDisplay.onClick = AlysDisplay_init$lambda_1(this);
   }
   Object.defineProperty(AlysDisplay.prototype, 'game', {
     get: function () {
@@ -1070,6 +1079,15 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
      while (true);
   };
   function AlysDisplay_init$lambda_0(this$AlysDisplay) {
+    return function (it) {
+      if (this$AlysDisplay.rulesArea_0.classList.length > 1)
+        this$AlysDisplay.rulesArea_0.className = 'rules-area';
+      else
+        this$AlysDisplay.rulesArea_0.className = 'rules-area hidden';
+      return Unit;
+    };
+  }
+  function AlysDisplay_init$lambda_1(this$AlysDisplay) {
     return function (it) {
       var tmp$, tmp$_0, tmp$_1, tmp$_2, tmp$_3;
       if (Kotlin.isType(this$AlysDisplay.game.currentPlayer(), Player) && this$AlysDisplay.game.state.board.isWithinBounds_dfplqh$(it)) {
