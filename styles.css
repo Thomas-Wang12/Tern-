@@ -136,7 +136,7 @@ button:hover {
 	white-space: pre-line;
 	overflow: hidden;
 	background-color: #eef;
-	max-height: 100rem;
+	max-height: 150rem;
 	transition: 0.3s ease;
 }
 

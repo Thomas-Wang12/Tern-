@@ -117,35 +117,49 @@ class AlysDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameAreaTo
 		undoButton.addEventListener("click", ::undo)
 		endTurnButton.addEventListener("click", ::endTurn)
 		createRuleArea(gameAreaRight, """Alys is a game about conquering an island.
-			|
+			|<img src="assets/B.png" /> <img src="assets/S1.png" />
 			|You expand your territory by recruiting soldiers in town and using them to take new fields. Towns, forts and soldiers all protect the fields next to them, which means you need stronger soldiers to take them.
-			|<img src="assets/B.png" /> <img src="assets/BR.png" />
-			|Towns collect money from the surrounding area every turn, and allow you to buy soldier and forts. When it has enough money to buy something, it'll notify you with a flag.
-			|<img src="assets/S1.png" /> <img src="assets/S1R.png" />
-			|Soldiers can take territory from other players, and come in several types. They can only do something once per turn, and will show you a flag when they're ready.
-			|<img src="assets/F.png" />
-			|Forts can be build on empty fields in your area, and provide better protection than towns.
-			|<img src="assets/S1.png" /> <img src="assets/S2.png" /> <img src="assets/S3.png" /> <img src="assets/S4.png" />
-			|Soldiers have four ranks, with increasing upkeep:
-			|
-			|Recruits (2) are able to take undefended fields.
-			|
-			|Veterans (6) can take fields defended by towns and recruits.
-			|
-			|Elites (18) can take fields defended by forts and lower rank soldiers.
-			|
-			|Generals (54) can take anything.
-			|
-			|You upgrade soldiers by moving one soldier onto another. Upkeep is paid at the beginning of each turn, and if the town in the area doesn't have enough money, the soldiers will die and turn into graves.
-			|<img src="assets/G.png" /> <img src="assets/T.png" /> <img src="assets/C.png" />
-			|Graves turn into trees or bushes. Overgrown fields provide no money to the town in the area, but can be removed by soldiers.
-			|Bushes expand to nearby coastal fields every turn, while new trees appear in fields next to two existing trees.
+			|<img src="assets/F.png" /> <img src="assets/T.png" />
+			|Towns collect money from the surrounding area every turn, and allow you to buy soldier and forts. Forts provide more protection than towns, so higher rank soldiers are needed to take them. Soldiers are upgraded by moving onto each other.
 		""".trimMargin(),
 				listOf(
-						/*RuleSection("Soldiers", "ja hej du"),
-						RuleSection("Towns", "ja hej du"),
-						RuleSection("Defense", "ja hej du"),
-						RuleSection("Plants", "ja hej du")*/
+						RuleSection("Towns", """<img src="assets/B.png" /> <img src="assets/BR.png" />
+							|Towns are the centers of your areas. Each area consisting of at least two fields will have a town, which collects the money you gain from the area. You can see those details in the top right corner.
+							|
+							|Towns let you recruit soldiers and build forts (select a town and press the corresponding button above the map, and then press the field where you want the fort/soldier). The flag lets you know when there's enough money to buy something.
+							|
+							|At the beginning of every turn, the town gains one money(?) per field in its area, except those that are overgrown. Then the upkeep for soldiers in the area is paid. If there's not enough money to pay your soldiers, they'll die and leave a grave.
+							|
+							|When two areas with a town each are connected, the town with the smaller treasury transfers its money to the other and disappears.
+							|
+							|A town protects the fields you own next to it, so a soldier of at least Veteran rank is needed to take it. When a town is destroyed, its treasury is lost.
+						""".trimMargin()),
+						RuleSection("Soldiers", """<img src="assets/S1.png" /> <img src="assets/S2.png" /> <img src="assets/S3.png" /> <img src="assets/S4.png" />
+							|Soldiers are used to conquer the enemies' fields. Like towns, soldiers protect the fields around them. Soldiers come in four ranks. Stronger soldiers beat weaker soldiers, but cost more upkeep.
+							|
+							|Upgrade a soldier by moving another soldier onto it.
+							|<img src="assets/S1.png" /> <img src="assets/S1R.png" />
+							|Recruits (upkeep 2) are only able to take undefended fields.
+							|<img src="assets/S2.png" /> <img src="assets/S2R.png" />
+							|Veterans (upkeep 6) can take fields defended by towns and recruits.
+							|<img src="assets/S3.png" /> <img src="assets/S3R.png" />
+							|Elites (upkeep 18) can take fields defended by forts and lower rank soldiers.
+							|<img src="assets/S4.png" /> <img src="assets/S4R.png" />
+							|Generals (upkeep 54) can take any field.
+							|
+							|A flag by a soldier means that it is ready to perform an action. Soldiers can generally only do one thing per turn, but are able to move freely between your empty fields.
+						""".trimMargin()),
+						RuleSection("Other details", """<img src="assets/F.png" />
+							|Fort defend and area and cost no upkeep. Only a soldier of at least Knight rank can destroy it.
+							|<img src="assets/T.png" /> <img src="assets/C.png" />
+							|Some fields are overgrown by trees or bushes. Overgrown fields provide no money to the town in the area, but can be removed by soldiers
+							|
+							|Whenever an empty field is adjacent to two trees, the trees will spread to that area. Bushes only grow on coastal fields, and spread to adjacent empty coastal fields. Try not to get overwhelmed.
+							|<img src="assets/G.png" />
+							|Graves are left by soldiers when their upkeep wasn't paid. The following turn they'll overgrow and turn into either trees or bushes, depending on whether they're near the coast or not.
+							|
+							|The game is won when there are no enemy towns left.
+						""".trimMargin())
 				)
 		)
 
