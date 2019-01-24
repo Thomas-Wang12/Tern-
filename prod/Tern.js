@@ -910,7 +910,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     };
   });
   AlysDisplay.prototype.updateDisplay = function () {
-    var tmp$, tmp$_0, tmp$_1;
+    var tmp$, tmp$_0, tmp$_1, tmp$_2, tmp$_3;
     var winner = this.game.winner;
     if (winner != null) {
       this.messageLine.textContent = winner.name + ' has won after ' + toString(this.game.state.round) + ' rounds!';
@@ -923,26 +923,34 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     var selectedField = origin != null ? this.game.state.board.get_dfplqh$(origin) : null;
     if ((selectedField != null ? selectedField.treasury : null) != null) {
       tmp$_1 = this.statusArea_0;
-      var tmp$_2 = 'Treasury: ' + toString(selectedField.treasury) + '\nExpected income: ' + toString(this.game.state.incomeFor_maxfsy$(Kotlin.isType(tmp$_0 = origin, Position) ? tmp$_0 : throwCCE())) + '\nUpkeep: ';
+      var tmp$_4 = 'Treasury: ' + toString(selectedField.treasury) + '\nExpected income: ' + toString(this.game.state.incomeFor_maxfsy$(Kotlin.isType(tmp$_0 = origin, Position) ? tmp$_0 : throwCCE())) + '\nUpkeep: ';
       var $receiver = AlysState$Companion_getInstance().connectedPositions_jwhin5$(origin, this.game.state.board);
       var destination = ArrayList_init();
-      var tmp$_3;
-      tmp$_3 = $receiver.iterator();
-      while (tmp$_3.hasNext()) {
-        var element = tmp$_3.next();
+      var tmp$_5;
+      tmp$_5 = $receiver.iterator();
+      while (tmp$_5.hasNext()) {
+        var element = tmp$_5.next();
         var tmp$_0_0;
         if ((tmp$_0_0 = element.field.piece) != null) {
           destination.add_11rb$(tmp$_0_0);
         }
       }
-      var tmp$_4;
+      var tmp$_6;
       var sum = 0;
-      tmp$_4 = destination.iterator();
-      while (tmp$_4.hasNext()) {
-        var element_0 = tmp$_4.next();
+      tmp$_6 = destination.iterator();
+      while (tmp$_6.hasNext()) {
+        var element_0 = tmp$_6.next();
         sum = sum + this.game.state.upkeepFor_ibj32h$(element_0) | 0;
       }
-      tmp$_1.textContent = tmp$_2 + toString(sum);
+      tmp$_1.textContent = tmp$_4 + toString(sum);
+      if (equals(this.buildType, AlysType$Soldier_getInstance())) {
+        tmp$_2 = this.statusArea_0;
+        tmp$_2.textContent = tmp$_2.textContent + '\nCurrently hiring soldier';
+      }
+      if (equals(this.buildType, AlysType$Fort_getInstance())) {
+        tmp$_3 = this.statusArea_0;
+        tmp$_3.textContent = tmp$_3.textContent + '\nCurrently building fort';
+      }
     }
      else {
       this.statusArea_0.textContent = 'No town selected';
@@ -968,12 +976,18 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     this.undoButton_0.disabled = this.previousStates.isEmpty();
   };
   AlysDisplay.prototype.hireSoldier_0 = function (event) {
+    var tmp$;
     this.buildType = AlysType$Soldier_getInstance();
     this.updateButtons_0();
+    tmp$ = this.statusArea_0;
+    tmp$.textContent = tmp$.textContent + '\nCurrently hiring soldier';
   };
   AlysDisplay.prototype.buildFort_0 = function (event) {
+    var tmp$;
     this.buildType = AlysType$Fort_getInstance();
     this.updateButtons_0();
+    tmp$ = this.statusArea_0;
+    tmp$.textContent = tmp$.textContent + '\nCurrently building fort';
   };
   AlysDisplay.prototype.undo_0 = function (event) {
     this.game.state = this.previousStates.removeAt_za3lpa$(this.previousStates.size - 1 | 0);

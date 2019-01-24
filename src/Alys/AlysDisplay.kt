@@ -257,6 +257,10 @@ class AlysDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameAreaTo
 					"\nUpkeep: " + AlysState.connectedPositions(origin, game.state.board)
 					.mapNotNull { it.field.piece }
 					.sumBy { game.state.upkeepFor(it) }
+			if (buildType == AlysType.Soldier)
+				statusArea.textContent += "\nCurrently hiring soldier"
+			if (buildType == AlysType.Fort)
+				statusArea.textContent += "\nCurrently building fort"
 		} else {
 			statusArea.textContent = "No town selected"
 		}
@@ -283,11 +287,13 @@ class AlysDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameAreaTo
 	private fun hireSoldier(event: Event) {
 		buildType = AlysType.Soldier
 		updateButtons()
+		statusArea.textContent += "\nCurrently hiring soldier"
 	}
 
 	private fun buildFort(event: Event) {
 		buildType = AlysType.Fort
 		updateButtons()
+		statusArea.textContent += "\nCurrently building fort"
 	}
 
 	private fun undo(event: Event) {
