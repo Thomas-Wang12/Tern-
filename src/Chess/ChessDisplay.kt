@@ -1,7 +1,7 @@
 import org.w3c.dom.*
 
-class ChessDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameAreaTop: HTMLElement, gameAreaRight: HTMLElement)
-	: GameDisplay<Chess, ChessState, ChessPiece?, ChessAction, ChessPlayer>(canvas, playerArea, gameAreaTop, gameAreaRight) {
+class ChessDisplay(canvasContainer: HTMLElement, playerArea: HTMLElement, gameAreaTop: HTMLElement, gameAreaRight: HTMLElement)
+	: GameDisplay<Chess, ChessState, ChessPiece?, ChessAction, ChessPlayer>(canvasContainer, playerArea, gameAreaTop, gameAreaRight) {
 	override var game = Chess()
 
 	var sourcePosition: Position? = null

@@ -97,12 +97,6 @@ class GridDisplay(val canvas: HTMLCanvasElement) {
 		canvas.addEventListener("click", clickListener)
 	}
 
-	fun end() {
-		canvas.removeEventListener("click", clickListener)
-		val context = canvas.getContext("2d") as CanvasRenderingContext2D
-		context.clearRect(0.0, 0.0, canvas.width.toDouble(), canvas.height.toDouble())
-	}
-
 	fun gridCoordsAt(canvasX: Int, canvasY: Int): Position? {
 		if (hexagonal)
 			return hexCoords(canvasX - translateX.toInt(), canvasY)

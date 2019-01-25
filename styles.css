@@ -68,7 +68,7 @@ nav button {
 	padding: 0.5rem;
 }
 
-.canvas {
+#canvas {
 	grid-area: canvas;
 	text-align: center;
 }

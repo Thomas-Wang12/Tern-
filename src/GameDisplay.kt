@@ -1,14 +1,17 @@
 import kotlinx.coroutines.*
 import org.w3c.dom.*
 import kotlin.browser.document
+import kotlin.browser.window
+import kotlin.math.min
 
 abstract class GameDisplay<G : BoardGame<S, T, A, P>, S : BoardGameState<T, A, P>, T, A, P>(
-		val canvas: HTMLCanvasElement,
+		val canvasContainer: HTMLElement,
 		val playerArea: HTMLElement,
 		val gameAreaTop: HTMLElement,
 		val gameAreaRight: HTMLElement
 ) {
 	abstract var game: G
+	val canvas = document.createElement("canvas") as HTMLCanvasElement
 	val gridDisplay = GridDisplay(canvas)
 	var aiDelay = 200L
 	val playerTypes = mutableListOf<PlayerType>(HumanPlayerType())
@@ -25,10 +28,8 @@ abstract class GameDisplay<G : BoardGame<S, T, A, P>, S : BoardGameState<T, A, P
 	abstract val getColor: ((T, x: Int, y: Int) -> String)?
 	abstract val draw: ((context: CanvasRenderingContext2D, fieldSize: Double, field: T, x: Int, y: Int) -> Unit)?
 
+
 	init {
-		playerArea.innerHTML = ""
-		gameAreaTop.innerHTML = ""
-		gameAreaRight.innerHTML = ""
 		turnLine.className = "message-line"
 		messageLine.className = "message-line"
 		newGameButton.className = "new-game"
@@ -44,11 +45,42 @@ abstract class GameDisplay<G : BoardGame<S, T, A, P>, S : BoardGameState<T, A, P
 				newPlayerButton.disabled = true
 			updateDisplay()
 		}
+
+		GlobalScope.launch {
+			startNewGame()
+		}
+	}
+
+	fun showGame() {
+		playerArea.innerHTML = ""
+		gameAreaTop.innerHTML = ""
+		gameAreaRight.innerHTML = ""
+		canvasContainer.innerHTML = ""
+		canvasContainer.appendChild(canvas)
+		sizeCanvas()
 		playerArea.appendChild(playerList)
 		playerArea.appendChild(newPlayerButton)
 		playerArea.appendChild(newGameButton)
 		playerArea.appendChild(turnLine)
 		playerArea.appendChild(messageLine)
+		onShowGame?.invoke()
+		updateDisplay()
+	}
+
+	open val onShowGame: (()->Unit)? = null
+
+	fun sizeCanvas(){
+		val dpr = window.devicePixelRatio
+		val element = canvas.parentElement as HTMLElement
+		val styleSize = min(element.clientWidth, window.innerHeight - 40)
+		val size = (styleSize * dpr).toInt()
+		canvas.style.width = styleSize.toString() + "px"
+		canvas.style.height = styleSize.toString() + "px"
+		canvas.width = size
+		canvas.height = size
+		val context: CanvasRenderingContext2D = canvas.getContext("2d") as CanvasRenderingContext2D
+		context.setTransform(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)
+		context.scale(dpr, dpr)
 	}
 
 	abstract fun startNewGame()
@@ -94,10 +126,6 @@ abstract class GameDisplay<G : BoardGame<S, T, A, P>, S : BoardGameState<T, A, P
 				performAction(player.requestAction(game.state))
 			}
 		}
-	}
-
-	fun end() {
-		gridDisplay.end()
 	}
 
 	fun updatePlayerList() {

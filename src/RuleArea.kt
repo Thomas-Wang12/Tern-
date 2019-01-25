@@ -3,22 +3,24 @@ import org.w3c.dom.HTMLDivElement
 import org.w3c.dom.HTMLElement
 import kotlin.browser.document
 
-fun createRuleArea(container: HTMLElement, overview: String, ruleSections: List<RuleSection>) {
-	val rulesButton = document.createElement("button") as HTMLButtonElement
-	val rulesArea = document.createElement("div") as HTMLDivElement
-	rulesButton.textContent = "Rules"
-	rulesArea.innerHTML = overview
-	rulesArea.className = "rules-area hidden"
-	container.appendChild(rulesButton)
-	container.appendChild(rulesArea)
-	rulesButton.onclick = {
-		if (rulesArea.classList.length > 1)
-			rulesArea.className = "rules-area"
-		else
-			rulesArea.className = "rules-area hidden"
+class RuleArea(val overview: String, val ruleSections: List<RuleSection>) {
+	fun showRules(container: HTMLElement) {
+		val rulesButton = document.createElement("button") as HTMLButtonElement
+		val rulesArea = document.createElement("div") as HTMLDivElement
+		rulesButton.textContent = "Rules"
+		rulesArea.innerHTML = overview
+		rulesArea.className = "rules-area hidden"
+		container.appendChild(rulesButton)
+		container.appendChild(rulesArea)
+		rulesButton.onclick = {
+			if (rulesArea.classList.length > 1)
+				rulesArea.className = "rules-area"
+			else
+				rulesArea.className = "rules-area hidden"
+		}
+		for (section in ruleSections)
+			section.addToContainer(rulesArea)
 	}
-	for (section in ruleSections)
-		section.addToContainer(rulesArea)
 }
 
 class RuleSection(val name: String, val content: String) {

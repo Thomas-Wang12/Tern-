@@ -1,8 +1,5 @@
 import org.w3c.dom.*
-import org.w3c.dom.events.Event
 import kotlin.browser.document
-import kotlin.browser.window
-import kotlin.math.min
 
 fun main(args: Array<String>) {
 	val header = document.getElementById("header") as HTMLElement
@@ -10,39 +7,27 @@ fun main(args: Array<String>) {
 	val playerArea = document.getElementById("player-area") as HTMLElement
 	val gameAreaTop = document.getElementById("game-area-top") as HTMLElement
 	val gameAreaRight = document.getElementById("game-area-right") as HTMLElement
-	val canvas = document.getElementById("canvas") as HTMLCanvasElement
+	val canvasContainer = document.getElementById("canvas") as HTMLElement
 
-	val dpr = window.devicePixelRatio
-	val element = canvas.parentElement as HTMLElement
-	val styleSize = min(element.clientWidth, window.innerHeight - navigation.clientHeight)
-	val size = (styleSize * dpr).toInt()
-	canvas.style.width = styleSize.toString() + "px"
-	canvas.style.height = styleSize.toString() + "px"
-	canvas.width = size
-	canvas.height = size
-	val context: CanvasRenderingContext2D = canvas.getContext("2d") as CanvasRenderingContext2D
-	context.scale(dpr, dpr)
 	header.textContent = "Select a game"
 
-	var game: GameDisplay<*, *, *, *, *>? = null
+	addButton(AlysDisplay(canvasContainer, playerArea, gameAreaTop, gameAreaRight), "Alys", navigation, header)
+	addButton(ChessDisplay(canvasContainer, playerArea, gameAreaTop, gameAreaRight), "Chess", navigation, header)
+	addButton(VirusDisplay(canvasContainer, playerArea, gameAreaTop, gameAreaRight), "Virus", navigation, header)
+	addButton(TicTacToeDisplay(canvasContainer, playerArea, gameAreaTop, gameAreaRight), "Tic Tac Toe", navigation, header)
+}
 
-	fun addButton(
-			gameDisplay: (HTMLCanvasElement, HTMLElement, HTMLElement, HTMLElement) -> GameDisplay<*,*,*,*,*>,
-			name: String,
-			navElement: HTMLElement
-	) {
-		val button = document.createElement("button") as HTMLButtonElement
-		button.textContent = name
-		navElement.appendChild(button)
-		button.addEventListener("click", {
-			game?.end()
-			header.textContent = name
-			game = gameDisplay(canvas, playerArea, gameAreaTop, gameAreaRight)
-		})
-	}
-
-	addButton(::AlysDisplay, "Alys", navigation)
-	addButton(::ChessDisplay, "Chess", navigation)
-	addButton(::VirusDisplay, "Virus", navigation)
-	addButton(::TicTacToeDisplay, "Tic Tac Toe", navigation)
+private fun addButton(
+		gameDisplay: GameDisplay<*, *, *, *, *>,
+		name: String,
+		navElement: HTMLElement,
+		header: HTMLElement
+) {
+	val button = document.createElement("button") as HTMLButtonElement
+	button.textContent = name
+	navElement.appendChild(button)
+	button.addEventListener("click", {
+		header.textContent = name
+		gameDisplay.showGame()
+	})
 }

@@ -1,7 +1,7 @@
 import org.w3c.dom.*
 
-class VirusDisplay(canvas: HTMLCanvasElement, playerArea: HTMLElement, gameAreaTop: HTMLElement, gameAreaRight: HTMLElement)
-	: GameDisplay<Virus, VirusState, Int, VirusAction, Int>(canvas, playerArea, gameAreaTop, gameAreaRight) {
+class VirusDisplay(canvasContainer: HTMLElement, playerArea: HTMLElement, gameAreaTop: HTMLElement, gameAreaRight: HTMLElement)
+	: GameDisplay<Virus, VirusState, Int, VirusAction, Int>(canvasContainer, playerArea, gameAreaTop, gameAreaRight) {
 	override var game = Virus()
 
 	override val getColor = getColor@{ piece: Int, _: Int, _: Int ->
