@@ -14,7 +14,7 @@ class AlysDisplay(canvasContainer: HTMLElement, playerArea: HTMLElement, gameAre
 	var originPosition: Position? = null
 	var buildType: AlysType? = null
 	val previousStates = mutableListOf<AlysState>()
-	//var selectedArea = listOf<Position>()
+	var selectedArea = listOf<Position>()
 	private val fortButton = document.createElement("button") as HTMLButtonElement
 	private val soldierButton = document.createElement("button") as HTMLButtonElement
 	private val undoButton = document.createElement("button") as HTMLButtonElement
@@ -72,7 +72,7 @@ class AlysDisplay(canvasContainer: HTMLElement, playerArea: HTMLElement, gameAre
 	override val getColor = getColor@{ _: AlysField?, x: Int, y: Int ->
 		val origin = originPosition
 		if (origin != null && origin.x == x && origin.y == y)
-			return@getColor "darkgrey"
+			return@getColor "white"
 		val piece = game.state.board[x, y] ?: return@getColor "transparent"
 		//if(Position(x,y) in selectedArea)
 		//	return@getColor "red"
@@ -82,9 +82,15 @@ class AlysDisplay(canvasContainer: HTMLElement, playerArea: HTMLElement, gameAre
 		return@getColor "white"
 	}
 
-	override val draw = draw@{ context: CanvasRenderingContext2D, fieldSize: Double, field: AlysField?, _: Int, _: Int ->
+	override val draw = draw@{ context: CanvasRenderingContext2D, fieldSize: Double, field: AlysField?, x: Int, y: Int ->
+		val origin = originPosition
 		if (field == null)
 			return@draw
+		context.lineWidth = 2.0
+		if (Position(x, y) in selectedArea) {
+			context.strokeStyle = "white"
+			context.stroke(gridDisplay.hexPathOffset)
+		}
 		val image = when (field.piece?.type) {
 			AlysType.Fort -> "F"
 			AlysType.Soldier -> soldierImage(field.piece, field.player == game.state.currentPlayer)
@@ -170,18 +176,15 @@ class AlysDisplay(canvasContainer: HTMLElement, playerArea: HTMLElement, gameAre
 					if (selectedField.piece?.type == AlysType.Soldier) {
 						if (selectedField.piece.hasMoved)
 							return@click
-						originPosition = it
-						updateDisplay()
+						selectField(it)
 						return@click
 					}
 					val selectedArea = AlysState.connectedPositions(it, game.state.board)
-					originPosition = selectedArea.find { it.field.treasury != null }?.position
+					selectField(selectedArea.find { it.field.treasury != null }?.position)
 					updateDisplay()
 				} else {
 					if (origin == it) {
-						buildType = null
-						originPosition = null
-						updateDisplay()
+						selectField(null)
 						return@click
 					}
 					val sourceField = game.state.board[origin]
@@ -189,8 +192,7 @@ class AlysDisplay(canvasContainer: HTMLElement, playerArea: HTMLElement, gameAre
 					var success = false
 					val destination = game.state.board[it]
 					if (sourceField?.piece?.type == AlysType.Soldier && destination?.treasury != null && destination.player == sourceField.player) {
-						originPosition = it
-						updateDisplay()
+						selectField(it)
 						return@click
 					} else if (sourceField?.piece?.type == AlysType.Soldier)
 						success = performAction(AlysMoveAction(origin, it))
@@ -199,22 +201,30 @@ class AlysDisplay(canvasContainer: HTMLElement, playerArea: HTMLElement, gameAre
 					else if (sourceField?.treasury != null) {
 						if (destination?.player == game.state.currentPlayer &&
 								(destination.treasury != null || destination.piece?.type == AlysType.Soldier)) {
-							originPosition = it
-							updateDisplay()
+							selectField(it)
 							return@click
 						}
 					}
 					if (success) {
-						buildType = null
-						originPosition = null
+						selectField(null)
 						val state = previousState
 						if (state != null)
 							previousStates.add(state)
 					}
-					updateDisplay()
 				}
 			}
 		}
+	}
+
+	fun selectField(position: Position?) {
+		originPosition = position
+		if (position != null)
+			selectedArea = AlysState.connectedPositions(position, game.state.board).map { it.position }
+		else {
+			selectedArea = listOf()
+			buildType = null
+		}
+		updateDisplay()
 	}
 
 	override val onShowGame: (() -> Unit)? = {

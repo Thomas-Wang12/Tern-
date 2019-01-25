@@ -24,16 +24,10 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   var random_0 = Kotlin.kotlin.ranges.random_xmiyix$;
   var throwCCE = Kotlin.throwCCE;
   var toString = Kotlin.toString;
+  var trimMargin = Kotlin.kotlin.text.trimMargin_rjktp$;
   var Unit = Kotlin.kotlin.Unit;
-  var coroutines = $module$kotlinx_coroutines_core.kotlinx.coroutines;
-  var L500 = Kotlin.Long.fromInt(500);
-  var delay = $module$kotlinx_coroutines_core.kotlinx.coroutines.delay_s8cxhz$;
-  var COROUTINE_SUSPENDED = Kotlin.kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED;
-  var CoroutineImpl = Kotlin.kotlin.coroutines.CoroutineImpl;
-  var launch = $module$kotlinx_coroutines_core.kotlinx.coroutines.launch_s496o7$;
   var L0 = Kotlin.Long.ZERO;
   var getCallableRef = Kotlin.getCallableRef;
-  var trimMargin = Kotlin.kotlin.text.trimMargin_rjktp$;
   var min = Kotlin.kotlin.collections.min_exjks8$;
   var contains = Kotlin.kotlin.collections.contains_2ws7j4$;
   var sum = Kotlin.kotlin.collections.sum_plj8ka$;
@@ -42,7 +36,12 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   var defineInlineFunction = Kotlin.defineInlineFunction;
   var wrapFunction = Kotlin.wrapFunction;
   var abs = Kotlin.kotlin.math.abs_za3lpa$;
+  var coroutines = $module$kotlinx_coroutines_core.kotlinx.coroutines;
   var L4000 = Kotlin.Long.fromInt(4000);
+  var delay = $module$kotlinx_coroutines_core.kotlinx.coroutines.delay_s8cxhz$;
+  var COROUTINE_SUSPENDED = Kotlin.kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED;
+  var CoroutineImpl = Kotlin.kotlin.coroutines.CoroutineImpl;
+  var launch = $module$kotlinx_coroutines_core.kotlinx.coroutines.launch_s496o7$;
   var L200 = Kotlin.Long.fromInt(200);
   var max = Kotlin.kotlin.collections.max_exjks8$;
   Alys.prototype = Object.create(BoardGame.prototype);
@@ -752,24 +751,25 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     simpleName: 'AlysBoardCreator',
     interfaces: []
   };
+  var emptyList = Kotlin.kotlin.collections.emptyList_287e2$;
   var LinkedHashMap_init = Kotlin.kotlin.collections.LinkedHashMap_init_q3lmfv$;
-  function AlysDisplay(canvas, playerArea, gameAreaTop, gameAreaRight) {
-    GameDisplay.call(this, canvas, playerArea, gameAreaTop, gameAreaRight);
+  function AlysDisplay(canvasContainer, playerArea, gameAreaTop, gameAreaRight) {
+    GameDisplay.call(this, canvasContainer, playerArea, gameAreaTop, gameAreaRight);
     this.game_6mofcn$_0 = new Alys();
     this.originPosition = null;
     this.buildType = null;
     this.previousStates = ArrayList_init();
-    var tmp$, tmp$_0, tmp$_1, tmp$_2, tmp$_3, tmp$_4;
+    this.selectedArea = emptyList();
+    var tmp$, tmp$_0, tmp$_1, tmp$_2, tmp$_3;
     this.fortButton_0 = Kotlin.isType(tmp$ = document.createElement('button'), HTMLButtonElement) ? tmp$ : throwCCE();
     this.soldierButton_0 = Kotlin.isType(tmp$_0 = document.createElement('button'), HTMLButtonElement) ? tmp$_0 : throwCCE();
     this.undoButton_0 = Kotlin.isType(tmp$_1 = document.createElement('button'), HTMLButtonElement) ? tmp$_1 : throwCCE();
     this.endTurnButton_0 = Kotlin.isType(tmp$_2 = document.createElement('button'), HTMLButtonElement) ? tmp$_2 : throwCCE();
     this.statusArea_0 = Kotlin.isType(tmp$_3 = document.createElement('div'), HTMLDivElement) ? tmp$_3 : throwCCE();
     this.images = LinkedHashMap_init();
+    this.ruleArea = new RuleArea(trimMargin('Alys is a game about conquering an island.\n\t\t\t|<img src="assets/B.png" /> <img src="assets/S1.png" />\n\t\t\t|You expand your territory by recruiting soldiers in town and using them to take new fields. Towns, forts and soldiers all protect the fields next to them, which means you need stronger soldiers to take them.\n\t\t\t|<img src="assets/F.png" /> <img src="assets/T.png" />\n\t\t\t|Towns collect money from the surrounding area every turn, and allow you to buy soldier and forts. Forts provide more protection than towns, so higher rank soldiers are needed to take them. Soldiers are upgraded by moving onto each other.\n\t\t'), listOf([new RuleSection('Towns', trimMargin('<img src="assets/B.png" /> <img src="assets/BR.png" />\n\t\t\t\t\t\t\t|Towns are the centers of your areas. Each area consisting of at least two fields will have a town, which collects the money you gain from the area. You can see those details in the top right corner.\n\t\t\t\t\t\t\t|\n\t\t\t\t\t\t\t|Towns let you recruit soldiers and build forts (select a town and press the corresponding button above the map, and then press the field where you want the fort/soldier). The flag lets you know when there\'s enough money to buy something.\n\t\t\t\t\t\t\t|\n\t\t\t\t\t\t\t|At the beginning of every turn, the town gains one money(?) per field in its area, except those that are overgrown. Then the upkeep for soldiers in the area is paid. If there\'s not enough money to pay your soldiers, they\'ll die and leave a grave.\n\t\t\t\t\t\t\t|\n\t\t\t\t\t\t\t|When two areas with a town each are connected, the town with the smaller treasury transfers its money to the other and disappears.\n\t\t\t\t\t\t\t|\n\t\t\t\t\t\t\t|A town protects the fields you own next to it, so a soldier of at least Veteran rank is needed to take it. When a town is destroyed, its treasury is lost.\n\t\t\t\t\t\t')), new RuleSection('Soldiers', trimMargin('<img src="assets/S1.png" /> <img src="assets/S2.png" /> <img src="assets/S3.png" /> <img src="assets/S4.png" />\n\t\t\t\t\t\t\t|Soldiers are used to conquer the enemies\' fields. They can move to any field neighbouring the area they are in. Like towns, soldiers protect the fields around them. Soldiers come in four ranks. Stronger soldiers beat weaker soldiers, but cost more upkeep.\n\t\t\t\t\t\t\t|\n\t\t\t\t\t\t\t|Upgrade a soldier by moving another soldier onto it.\n\t\t\t\t\t\t\t|<img src="assets/S1.png" /> <img src="assets/S1R.png" />\n\t\t\t\t\t\t\t|Recruits (upkeep 2) are only able to take undefended fields.\n\t\t\t\t\t\t\t|<img src="assets/S2.png" /> <img src="assets/S2R.png" />\n\t\t\t\t\t\t\t|Veterans (upkeep 6) can take fields defended by towns and recruits.\n\t\t\t\t\t\t\t|<img src="assets/S3.png" /> <img src="assets/S3R.png" />\n\t\t\t\t\t\t\t|Elites (upkeep 18) can take fields defended by forts and lower rank soldiers.\n\t\t\t\t\t\t\t|<img src="assets/S4.png" /> <img src="assets/S4R.png" />\n\t\t\t\t\t\t\t|Generals (upkeep 54) can take any field.\n\t\t\t\t\t\t\t|\n\t\t\t\t\t\t\t|A flag by a soldier means that it is ready to perform an action. Soldiers can generally only do one thing per turn, but are able to move freely between your empty fields.\n\t\t\t\t\t\t')), new RuleSection('Other details', trimMargin('<img src="assets/F.png" />\n\t\t\t\t\t\t\t|Fort defend and area and cost no upkeep. Only a soldier of at least Knight rank can destroy it.\n\t\t\t\t\t\t\t|<img src="assets/T.png" /> <img src="assets/C.png" />\n\t\t\t\t\t\t\t|Some fields are overgrown by trees or bushes. Overgrown fields provide no money to the town in the area, but can be removed by soldiers\n\t\t\t\t\t\t\t|\n\t\t\t\t\t\t\t|Whenever an empty field is adjacent to two trees, the trees will spread to that area. Bushes only grow on coastal fields, and spread to adjacent empty coastal fields. Try not to get overwhelmed.\n\t\t\t\t\t\t\t|<img src="assets/G.png" />\n\t\t\t\t\t\t\t|Graves are left by soldiers when their upkeep wasn\'t paid. The following turn they\'ll overgrow and turn into either trees or bushes, depending on whether they\'re near the coast or not.\n\t\t\t\t\t\t\t|\n\t\t\t\t\t\t\t|The game is won when there are no enemy towns left.\n\t\t\t\t\t\t'))]));
     this.getColor_vm40yk$_0 = AlysDisplay$getColor$lambda(this);
     this.draw_6lbnvp$_0 = AlysDisplay$draw$lambda(this);
-    var context = Kotlin.isType(tmp$_4 = canvas.getContext('2d'), CanvasRenderingContext2D) ? tmp$_4 : throwCCE();
-    context.imageSmoothingEnabled = false;
     this.addImage_61zpoe$('S1');
     this.addImage_61zpoe$('S1R');
     this.addImage_61zpoe$('S2');
@@ -784,15 +784,9 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     this.addImage_61zpoe$('T');
     this.addImage_61zpoe$('C');
     this.addImage_61zpoe$('G');
-    launch(coroutines.GlobalScope, void 0, void 0, AlysDisplay_init$lambda(this));
     this.aiDelay = L0;
     this.gridDisplay.gridColor = '#7df';
     this.gridDisplay.outerBorder = 50.0;
-    gameAreaTop.appendChild(this.undoButton_0);
-    gameAreaTop.appendChild(this.soldierButton_0);
-    gameAreaTop.appendChild(this.fortButton_0);
-    gameAreaRight.appendChild(this.statusArea_0);
-    gameAreaRight.appendChild(this.endTurnButton_0);
     this.statusArea_0.className = 'status-area';
     this.statusArea_0.textContent = 'Nothing selected';
     this.fortButton_0.textContent = 'Build fort (15)';
@@ -811,7 +805,6 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     this.endTurnButton_0.addEventListener('click', getCallableRef('endTurn', function ($receiver, event) {
       return $receiver.endTurn_0(event), Unit;
     }.bind(null, this)));
-    createRuleArea(gameAreaRight, trimMargin('Alys is a game about conquering an island.\n\t\t\t|<img src="assets/B.png" /> <img src="assets/S1.png" />\n\t\t\t|You expand your territory by recruiting soldiers in town and using them to take new fields. Towns, forts and soldiers all protect the fields next to them, which means you need stronger soldiers to take them.\n\t\t\t|<img src="assets/F.png" /> <img src="assets/T.png" />\n\t\t\t|Towns collect money from the surrounding area every turn, and allow you to buy soldier and forts. Forts provide more protection than towns, so higher rank soldiers are needed to take them. Soldiers are upgraded by moving onto each other.\n\t\t'), listOf([new RuleSection('Towns', trimMargin('<img src="assets/B.png" /> <img src="assets/BR.png" />\n\t\t\t\t\t\t\t|Towns are the centers of your areas. Each area consisting of at least two fields will have a town, which collects the money you gain from the area. You can see those details in the top right corner.\n\t\t\t\t\t\t\t|\n\t\t\t\t\t\t\t|Towns let you recruit soldiers and build forts (select a town and press the corresponding button above the map, and then press the field where you want the fort/soldier). The flag lets you know when there\'s enough money to buy something.\n\t\t\t\t\t\t\t|\n\t\t\t\t\t\t\t|At the beginning of every turn, the town gains one money(?) per field in its area, except those that are overgrown. Then the upkeep for soldiers in the area is paid. If there\'s not enough money to pay your soldiers, they\'ll die and leave a grave.\n\t\t\t\t\t\t\t|\n\t\t\t\t\t\t\t|When two areas with a town each are connected, the town with the smaller treasury transfers its money to the other and disappears.\n\t\t\t\t\t\t\t|\n\t\t\t\t\t\t\t|A town protects the fields you own next to it, so a soldier of at least Veteran rank is needed to take it. When a town is destroyed, its treasury is lost.\n\t\t\t\t\t\t')), new RuleSection('Soldiers', trimMargin('<img src="assets/S1.png" /> <img src="assets/S2.png" /> <img src="assets/S3.png" /> <img src="assets/S4.png" />\n\t\t\t\t\t\t\t|Soldiers are used to conquer the enemies\' fields. Like towns, soldiers protect the fields around them. Soldiers come in four ranks. Stronger soldiers beat weaker soldiers, but cost more upkeep.\n\t\t\t\t\t\t\t|\n\t\t\t\t\t\t\t|Upgrade a soldier by moving another soldier onto it.\n\t\t\t\t\t\t\t|<img src="assets/S1.png" /> <img src="assets/S1R.png" />\n\t\t\t\t\t\t\t|Recruits (upkeep 2) are only able to take undefended fields.\n\t\t\t\t\t\t\t|<img src="assets/S2.png" /> <img src="assets/S2R.png" />\n\t\t\t\t\t\t\t|Veterans (upkeep 6) can take fields defended by towns and recruits.\n\t\t\t\t\t\t\t|<img src="assets/S3.png" /> <img src="assets/S3R.png" />\n\t\t\t\t\t\t\t|Elites (upkeep 18) can take fields defended by forts and lower rank soldiers.\n\t\t\t\t\t\t\t|<img src="assets/S4.png" /> <img src="assets/S4R.png" />\n\t\t\t\t\t\t\t|Generals (upkeep 54) can take any field.\n\t\t\t\t\t\t\t|\n\t\t\t\t\t\t\t|A flag by a soldier means that it is ready to perform an action. Soldiers can generally only do one thing per turn, but are able to move freely between your empty fields.\n\t\t\t\t\t\t')), new RuleSection('Other details', trimMargin('<img src="assets/F.png" />\n\t\t\t\t\t\t\t|Fort defend and area and cost no upkeep. Only a soldier of at least Knight rank can destroy it.\n\t\t\t\t\t\t\t|<img src="assets/T.png" /> <img src="assets/C.png" />\n\t\t\t\t\t\t\t|Some fields are overgrown by trees or bushes. Overgrown fields provide no money to the town in the area, but can be removed by soldiers\n\t\t\t\t\t\t\t|\n\t\t\t\t\t\t\t|Whenever an empty field is adjacent to two trees, the trees will spread to that area. Bushes only grow on coastal fields, and spread to adjacent empty coastal fields. Try not to get overwhelmed.\n\t\t\t\t\t\t\t|<img src="assets/G.png" />\n\t\t\t\t\t\t\t|Graves are left by soldiers when their upkeep wasn\'t paid. The following turn they\'ll overgrow and turn into either trees or bushes, depending on whether they\'re near the coast or not.\n\t\t\t\t\t\t\t|\n\t\t\t\t\t\t\t|The game is won when there are no enemy towns left.\n\t\t\t\t\t\t'))]));
     this.playerTypes.add_11rb$(new RandomAIPlayerType());
     this.playerTypes.add_11rb$(new SimpleAlysAIPlayerType());
     this.players.add_11rb$(new HumanPlayer('Player 1', '#0b9'));
@@ -827,8 +820,8 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     this.players.add_11rb$(new SimpleAIPlayer('Player 5', 'orange', getCallableRef('alysUtility', function (state, action) {
       return alysUtility(state, action);
     })));
-    this.startNewGame();
-    this.gridDisplay.onClick = AlysDisplay_init$lambda_0(this);
+    this.gridDisplay.onClick = AlysDisplay_init$lambda(this);
+    this.onShowGame_59dkf9$_0 = AlysDisplay$onShowGame$lambda(this, gameAreaTop, gameAreaRight);
   }
   Object.defineProperty(AlysDisplay.prototype, 'game', {
     get: function () {
@@ -882,6 +875,30 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     this.gridDisplay.fieldSize = size % 2 === 0 ? size - 1 | 0 : size;
     this.gridDisplay.showHexagons();
   };
+  AlysDisplay.prototype.selectField_9nmm0a$ = function (position) {
+    this.originPosition = position;
+    if (position != null) {
+      var $receiver = AlysState$Companion_getInstance().connectedPositions_jwhin5$(position, this.game.state.board);
+      var destination = ArrayList_init_0(collectionSizeOrDefault($receiver, 10));
+      var tmp$;
+      tmp$ = $receiver.iterator();
+      while (tmp$.hasNext()) {
+        var item = tmp$.next();
+        destination.add_11rb$(item.position);
+      }
+      this.selectedArea = destination;
+    }
+     else {
+      this.selectedArea = emptyList();
+      this.buildType = null;
+    }
+    this.updateDisplay();
+  };
+  Object.defineProperty(AlysDisplay.prototype, 'onShowGame', {
+    get: function () {
+      return this.onShowGame_59dkf9$_0;
+    }
+  });
   var Random_0 = Kotlin.kotlin.random.Random;
   AlysDisplay.prototype.startNewGame = function () {
     var tmp$;
@@ -893,7 +910,6 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
       $receiver.put_xwzc9p$(i, value);
     }
     this.game.newGame_qt1dr2$(void 0, void 0, random_0(new IntRange(0, 100000), Random_0.Default));
-    this.resize();
     this.awaitActionFrom_s8jyv4$(this.game.currentPlayer());
     this.messageLine.textContent = '';
     this.updateDisplay();
@@ -1001,7 +1017,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
       var tmp$;
       var origin = this$AlysDisplay.originPosition;
       if (origin != null && origin.x === x && origin.y === y)
-        return 'darkgrey';
+        return 'white';
       tmp$ = this$AlysDisplay.game.state.board.get_vux9f0$(x, y);
       if (tmp$ == null) {
         return 'transparent';
@@ -1014,10 +1030,16 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     };
   }
   function AlysDisplay$draw$lambda(this$AlysDisplay) {
-    return function (context, fieldSize, field, f, f_0) {
+    return function (context, fieldSize, field, x, y) {
       var tmp$, tmp$_0, tmp$_1;
+      var origin = this$AlysDisplay.originPosition;
       if (field == null)
         return;
+      context.lineWidth = 2.0;
+      if (this$AlysDisplay.selectedArea.contains_11rb$(new Position(x, y))) {
+        context.strokeStyle = 'white';
+        context.stroke(this$AlysDisplay.gridDisplay.hexPathOffset);
+      }
       tmp$_0 = (tmp$ = field.piece) != null ? tmp$.type : null;
       if (equals(tmp$_0, AlysType$Fort_getInstance()))
         tmp$_1 = 'F';
@@ -1037,61 +1059,9 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
       return Unit;
     };
   }
-  function AlysDisplay_init$lambda(this$AlysDisplay_0) {
-    return function ($receiver, continuation_0, suspended) {
-      var instance = new Coroutine$AlysDisplay_init$lambda(this$AlysDisplay_0, $receiver, this, continuation_0);
-      if (suspended)
-        return instance;
-      else
-        return instance.doResume(null);
-    };
-  }
-  function Coroutine$AlysDisplay_init$lambda(this$AlysDisplay_0, $receiver, controller, continuation_0) {
-    CoroutineImpl.call(this, continuation_0);
-    this.$controller = controller;
-    this.exceptionState_0 = 1;
-    this.local$this$AlysDisplay = this$AlysDisplay_0;
-  }
-  Coroutine$AlysDisplay_init$lambda.$metadata$ = {
-    kind: Kotlin.Kind.CLASS,
-    simpleName: null,
-    interfaces: [CoroutineImpl]
-  };
-  Coroutine$AlysDisplay_init$lambda.prototype = Object.create(CoroutineImpl.prototype);
-  Coroutine$AlysDisplay_init$lambda.prototype.constructor = Coroutine$AlysDisplay_init$lambda;
-  Coroutine$AlysDisplay_init$lambda.prototype.doResume = function () {
-    do
-      try {
-        switch (this.state_0) {
-          case 0:
-            this.state_0 = 2;
-            this.result_0 = delay(L500, this);
-            if (this.result_0 === COROUTINE_SUSPENDED)
-              return COROUTINE_SUSPENDED;
-            continue;
-          case 1:
-            throw this.exception_0;
-          case 2:
-            return this.local$this$AlysDisplay.updateDisplay(), Unit;
-          default:this.state_0 = 1;
-            throw new Error('State Machine Unreachable execution');
-        }
-      }
-       catch (e) {
-        if (this.state_0 === 1) {
-          this.exceptionState_0 = this.state_0;
-          throw e;
-        }
-         else {
-          this.state_0 = this.exceptionState_0;
-          this.exception_0 = e;
-        }
-      }
-     while (true);
-  };
-  function AlysDisplay_init$lambda_0(this$AlysDisplay) {
+  function AlysDisplay_init$lambda(this$AlysDisplay) {
     return function (it) {
-      var tmp$, tmp$_0, tmp$_1, tmp$_2, tmp$_3, tmp$_4;
+      var tmp$, tmp$_0, tmp$_1, tmp$_2, tmp$_3, tmp$_4, tmp$_5;
       if (Kotlin.isType(this$AlysDisplay.game.currentPlayer(), Player) && this$AlysDisplay.game.state.board.isWithinBounds_dfplqh$(it)) {
         var origin = this$AlysDisplay.originPosition;
         if (origin == null) {
@@ -1105,12 +1075,10 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
           if (equals((tmp$_0 = selectedField.piece) != null ? tmp$_0.type : null, AlysType$Soldier_getInstance())) {
             if (selectedField.piece.hasMoved)
               return;
-            this$AlysDisplay.originPosition = it;
-            this$AlysDisplay.updateDisplay();
+            this$AlysDisplay.selectField_9nmm0a$(it);
             return;
           }
           var selectedArea = AlysState$Companion_getInstance().connectedPositions_jwhin5$(it, this$AlysDisplay.game.state.board);
-          var tmp$_5 = this$AlysDisplay;
           var firstOrNull$result;
           firstOrNull$break: do {
             var tmp$_6;
@@ -1125,46 +1093,56 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
             firstOrNull$result = null;
           }
            while (false);
-          tmp$_5.originPosition = (tmp$_1 = firstOrNull$result) != null ? tmp$_1.position : null;
+          tmp$_2 = (tmp$_1 = firstOrNull$result) != null ? tmp$_1.position : null;
+          this$AlysDisplay.selectField_9nmm0a$(tmp$_2);
           this$AlysDisplay.updateDisplay();
         }
          else {
           if (equals(origin, it)) {
-            this$AlysDisplay.buildType = null;
-            this$AlysDisplay.originPosition = null;
-            this$AlysDisplay.updateDisplay();
+            this$AlysDisplay.selectField_9nmm0a$(null);
             return;
           }
           var sourceField = this$AlysDisplay.game.state.board.get_dfplqh$(origin);
           var type = this$AlysDisplay.buildType;
           var success = false;
           var destination = this$AlysDisplay.game.state.board.get_dfplqh$(it);
-          if (equals((tmp$_2 = sourceField != null ? sourceField.piece : null) != null ? tmp$_2.type : null, AlysType$Soldier_getInstance()) && (destination != null ? destination.treasury : null) != null && destination.player === sourceField.player) {
-            this$AlysDisplay.originPosition = it;
-            this$AlysDisplay.updateDisplay();
+          if (equals((tmp$_3 = sourceField != null ? sourceField.piece : null) != null ? tmp$_3.type : null, AlysType$Soldier_getInstance()) && (destination != null ? destination.treasury : null) != null && destination.player === sourceField.player) {
+            this$AlysDisplay.selectField_9nmm0a$(it);
             return;
           }
-           else if (equals((tmp$_3 = sourceField != null ? sourceField.piece : null) != null ? tmp$_3.type : null, AlysType$Soldier_getInstance()))
+           else if (equals((tmp$_4 = sourceField != null ? sourceField.piece : null) != null ? tmp$_4.type : null, AlysType$Soldier_getInstance()))
             success = this$AlysDisplay.performAction_11re$(new AlysMoveAction(origin, it));
           else if (type != null)
             success = this$AlysDisplay.performAction_11re$(new AlysCreateAction(type, origin, it));
           else if ((sourceField != null ? sourceField.treasury : null) != null) {
-            if ((destination != null ? destination.player : null) === this$AlysDisplay.game.state.currentPlayer && (destination.treasury != null || equals((tmp$_4 = destination.piece) != null ? tmp$_4.type : null, AlysType$Soldier_getInstance()))) {
-              this$AlysDisplay.originPosition = it;
-              this$AlysDisplay.updateDisplay();
+            if ((destination != null ? destination.player : null) === this$AlysDisplay.game.state.currentPlayer && (destination.treasury != null || equals((tmp$_5 = destination.piece) != null ? tmp$_5.type : null, AlysType$Soldier_getInstance()))) {
+              this$AlysDisplay.selectField_9nmm0a$(it);
               return;
             }
           }
           if (success) {
-            this$AlysDisplay.buildType = null;
-            this$AlysDisplay.originPosition = null;
+            this$AlysDisplay.selectField_9nmm0a$(null);
             var state = this$AlysDisplay.previousState;
             if (state != null)
               this$AlysDisplay.previousStates.add_11rb$(state);
           }
-          this$AlysDisplay.updateDisplay();
         }
       }
+      return Unit;
+    };
+  }
+  function AlysDisplay$onShowGame$lambda(this$AlysDisplay, closure$gameAreaTop, closure$gameAreaRight) {
+    return function () {
+      var tmp$;
+      var context = Kotlin.isType(tmp$ = this$AlysDisplay.canvas.getContext('2d'), CanvasRenderingContext2D) ? tmp$ : throwCCE();
+      context.imageSmoothingEnabled = false;
+      closure$gameAreaTop.appendChild(this$AlysDisplay.undoButton_0);
+      closure$gameAreaTop.appendChild(this$AlysDisplay.soldierButton_0);
+      closure$gameAreaTop.appendChild(this$AlysDisplay.fortButton_0);
+      closure$gameAreaRight.appendChild(this$AlysDisplay.statusArea_0);
+      closure$gameAreaRight.appendChild(this$AlysDisplay.endTurnButton_0);
+      this$AlysDisplay.ruleArea.showRules_lt8gi4$(closure$gameAreaRight);
+      this$AlysDisplay.resize();
       return Unit;
     };
   }
@@ -2172,7 +2150,6 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   function AlysState$Companion() {
     AlysState$Companion_instance = this;
   }
-  var emptyList = Kotlin.kotlin.collections.emptyList_287e2$;
   AlysState$Companion.prototype.connectedPositions_jwhin5$ = function (origin, board) {
     var tmp$;
     tmp$ = board.get_dfplqh$(origin);
@@ -2845,8 +2822,8 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     }
   }
   ChessPlayer.valueOf_61zpoe$ = ChessPlayer$valueOf;
-  function ChessDisplay(canvas, playerArea, gameAreaTop, gameAreaRight) {
-    GameDisplay.call(this, canvas, playerArea, gameAreaTop, gameAreaRight);
+  function ChessDisplay(canvasContainer, playerArea, gameAreaTop, gameAreaRight) {
+    GameDisplay.call(this, canvasContainer, playerArea, gameAreaTop, gameAreaRight);
     this.game_vohlt0$_0 = new Chess();
     this.sourcePosition = null;
     this.getColor_tn0utd$_0 = ChessDisplay$getColor$lambda(this);
@@ -3370,27 +3347,25 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   ChessPiece.prototype.equals = function (other) {
     return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.type, other.type) && Kotlin.equals(this.player, other.player) && Kotlin.equals(this.hasMoved, other.hasMoved)))));
   };
-  function GameDisplay(canvas, playerArea, gameAreaTop, gameAreaRight) {
-    this.canvas = canvas;
+  function GameDisplay(canvasContainer, playerArea, gameAreaTop, gameAreaRight) {
+    this.canvasContainer = canvasContainer;
     this.playerArea = playerArea;
     this.gameAreaTop = gameAreaTop;
     this.gameAreaRight = gameAreaRight;
+    var tmp$, tmp$_0, tmp$_1, tmp$_2, tmp$_3, tmp$_4;
+    this.canvas = Kotlin.isType(tmp$ = document.createElement('canvas'), HTMLCanvasElement) ? tmp$ : throwCCE();
     this.gridDisplay = new GridDisplay(this.canvas);
     this.aiDelay = L200;
     this.playerTypes = mutableListOf([new HumanPlayerType()]);
     this.players = ArrayList_init();
     this.minPlayers = 2;
     this.maxPlayers = 8;
-    var tmp$, tmp$_0, tmp$_1, tmp$_2, tmp$_3;
-    this.playerList = Kotlin.isType(tmp$ = document.createElement('div'), HTMLDivElement) ? tmp$ : throwCCE();
-    this.newGameButton = Kotlin.isType(tmp$_0 = document.createElement('button'), HTMLButtonElement) ? tmp$_0 : throwCCE();
-    this.newPlayerButton = Kotlin.isType(tmp$_1 = document.createElement('button'), HTMLButtonElement) ? tmp$_1 : throwCCE();
-    this.turnLine = Kotlin.isType(tmp$_2 = document.createElement('div'), HTMLDivElement) ? tmp$_2 : throwCCE();
-    this.messageLine = Kotlin.isType(tmp$_3 = document.createElement('div'), HTMLDivElement) ? tmp$_3 : throwCCE();
+    this.playerList = Kotlin.isType(tmp$_0 = document.createElement('div'), HTMLDivElement) ? tmp$_0 : throwCCE();
+    this.newGameButton = Kotlin.isType(tmp$_1 = document.createElement('button'), HTMLButtonElement) ? tmp$_1 : throwCCE();
+    this.newPlayerButton = Kotlin.isType(tmp$_2 = document.createElement('button'), HTMLButtonElement) ? tmp$_2 : throwCCE();
+    this.turnLine = Kotlin.isType(tmp$_3 = document.createElement('div'), HTMLDivElement) ? tmp$_3 : throwCCE();
+    this.messageLine = Kotlin.isType(tmp$_4 = document.createElement('div'), HTMLDivElement) ? tmp$_4 : throwCCE();
     this.previousState = null;
-    this.playerArea.innerHTML = '';
-    this.gameAreaTop.innerHTML = '';
-    this.gameAreaRight.innerHTML = '';
     this.turnLine.className = 'message-line';
     this.messageLine.className = 'message-line';
     this.newGameButton.className = 'new-game';
@@ -3398,12 +3373,46 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     this.newGameButton.onclick = GameDisplay_init$lambda(this);
     this.newPlayerButton.textContent = 'Add player';
     this.newPlayerButton.onclick = GameDisplay_init$lambda_0(this);
+    launch(coroutines.GlobalScope, void 0, void 0, GameDisplay_init$lambda_1(this));
+    this.onShowGame_qijy9e$_0 = null;
+  }
+  GameDisplay.prototype.showGame = function () {
+    var tmp$;
+    this.playerArea.innerHTML = '';
+    this.gameAreaTop.innerHTML = '';
+    this.gameAreaRight.innerHTML = '';
+    this.canvasContainer.innerHTML = '';
+    this.canvasContainer.appendChild(this.canvas);
+    this.sizeCanvas();
     this.playerArea.appendChild(this.playerList);
     this.playerArea.appendChild(this.newPlayerButton);
     this.playerArea.appendChild(this.newGameButton);
     this.playerArea.appendChild(this.turnLine);
     this.playerArea.appendChild(this.messageLine);
-  }
+    (tmp$ = this.onShowGame) != null ? tmp$() : null;
+    this.updateDisplay();
+  };
+  Object.defineProperty(GameDisplay.prototype, 'onShowGame', {
+    get: function () {
+      return this.onShowGame_qijy9e$_0;
+    }
+  });
+  GameDisplay.prototype.sizeCanvas = function () {
+    var tmp$, tmp$_0;
+    var dpr = window.devicePixelRatio;
+    var element = Kotlin.isType(tmp$ = this.canvas.parentElement, HTMLElement) ? tmp$ : throwCCE();
+    var a = element.clientWidth;
+    var b = window.innerHeight - 40 | 0;
+    var styleSize = Math_0.min(a, b);
+    var size = numberToInt(styleSize * dpr);
+    this.canvas.style.width = styleSize.toString() + 'px';
+    this.canvas.style.height = styleSize.toString() + 'px';
+    this.canvas.width = size;
+    this.canvas.height = size;
+    var context = Kotlin.isType(tmp$_0 = this.canvas.getContext('2d'), CanvasRenderingContext2D) ? tmp$_0 : throwCCE();
+    context.setTransform(1.0, 0.0, 0.0, 1.0, 0.0, 0.0);
+    context.scale(dpr, dpr);
+  };
   function GameDisplay$performAction$lambda$lambda(this$GameDisplay_0) {
     return function ($receiver, continuation_0, suspended) {
       var instance = new Coroutine$GameDisplay$performAction$lambda$lambda(this$GameDisplay_0, $receiver, this, continuation_0);
@@ -3557,9 +3566,6 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
       launch(coroutines.GlobalScope, void 0, void 0, GameDisplay$awaitActionFrom$lambda(this, player));
     }
   };
-  GameDisplay.prototype.end = function () {
-    this.gridDisplay.end();
-  };
   GameDisplay.prototype.updatePlayerList = function () {
     var tmp$, tmp$_0, tmp$_1, tmp$_2, tmp$_3;
     this.playerList.innerHTML = '';
@@ -3674,6 +3680,52 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
       return Unit;
     };
   }
+  function GameDisplay_init$lambda_1(this$GameDisplay_0) {
+    return function ($receiver, continuation_0, suspended) {
+      var instance = new Coroutine$GameDisplay_init$lambda(this$GameDisplay_0, $receiver, this, continuation_0);
+      if (suspended)
+        return instance;
+      else
+        return instance.doResume(null);
+    };
+  }
+  function Coroutine$GameDisplay_init$lambda(this$GameDisplay_0, $receiver, controller, continuation_0) {
+    CoroutineImpl.call(this, continuation_0);
+    this.$controller = controller;
+    this.exceptionState_0 = 1;
+    this.local$this$GameDisplay = this$GameDisplay_0;
+  }
+  Coroutine$GameDisplay_init$lambda.$metadata$ = {
+    kind: Kotlin.Kind.CLASS,
+    simpleName: null,
+    interfaces: [CoroutineImpl]
+  };
+  Coroutine$GameDisplay_init$lambda.prototype = Object.create(CoroutineImpl.prototype);
+  Coroutine$GameDisplay_init$lambda.prototype.constructor = Coroutine$GameDisplay_init$lambda;
+  Coroutine$GameDisplay_init$lambda.prototype.doResume = function () {
+    do
+      try {
+        switch (this.state_0) {
+          case 0:
+            return this.local$this$GameDisplay.startNewGame(), Unit;
+          case 1:
+            throw this.exception_0;
+          default:this.state_0 = 1;
+            throw new Error('State Machine Unreachable execution');
+        }
+      }
+       catch (e) {
+        if (this.state_0 === 1) {
+          this.exceptionState_0 = this.state_0;
+          throw e;
+        }
+         else {
+          this.state_0 = this.exceptionState_0;
+          this.exception_0 = e;
+        }
+      }
+     while (true);
+  };
   GameDisplay.$metadata$ = {
     kind: Kind_CLASS,
     simpleName: 'GameDisplay',
@@ -3990,12 +4042,6 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     path.closePath();
     return path;
   };
-  GridDisplay.prototype.end = function () {
-    var tmp$;
-    this.canvas.removeEventListener('click', this.clickListener);
-    var context = Kotlin.isType(tmp$ = this.canvas.getContext('2d'), CanvasRenderingContext2D) ? tmp$ : throwCCE();
-    context.clearRect(0.0, 0.0, this.canvas.width, this.canvas.height);
-  };
   GridDisplay.prototype.gridCoordsAt_vux9f0$ = function (canvasX, canvasY) {
     if (this.hexagonal_0)
       return this.hexCoords_0(canvasX - numberToInt(this.translateX) | 0, canvasY);
@@ -4047,59 +4093,33 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     simpleName: 'GridDisplay',
     interfaces: []
   };
-  function main$addButton$lambda(closure$game, closure$name, closure$header, closure$gameDisplay, closure$canvas, closure$playerArea, closure$gameAreaTop, closure$gameAreaRight) {
-    return function (it) {
-      var tmp$;
-      (tmp$ = closure$game.v) != null ? (tmp$.end(), Unit) : null;
-      closure$header.textContent = closure$name;
-      closure$game.v = closure$gameDisplay(closure$canvas, closure$playerArea, closure$gameAreaTop, closure$gameAreaRight);
-      return Unit;
-    };
-  }
-  function main$addButton(closure$game, closure$header, closure$canvas, closure$playerArea, closure$gameAreaTop, closure$gameAreaRight) {
-    return function (gameDisplay, name, navElement) {
-      var tmp$;
-      var button = Kotlin.isType(tmp$ = document.createElement('button'), HTMLButtonElement) ? tmp$ : throwCCE();
-      button.textContent = name;
-      navElement.appendChild(button);
-      button.addEventListener('click', main$addButton$lambda(closure$game, name, closure$header, gameDisplay, closure$canvas, closure$playerArea, closure$gameAreaTop, closure$gameAreaRight));
-    };
-  }
   function main(args) {
-    var tmp$, tmp$_0, tmp$_1, tmp$_2, tmp$_3, tmp$_4, tmp$_5, tmp$_6;
+    var tmp$, tmp$_0, tmp$_1, tmp$_2, tmp$_3, tmp$_4;
     var header = Kotlin.isType(tmp$ = document.getElementById('header'), HTMLElement) ? tmp$ : throwCCE();
     var navigation = Kotlin.isType(tmp$_0 = document.getElementById('navigation'), HTMLElement) ? tmp$_0 : throwCCE();
     var playerArea = Kotlin.isType(tmp$_1 = document.getElementById('player-area'), HTMLElement) ? tmp$_1 : throwCCE();
     var gameAreaTop = Kotlin.isType(tmp$_2 = document.getElementById('game-area-top'), HTMLElement) ? tmp$_2 : throwCCE();
     var gameAreaRight = Kotlin.isType(tmp$_3 = document.getElementById('game-area-right'), HTMLElement) ? tmp$_3 : throwCCE();
-    var canvas = Kotlin.isType(tmp$_4 = document.getElementById('canvas'), HTMLCanvasElement) ? tmp$_4 : throwCCE();
-    var dpr = window.devicePixelRatio;
-    var element = Kotlin.isType(tmp$_5 = canvas.parentElement, HTMLElement) ? tmp$_5 : throwCCE();
-    var a = element.clientWidth;
-    var b = window.innerHeight - navigation.clientHeight | 0;
-    var styleSize = Math_0.min(a, b);
-    var size = numberToInt(styleSize * dpr);
-    canvas.style.width = styleSize.toString() + 'px';
-    canvas.style.height = styleSize.toString() + 'px';
-    canvas.width = size;
-    canvas.height = size;
-    var context = Kotlin.isType(tmp$_6 = canvas.getContext('2d'), CanvasRenderingContext2D) ? tmp$_6 : throwCCE();
-    context.scale(dpr, dpr);
+    var canvasContainer = Kotlin.isType(tmp$_4 = document.getElementById('canvas'), HTMLElement) ? tmp$_4 : throwCCE();
     header.textContent = 'Select a game';
-    var game = {v: null};
-    var addButton = main$addButton(game, header, canvas, playerArea, gameAreaTop, gameAreaRight);
-    addButton(getCallableRef('AlysDisplay', function (canvas, playerArea, gameAreaTop, gameAreaRight) {
-      return new AlysDisplay(canvas, playerArea, gameAreaTop, gameAreaRight);
-    }), 'Alys', navigation);
-    addButton(getCallableRef('ChessDisplay', function (canvas, playerArea, gameAreaTop, gameAreaRight) {
-      return new ChessDisplay(canvas, playerArea, gameAreaTop, gameAreaRight);
-    }), 'Chess', navigation);
-    addButton(getCallableRef('VirusDisplay', function (canvas, playerArea, gameAreaTop, gameAreaRight) {
-      return new VirusDisplay(canvas, playerArea, gameAreaTop, gameAreaRight);
-    }), 'Virus', navigation);
-    addButton(getCallableRef('TicTacToeDisplay', function (canvas, playerArea, gameAreaTop, gameAreaRight) {
-      return new TicTacToeDisplay(canvas, playerArea, gameAreaTop, gameAreaRight);
-    }), 'Tic Tac Toe', navigation);
+    addButton(new AlysDisplay(canvasContainer, playerArea, gameAreaTop, gameAreaRight), 'Alys', navigation, header);
+    addButton(new ChessDisplay(canvasContainer, playerArea, gameAreaTop, gameAreaRight), 'Chess', navigation, header);
+    addButton(new VirusDisplay(canvasContainer, playerArea, gameAreaTop, gameAreaRight), 'Virus', navigation, header);
+    addButton(new TicTacToeDisplay(canvasContainer, playerArea, gameAreaTop, gameAreaRight), 'Tic Tac Toe', navigation, header);
+  }
+  function addButton$lambda(closure$name, closure$header, closure$gameDisplay) {
+    return function (it) {
+      closure$header.textContent = closure$name;
+      closure$gameDisplay.showGame();
+      return Unit;
+    };
+  }
+  function addButton(gameDisplay, name, navElement, header) {
+    var tmp$;
+    var button = Kotlin.isType(tmp$ = document.createElement('button'), HTMLButtonElement) ? tmp$ : throwCCE();
+    button.textContent = name;
+    navElement.appendChild(button);
+    button.addEventListener('click', addButton$lambda(name, header, gameDisplay));
   }
   function Position(x, y) {
     this.x = x;
@@ -4167,7 +4187,11 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   Position.prototype.equals = function (other) {
     return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.x, other.x) && Kotlin.equals(this.y, other.y)))));
   };
-  function createRuleArea$lambda(closure$rulesArea) {
+  function RuleArea(overview, ruleSections) {
+    this.overview = overview;
+    this.ruleSections = ruleSections;
+  }
+  function RuleArea$showRules$lambda(closure$rulesArea) {
     return function (it) {
       if (closure$rulesArea.classList.length > 1)
         closure$rulesArea.className = 'rules-area';
@@ -4176,22 +4200,27 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
       return Unit;
     };
   }
-  function createRuleArea(container, overview, ruleSections) {
+  RuleArea.prototype.showRules_lt8gi4$ = function (container) {
     var tmp$, tmp$_0, tmp$_1;
     var rulesButton = Kotlin.isType(tmp$ = document.createElement('button'), HTMLButtonElement) ? tmp$ : throwCCE();
     var rulesArea = Kotlin.isType(tmp$_0 = document.createElement('div'), HTMLDivElement) ? tmp$_0 : throwCCE();
     rulesButton.textContent = 'Rules';
-    rulesArea.innerHTML = overview;
+    rulesArea.innerHTML = this.overview;
     rulesArea.className = 'rules-area hidden';
     container.appendChild(rulesButton);
     container.appendChild(rulesArea);
-    rulesButton.onclick = createRuleArea$lambda(rulesArea);
-    tmp$_1 = ruleSections.iterator();
+    rulesButton.onclick = RuleArea$showRules$lambda(rulesArea);
+    tmp$_1 = this.ruleSections.iterator();
     while (tmp$_1.hasNext()) {
       var section = tmp$_1.next();
       section.addToContainer_e0t6x9$(rulesArea);
     }
-  }
+  };
+  RuleArea.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'RuleArea',
+    interfaces: []
+  };
   function RuleSection(name, content) {
     this.name = name;
     this.content = content;
@@ -4437,8 +4466,8 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   TicTacToeAction.prototype.equals = function (other) {
     return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.piece, other.piece) && Kotlin.equals(this.x, other.x) && Kotlin.equals(this.y, other.y)))));
   };
-  function TicTacToeDisplay(canvas, playerArea, gameAreaTop, gameAreaRight) {
-    GameDisplay.call(this, canvas, playerArea, gameAreaTop, gameAreaRight);
+  function TicTacToeDisplay(canvasContainer, playerArea, gameAreaTop, gameAreaRight) {
+    GameDisplay.call(this, canvasContainer, playerArea, gameAreaTop, gameAreaRight);
     this.game_p4bo12$_0 = new TicTacToe();
     this.getColor_fajsqn$_0 = null;
     this.draw_p5ofi0$_0 = TicTacToeDisplay$draw$lambda;
@@ -4900,8 +4929,8 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   VirusAction.prototype.equals = function (other) {
     return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.source, other.source) && Kotlin.equals(this.destination, other.destination)))));
   };
-  function VirusDisplay(canvas, playerArea, gameAreaTop, gameAreaRight) {
-    GameDisplay.call(this, canvas, playerArea, gameAreaTop, gameAreaRight);
+  function VirusDisplay(canvasContainer, playerArea, gameAreaTop, gameAreaRight) {
+    GameDisplay.call(this, canvasContainer, playerArea, gameAreaTop, gameAreaRight);
     this.game_rcjipt$_0 = new Virus();
     this.getColor_csj3a4$_0 = VirusDisplay$getColor$lambda(this);
     this.draw_rdwa6r$_0 = null;
@@ -5063,7 +5092,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   _.GridDisplay = GridDisplay;
   _.main_kand9s$ = main;
   _.Position = Position;
-  _.createRuleArea_gwmwxu$ = createRuleArea;
+  _.RuleArea = RuleArea;
   _.RuleSection = RuleSection;
   Object.defineProperty(TicTacToe, 'Companion', {
     get: TicTacToe$Companion_getInstance
