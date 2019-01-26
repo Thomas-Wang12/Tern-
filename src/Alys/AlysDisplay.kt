@@ -30,10 +30,18 @@ class AlysDisplay(canvasContainer: HTMLElement, playerArea: HTMLElement, gameAre
 			|Towns collect money from the surrounding area every turn, and allow you to buy soldier and forts. Forts provide more protection than towns, so higher rank soldiers are needed to take them. Soldiers are upgraded by moving onto each other.
 		""".trimMargin(),
 			listOf(
+					RuleSection("How to play", """<img src="assets/BR.png" /> <img src="assets/S1R.png" />
+							|To create soldiers and forts, click on one of your areas, which will select the town in the area. When a town with enough money is selected, you'll be able to press the buttons above the map. A flag by the town will tell you if there's enough money to buy something.
+							|
+							|<img src="assets/F.png" />
+							|Press the "Build Fort" button and select an empty field in the highlighted area to build a fort there.
+							|<img src="assets/S1.png" /> <img src="assets/S2.png" />
+							|Press the "Hire Soldier" button and select a field in or next to the highlighted area to place a soldier there. A soldier can be placed on any field in your own area, other than on forts or towns, and on any enemy field whose defense it is strong enough to beat. Placing one soldier onto another create an upgraded soldier.
+							|
+							|Existing soldiers can also be selected and moved. A flag by a soldier will tell you when it is ready to move.
+						""".trimMargin()),
 					RuleSection("Towns", """<img src="assets/B.png" /> <img src="assets/BR.png" />
 							|Towns are the centers of your areas. Each area consisting of at least two fields will have a town, which collects the money you gain from the area. You can see those details in the top right corner.
-							|
-							|Towns let you recruit soldiers and build forts (select a town and press the corresponding button above the map, and then press the field where you want the fort/soldier). The flag lets you know when there's enough money to buy something.
 							|
 							|At the beginning of every turn, the town's treasury grows by one per field in its area, except those that are overgrown. Then the upkeep for soldiers in the area is paid. If there's not enough money to pay your soldiers, they'll die and leave a grave.
 							|
@@ -54,7 +62,7 @@ class AlysDisplay(canvasContainer: HTMLElement, playerArea: HTMLElement, gameAre
 							|<img src="assets/S4.png" /> <img src="assets/S4R.png" />
 							|Generals (upkeep 54) can take any field.
 							|
-							|A flag by a soldier means that it is ready to perform an action. Soldiers can generally only do one thing per turn, but are able to move freely between your empty fields.
+							|Soldiers can generally only do one thing per turn, but are able to move freely between your empty fields.
 						""".trimMargin()),
 					RuleSection("Other details", """<img src="assets/F.png" />
 							|Fort defend and area and cost no upkeep. Only a soldier of at least Knight rank can destroy it.
@@ -63,7 +71,7 @@ class AlysDisplay(canvasContainer: HTMLElement, playerArea: HTMLElement, gameAre
 							|
 							|Whenever an empty field is adjacent to two trees, the trees will spread to that area. Bushes only grow on coastal fields, and spread to adjacent empty coastal fields. Try not to get overwhelmed.
 							|<img src="assets/G.png" />
-							|Graves are left by soldiers when their upkeep wasn't paid. The following turn they'll overgrow and turn into either trees or bushes, depending on whether they're near the coast or not.
+							|Graves are left by soldiers when their upkeep wasn't paid. The following turn they'll overgrow and turn into trees or bushes, depending on whether they're near the coast or not.
 							|
 							|The game is won when there are no enemy towns left.
 						""".trimMargin())
