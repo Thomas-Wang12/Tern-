@@ -275,11 +275,11 @@ data class AlysState(
 
 	fun incomeFor(basePosition: Position, newBoard: Grid<AlysField?>? = null): Int {
 		val board = newBoard ?: board
-		return connectedPositions(basePosition, board).filter{ it.field.piece?.type != AlysType.Tree && it.field.piece?.type != AlysType.CoastTree}.size
+		return connectedPositions(basePosition, board).filter { it.field.piece?.type != AlysType.Tree && it.field.piece?.type != AlysType.CoastTree }.size
 	}
 
 	fun upkeepFor(piece: AlysPiece): Int {
-		if(piece.type != AlysType.Soldier)
+		if (piece.type != AlysType.Soldier)
 			return 0
 		return upkeepFor(piece.strength)
 	}
@@ -297,7 +297,7 @@ data class AlysState(
 	override fun findWinner(): Int? {
 		var remainingPlayer: Int? = null
 		for (field in board.fields.filterNotNull()) {
-			if(field.treasury == null)
+			if (field.treasury == null)
 				continue
 			val player = field.player
 			if (remainingPlayer == null)
@@ -349,3 +349,12 @@ data class AlysState(
 		}
 	}
 }
+
+abstract class UpdateThing {
+	abstract val conditions: List<Rule<AlysState, AlysAction>>
+	abstract fun shouldHappen(state: AlysState, action: AlysAction): Boolean
+	abstract fun update(state: AlysState, action: AlysAction): AlysState
+}
+
+
+

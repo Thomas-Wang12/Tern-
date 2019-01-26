@@ -7,7 +7,7 @@ class RuleArea(val overview: String, val ruleSections: List<RuleSection>) {
 	fun showRules(container: HTMLElement) {
 		val rulesButton = document.createElement("button") as HTMLButtonElement
 		val rulesArea = document.createElement("div") as HTMLDivElement
-		rulesButton.textContent = "Rules"
+		rulesButton.textContent = "How to play"
 		rulesArea.innerHTML = overview
 		rulesArea.className = "rules-area hidden"
 		container.appendChild(rulesButton)

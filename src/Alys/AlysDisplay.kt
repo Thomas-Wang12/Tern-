@@ -30,15 +30,15 @@ class AlysDisplay(canvasContainer: HTMLElement, playerArea: HTMLElement, gameAre
 			|Towns collect money from the surrounding area every turn, and allow you to buy soldier and forts. Forts provide more protection than towns, so higher rank soldiers are needed to take them. Soldiers are upgraded by moving onto each other.
 		""".trimMargin(),
 			listOf(
-					RuleSection("How to play", """<img src="assets/BR.png" /> <img src="assets/S1R.png" />
-							|To create soldiers and forts, click on one of your areas, which will select the town in the area. When a town with enough money is selected, you'll be able to press the buttons above the map. A flag by the town will tell you if there's enough money to buy something.
+					RuleSection("Gameplay", """<img src="assets/BR.png" /> <img src="assets/S1R.png" />
+							|Flags indicate when towns or soldiers are ready to do something. Clicking on an area with a town that has a flag will let you create soldiers and forts. With a town selected, you'll be able to press the buttons above the map.
 							|
 							|<img src="assets/F.png" />
 							|Press the "Build Fort" button and select an empty field in the highlighted area to build a fort there.
 							|<img src="assets/S1.png" /> <img src="assets/S2.png" />
-							|Press the "Hire Soldier" button and select a field in or next to the highlighted area to place a soldier there. A soldier can be placed on any field in your own area, other than on forts or towns, and on any enemy field whose defense it is strong enough to beat. Placing one soldier onto another create an upgraded soldier.
+							|Press the "Hire Soldier" button and select a field in or next to the highlighted area to place a soldier there. You can also click an existing soldier with a flag to give it orders.
 							|
-							|Existing soldiers can also be selected and moved. A flag by a soldier will tell you when it is ready to move.
+							|A soldier can be placed on any field in your own area, other than on forts or towns, and on any enemy field whose defense it is strong enough to beat. Placing one soldier onto another create an upgraded soldier.
 						""".trimMargin()),
 					RuleSection("Towns", """<img src="assets/B.png" /> <img src="assets/BR.png" />
 							|Towns are the centers of your areas. Each area consisting of at least two fields will have a town, which collects the money you gain from the area. You can see those details in the top right corner.
