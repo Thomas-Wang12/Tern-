@@ -767,7 +767,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     this.endTurnButton_0 = Kotlin.isType(tmp$_2 = document.createElement('button'), HTMLButtonElement) ? tmp$_2 : throwCCE();
     this.statusArea_0 = Kotlin.isType(tmp$_3 = document.createElement('div'), HTMLDivElement) ? tmp$_3 : throwCCE();
     this.images = LinkedHashMap_init();
-    this.ruleArea = new RuleArea(trimMargin('Alys is a game about conquering an island.\n\t\t\t|<img src="assets/B.png" /> <img src="assets/S1.png" />\n\t\t\t|You expand your territory by recruiting soldiers in town and using them to take new fields. Towns, forts and soldiers all protect the fields next to them, which means you need stronger soldiers to take them.\n\t\t\t|<img src="assets/F.png" /> <img src="assets/T.png" />\n\t\t\t|Towns collect money from the surrounding area every turn, and allow you to buy soldier and forts. Forts provide more protection than towns, so higher rank soldiers are needed to take them. Soldiers are upgraded by moving onto each other.\n\t\t'), listOf([new RuleSection('Towns', trimMargin('<img src="assets/B.png" /> <img src="assets/BR.png" />\n\t\t\t\t\t\t\t|Towns are the centers of your areas. Each area consisting of at least two fields will have a town, which collects the money you gain from the area. You can see those details in the top right corner.\n\t\t\t\t\t\t\t|\n\t\t\t\t\t\t\t|Towns let you recruit soldiers and build forts (select a town and press the corresponding button above the map, and then press the field where you want the fort/soldier). The flag lets you know when there\'s enough money to buy something.\n\t\t\t\t\t\t\t|\n\t\t\t\t\t\t\t|At the beginning of every turn, the town gains one money(?) per field in its area, except those that are overgrown. Then the upkeep for soldiers in the area is paid. If there\'s not enough money to pay your soldiers, they\'ll die and leave a grave.\n\t\t\t\t\t\t\t|\n\t\t\t\t\t\t\t|When two areas with a town each are connected, the town with the smaller treasury transfers its money to the other and disappears.\n\t\t\t\t\t\t\t|\n\t\t\t\t\t\t\t|A town protects the fields you own next to it, so a soldier of at least Veteran rank is needed to take it. When a town is destroyed, its treasury is lost.\n\t\t\t\t\t\t')), new RuleSection('Soldiers', trimMargin('<img src="assets/S1.png" /> <img src="assets/S2.png" /> <img src="assets/S3.png" /> <img src="assets/S4.png" />\n\t\t\t\t\t\t\t|Soldiers are used to conquer the enemies\' fields. They can move to any field neighbouring the area they are in. Like towns, soldiers protect the fields around them. Soldiers come in four ranks. Stronger soldiers beat weaker soldiers, but cost more upkeep.\n\t\t\t\t\t\t\t|\n\t\t\t\t\t\t\t|Upgrade a soldier by moving another soldier onto it.\n\t\t\t\t\t\t\t|<img src="assets/S1.png" /> <img src="assets/S1R.png" />\n\t\t\t\t\t\t\t|Recruits (upkeep 2) are only able to take undefended fields.\n\t\t\t\t\t\t\t|<img src="assets/S2.png" /> <img src="assets/S2R.png" />\n\t\t\t\t\t\t\t|Veterans (upkeep 6) can take fields defended by towns and recruits.\n\t\t\t\t\t\t\t|<img src="assets/S3.png" /> <img src="assets/S3R.png" />\n\t\t\t\t\t\t\t|Elites (upkeep 18) can take fields defended by forts and lower rank soldiers.\n\t\t\t\t\t\t\t|<img src="assets/S4.png" /> <img src="assets/S4R.png" />\n\t\t\t\t\t\t\t|Generals (upkeep 54) can take any field.\n\t\t\t\t\t\t\t|\n\t\t\t\t\t\t\t|A flag by a soldier means that it is ready to perform an action. Soldiers can generally only do one thing per turn, but are able to move freely between your empty fields.\n\t\t\t\t\t\t')), new RuleSection('Other details', trimMargin('<img src="assets/F.png" />\n\t\t\t\t\t\t\t|Fort defend and area and cost no upkeep. Only a soldier of at least Knight rank can destroy it.\n\t\t\t\t\t\t\t|<img src="assets/T.png" /> <img src="assets/C.png" />\n\t\t\t\t\t\t\t|Some fields are overgrown by trees or bushes. Overgrown fields provide no money to the town in the area, but can be removed by soldiers\n\t\t\t\t\t\t\t|\n\t\t\t\t\t\t\t|Whenever an empty field is adjacent to two trees, the trees will spread to that area. Bushes only grow on coastal fields, and spread to adjacent empty coastal fields. Try not to get overwhelmed.\n\t\t\t\t\t\t\t|<img src="assets/G.png" />\n\t\t\t\t\t\t\t|Graves are left by soldiers when their upkeep wasn\'t paid. The following turn they\'ll overgrow and turn into either trees or bushes, depending on whether they\'re near the coast or not.\n\t\t\t\t\t\t\t|\n\t\t\t\t\t\t\t|The game is won when there are no enemy towns left.\n\t\t\t\t\t\t'))]));
+    this.ruleArea = new RuleArea(trimMargin('Alys is a game about conquering an island.\n\t\t\t|<img src="assets/B.png" /> <img src="assets/S1.png" />\n\t\t\t|You expand your territory by recruiting soldiers in town and using them to take new fields. Towns, forts and soldiers all protect the fields next to them, which means you need stronger soldiers to take them.\n\t\t\t|<img src="assets/F.png" /> <img src="assets/T.png" />\n\t\t\t|Towns collect money from the surrounding area every turn, and allow you to buy soldier and forts. Forts provide more protection than towns, so higher rank soldiers are needed to take them. Soldiers are upgraded by moving onto each other.\n\t\t'), listOf([new RuleSection('Towns', trimMargin('<img src="assets/B.png" /> <img src="assets/BR.png" />\n\t\t\t\t\t\t\t|Towns are the centers of your areas. Each area consisting of at least two fields will have a town, which collects the money you gain from the area. You can see those details in the top right corner.\n\t\t\t\t\t\t\t|\n\t\t\t\t\t\t\t|Towns let you recruit soldiers and build forts (select a town and press the corresponding button above the map, and then press the field where you want the fort/soldier). The flag lets you know when there\'s enough money to buy something.\n\t\t\t\t\t\t\t|\n\t\t\t\t\t\t\t|At the beginning of every turn, the town\'s treasury grows by one per field in its area, except those that are overgrown. Then the upkeep for soldiers in the area is paid. If there\'s not enough money to pay your soldiers, they\'ll die and leave a grave.\n\t\t\t\t\t\t\t|\n\t\t\t\t\t\t\t|When two areas with a town each are connected, the town with the smaller treasury transfers its money to the other and disappears.\n\t\t\t\t\t\t\t|\n\t\t\t\t\t\t\t|A town protects the fields you own next to it, so a soldier of at least Veteran rank is needed to take it. When a town is destroyed, its treasury is lost.\n\t\t\t\t\t\t')), new RuleSection('Soldiers', trimMargin('<img src="assets/S1.png" /> <img src="assets/S2.png" /> <img src="assets/S3.png" /> <img src="assets/S4.png" />\n\t\t\t\t\t\t\t|Soldiers are used to conquer the enemies\' fields. They can move to any field neighbouring the area they are in. Like towns, soldiers protect the fields around them. Soldiers come in four ranks. Stronger soldiers beat weaker soldiers, but cost more upkeep.\n\t\t\t\t\t\t\t|\n\t\t\t\t\t\t\t|Upgrade a soldier by moving another soldier onto it.\n\t\t\t\t\t\t\t|<img src="assets/S1.png" /> <img src="assets/S1R.png" />\n\t\t\t\t\t\t\t|Recruits (upkeep 2) are only able to take undefended fields.\n\t\t\t\t\t\t\t|<img src="assets/S2.png" /> <img src="assets/S2R.png" />\n\t\t\t\t\t\t\t|Veterans (upkeep 6) can take fields defended by towns and recruits.\n\t\t\t\t\t\t\t|<img src="assets/S3.png" /> <img src="assets/S3R.png" />\n\t\t\t\t\t\t\t|Elites (upkeep 18) can take fields defended by forts and lower rank soldiers.\n\t\t\t\t\t\t\t|<img src="assets/S4.png" /> <img src="assets/S4R.png" />\n\t\t\t\t\t\t\t|Generals (upkeep 54) can take any field.\n\t\t\t\t\t\t\t|\n\t\t\t\t\t\t\t|A flag by a soldier means that it is ready to perform an action. Soldiers can generally only do one thing per turn, but are able to move freely between your empty fields.\n\t\t\t\t\t\t')), new RuleSection('Other details', trimMargin('<img src="assets/F.png" />\n\t\t\t\t\t\t\t|Fort defend and area and cost no upkeep. Only a soldier of at least Knight rank can destroy it.\n\t\t\t\t\t\t\t|<img src="assets/T.png" /> <img src="assets/C.png" />\n\t\t\t\t\t\t\t|Some fields are overgrown by trees or bushes. Overgrown fields provide no money to the town in the area, but can be removed by soldiers\n\t\t\t\t\t\t\t|\n\t\t\t\t\t\t\t|Whenever an empty field is adjacent to two trees, the trees will spread to that area. Bushes only grow on coastal fields, and spread to adjacent empty coastal fields. Try not to get overwhelmed.\n\t\t\t\t\t\t\t|<img src="assets/G.png" />\n\t\t\t\t\t\t\t|Graves are left by soldiers when their upkeep wasn\'t paid. The following turn they\'ll overgrow and turn into either trees or bushes, depending on whether they\'re near the coast or not.\n\t\t\t\t\t\t\t|\n\t\t\t\t\t\t\t|The game is won when there are no enemy towns left.\n\t\t\t\t\t\t'))]));
     this.getColor_vm40yk$_0 = AlysDisplay$getColor$lambda(this);
     this.draw_6lbnvp$_0 = AlysDisplay$draw$lambda(this);
     this.addImage_61zpoe$('S1');
@@ -808,18 +808,10 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     this.playerTypes.add_11rb$(new RandomAIPlayerType());
     this.playerTypes.add_11rb$(new SimpleAlysAIPlayerType());
     this.players.add_11rb$(new HumanPlayer('Player 1', '#0b9'));
-    this.players.add_11rb$(new SimpleAIPlayer('Player 2', 'green', getCallableRef('alysUtility', function (state, action) {
-      return alysUtility(state, action);
-    })));
-    this.players.add_11rb$(new SimpleAIPlayer('Player 3', 'yellowgreen', getCallableRef('alysUtility', function (state, action) {
-      return alysUtility(state, action);
-    })));
-    this.players.add_11rb$(new SimpleAIPlayer('Player 4', 'yellow', getCallableRef('alysUtility', function (state, action) {
-      return alysUtility(state, action);
-    })));
-    this.players.add_11rb$(new SimpleAIPlayer('Player 5', 'orange', getCallableRef('alysUtility', function (state, action) {
-      return alysUtility(state, action);
-    })));
+    this.players.add_11rb$(new RandomAIPlayer('Player 2', 'green'));
+    this.players.add_11rb$(new RandomAIPlayer('Player 3', 'yellowgreen'));
+    this.players.add_11rb$(new RandomAIPlayer('Player 4', 'yellow'));
+    this.players.add_11rb$(new RandomAIPlayer('Player 5', 'orange'));
     this.gridDisplay.onClick = AlysDisplay_init$lambda(this);
     this.onShowGame_59dkf9$_0 = AlysDisplay$onShowGame$lambda(this, gameAreaTop, gameAreaRight);
   }
@@ -1032,7 +1024,6 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   function AlysDisplay$draw$lambda(this$AlysDisplay) {
     return function (context, fieldSize, field, x, y) {
       var tmp$, tmp$_0, tmp$_1;
-      var origin = this$AlysDisplay.originPosition;
       if (field == null)
         return;
       context.lineWidth = 2.0;
@@ -1139,8 +1130,8 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
       closure$gameAreaTop.appendChild(this$AlysDisplay.undoButton_0);
       closure$gameAreaTop.appendChild(this$AlysDisplay.soldierButton_0);
       closure$gameAreaTop.appendChild(this$AlysDisplay.fortButton_0);
+      closure$gameAreaTop.appendChild(this$AlysDisplay.endTurnButton_0);
       closure$gameAreaRight.appendChild(this$AlysDisplay.statusArea_0);
-      closure$gameAreaRight.appendChild(this$AlysDisplay.endTurnButton_0);
       this$AlysDisplay.ruleArea.showRules_lt8gi4$(closure$gameAreaRight);
       this$AlysDisplay.resize();
       return Unit;
@@ -1152,7 +1143,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     interfaces: [GameDisplay]
   };
   function SimpleAlysAIPlayerType() {
-    PlayerType.call(this, 'CPU - So-so');
+    PlayerType.call(this, 'CPU - Medium');
   }
   SimpleAlysAIPlayerType.prototype.isOfType_vgc0e7$ = function (player) {
     return Kotlin.isType(player, SimpleAIPlayer);
@@ -3848,7 +3839,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     interfaces: [PlayerType]
   };
   function RandomAIPlayerType() {
-    PlayerType.call(this, 'CPU - Worst');
+    PlayerType.call(this, 'CPU - Weak');
   }
   RandomAIPlayerType.prototype.isOfType_vgc0e7$ = function (player) {
     return Kotlin.isType(player, RandomAIPlayer);
@@ -4932,15 +4923,15 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   function VirusDisplay(canvasContainer, playerArea, gameAreaTop, gameAreaRight) {
     GameDisplay.call(this, canvasContainer, playerArea, gameAreaTop, gameAreaRight);
     this.game_rcjipt$_0 = new Virus();
+    this.originPosition = null;
     this.getColor_csj3a4$_0 = VirusDisplay$getColor$lambda(this);
-    this.draw_rdwa6r$_0 = null;
+    this.draw_rdwa6r$_0 = VirusDisplay$draw$lambda(this);
     this.playerTypes.add_11rb$(new RandomAIPlayerType());
     this.players.add_11rb$(new HumanPlayer('Player 1', 'yellow'));
     this.players.add_11rb$(new RandomAIPlayer('Player 2', 'red'));
     this.maxPlayers = 4;
     this.startNewGame();
-    var sourcePosition = {v: null};
-    this.gridDisplay.onClick = VirusDisplay_init$lambda(this, sourcePosition);
+    this.gridDisplay.onClick = VirusDisplay_init$lambda(this);
   }
   Object.defineProperty(VirusDisplay.prototype, 'game', {
     get: function () {
@@ -4981,16 +4972,27 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
       return 'white';
     };
   }
-  function VirusDisplay_init$lambda(this$VirusDisplay, closure$sourcePosition) {
+  function VirusDisplay$draw$lambda(this$VirusDisplay) {
+    return function (context, fieldSize, field, x, y) {
+      var origin = this$VirusDisplay.originPosition;
+      if (origin == null || !(origin.x === x && origin.y === y))
+        return;
+      context.fillStyle = 'white';
+      context.fillRect(fieldSize / 4, fieldSize / 4, fieldSize / 2, fieldSize / 2);
+      return Unit;
+    };
+  }
+  function VirusDisplay_init$lambda(this$VirusDisplay) {
     return function (it) {
       if (Kotlin.isType(this$VirusDisplay.game.currentPlayer(), Player) && it.x >= 0 && it.y >= 0 && it.x < this$VirusDisplay.game.state.width && it.y < this$VirusDisplay.game.state.height) {
-        var source = closure$sourcePosition.v;
-        if (source == null) {
-          closure$sourcePosition.v = new Position(it.x, it.y);
+        var origin = this$VirusDisplay.originPosition;
+        if (origin == null) {
+          this$VirusDisplay.originPosition = new Position(it.x, it.y);
+          this$VirusDisplay.updateDisplay();
         }
          else {
-          closure$sourcePosition.v = null;
-          this$VirusDisplay.performAction_11re$(new VirusAction(source, new Position(it.x, it.y)));
+          this$VirusDisplay.originPosition = null;
+          this$VirusDisplay.performAction_11re$(new VirusAction(origin, new Position(it.x, it.y)));
         }
       }
       return Unit;

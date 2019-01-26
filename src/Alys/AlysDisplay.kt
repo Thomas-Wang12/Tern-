@@ -35,7 +35,7 @@ class AlysDisplay(canvasContainer: HTMLElement, playerArea: HTMLElement, gameAre
 							|
 							|Towns let you recruit soldiers and build forts (select a town and press the corresponding button above the map, and then press the field where you want the fort/soldier). The flag lets you know when there's enough money to buy something.
 							|
-							|At the beginning of every turn, the town gains one money(?) per field in its area, except those that are overgrown. Then the upkeep for soldiers in the area is paid. If there's not enough money to pay your soldiers, they'll die and leave a grave.
+							|At the beginning of every turn, the town's treasury grows by one per field in its area, except those that are overgrown. Then the upkeep for soldiers in the area is paid. If there's not enough money to pay your soldiers, they'll die and leave a grave.
 							|
 							|When two areas with a town each are connected, the town with the smaller treasury transfers its money to the other and disappears.
 							|
@@ -74,8 +74,6 @@ class AlysDisplay(canvasContainer: HTMLElement, playerArea: HTMLElement, gameAre
 		if (origin != null && origin.x == x && origin.y == y)
 			return@getColor "white"
 		val piece = game.state.board[x, y] ?: return@getColor "transparent"
-		//if(Position(x,y) in selectedArea)
-		//	return@getColor "red"
 		val player = game.players[piece.player]
 		if (player != null)
 			return@getColor player.color
@@ -83,7 +81,6 @@ class AlysDisplay(canvasContainer: HTMLElement, playerArea: HTMLElement, gameAre
 	}
 
 	override val draw = draw@{ context: CanvasRenderingContext2D, fieldSize: Double, field: AlysField?, x: Int, y: Int ->
-		val origin = originPosition
 		if (field == null)
 			return@draw
 		context.lineWidth = 2.0
@@ -161,10 +158,10 @@ class AlysDisplay(canvasContainer: HTMLElement, playerArea: HTMLElement, gameAre
 		playerTypes.add(RandomAIPlayerType<AlysState, AlysAction>())
 		playerTypes.add(SimpleAlysAIPlayerType())
 		players.add(HumanPlayer("Player 1", "#0b9"))
-		players.add(SimpleAIPlayer("Player 2", "green", ::alysUtility))
-		players.add(SimpleAIPlayer("Player 3", "yellowgreen", ::alysUtility))
-		players.add(SimpleAIPlayer("Player 4", "yellow", ::alysUtility))
-		players.add(SimpleAIPlayer("Player 5", "orange", ::alysUtility))
+		players.add(RandomAIPlayer<AlysState, AlysAction>("Player 2", "green"))
+		players.add(RandomAIPlayer<AlysState, AlysAction>("Player 3", "yellowgreen"))
+		players.add(RandomAIPlayer<AlysState, AlysAction>("Player 4", "yellow"))
+		players.add(RandomAIPlayer<AlysState, AlysAction>("Player 5", "orange"))
 
 		gridDisplay.onClick = click@{
 			if (game.currentPlayer() is Player && game.state.board.isWithinBounds(it)) {
@@ -233,8 +230,8 @@ class AlysDisplay(canvasContainer: HTMLElement, playerArea: HTMLElement, gameAre
 		gameAreaTop.appendChild(undoButton)
 		gameAreaTop.appendChild(soldierButton)
 		gameAreaTop.appendChild(fortButton)
+		gameAreaTop.appendChild(endTurnButton)
 		gameAreaRight.appendChild(statusArea)
-		gameAreaRight.appendChild(endTurnButton)
 		ruleArea.showRules(gameAreaRight)
 		resize()
 	}
@@ -314,7 +311,7 @@ class AlysDisplay(canvasContainer: HTMLElement, playerArea: HTMLElement, gameAre
 	}
 }
 
-class SimpleAlysAIPlayerType : PlayerType("CPU - So-so") {
+class SimpleAlysAIPlayerType : PlayerType("CPU - Medium") {
 	override fun isOfType(player: Player): Boolean = player is SimpleAIPlayer<*, *>
 	override fun getNew(name: String, color: String) = SimpleAIPlayer(name, color, ::alysUtility)
 }

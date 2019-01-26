@@ -238,7 +238,7 @@ class HumanPlayerType : PlayerType("Human") {
 	override fun getNew(name: String, color: String) = HumanPlayer(name, color)
 }
 
-class RandomAIPlayerType<S : BoardGameState<*, A, *>, A> : PlayerType("CPU - Worst") {
+class RandomAIPlayerType<S : BoardGameState<*, A, *>, A> : PlayerType("CPU - Weak") {
 	override fun isOfType(player: Player): Boolean = player is RandomAIPlayer<*, *>
 	override fun getNew(name: String, color: String) = RandomAIPlayer<S, A>(name, color)
 }

@@ -4,13 +4,22 @@ class VirusDisplay(canvasContainer: HTMLElement, playerArea: HTMLElement, gameAr
 	: GameDisplay<Virus, VirusState, Int, VirusAction, Int>(canvasContainer, playerArea, gameAreaTop, gameAreaRight) {
 	override var game = Virus()
 
+	var originPosition: Position? = null
+
 	override val getColor = getColor@{ piece: Int, _: Int, _: Int ->
 		val player = game.players[piece]
 		if (player != null)
 			return@getColor player.color
 		return@getColor "white"
 	}
-	override val draw = null
+	override val draw = draw@{ context: CanvasRenderingContext2D, fieldSize: Double, field: Int, x: Int, y: Int ->
+		val origin = originPosition
+		if (origin == null || !(origin.x == x && origin.y == y))
+			return@draw
+		// context.lineWidth = 2.0
+		context.fillStyle = "white"
+		context.fillRect(fieldSize/4, fieldSize/4, fieldSize/2, fieldSize/2)
+	}
 
 	init {
 		playerTypes.add(RandomAIPlayerType<VirusState, VirusAction>())
@@ -20,16 +29,15 @@ class VirusDisplay(canvasContainer: HTMLElement, playerArea: HTMLElement, gameAr
 
 		startNewGame()
 
-		var sourcePosition: Position? = null
-
 		gridDisplay.onClick = {
 			if (game.currentPlayer() is Player && it.x >= 0 && it.y >= 0 && it.x < game.state.width && it.y < game.state.height) {
-				val source = sourcePosition
-				if (source == null) {
-					sourcePosition = Position(it.x, it.y)
+				val origin = originPosition
+				if (origin == null) {
+					originPosition = Position(it.x, it.y)
+					updateDisplay()
 				} else {
-					sourcePosition = null
-					performAction(VirusAction(source, Position(it.x, it.y)))
+					originPosition = null
+					performAction(VirusAction(origin, Position(it.x, it.y)))
 				}
 			}
 		}
