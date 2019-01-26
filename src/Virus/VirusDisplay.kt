@@ -23,6 +23,7 @@ class VirusDisplay(canvasContainer: HTMLElement, playerArea: HTMLElement, gameAr
 
 	init {
 		playerTypes.add(RandomAIPlayerType<VirusState, VirusAction>())
+		playerTypes.add(SimpleVirusAIPlayerType())
 		players.add(HumanPlayer("Player 1", "yellow"))
 		players.add(RandomAIPlayer<VirusState, VirusAction>("Player 2", "red"))
 		maxPlayers = 4
@@ -51,4 +52,18 @@ class VirusDisplay(canvasContainer: HTMLElement, playerArea: HTMLElement, gameAr
 		awaitActionFrom(game.currentPlayer())
 		updateDisplay()
 	}
+}
+
+class SimpleVirusAIPlayerType : PlayerType("CPU - Medium") {
+	override fun isOfType(player: Player): Boolean = player is SimpleAIPlayer<*, *>
+	override fun getNew(name: String, color: String) = SimpleAIPlayer(name, color, ::virusUtility)
+}
+
+private fun virusUtility(state: VirusState, action: VirusAction): Int {
+	val currentDifference = state.board.fields.filter { it == state.currentPlayer }.size
+	- state.board.fields.filter { it != state.currentPlayer  && it != 0}.size
+	val nextState = state.nextState(action)
+	val nextDifference = nextState.board.fields.filter { it == state.currentPlayer }.size
+	- nextState.board.fields.filter { it != state.currentPlayer  && it != 0}.size
+	return nextDifference - currentDifference
 }

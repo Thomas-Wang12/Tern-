@@ -26,7 +26,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   var toString = Kotlin.toString;
   var trimMargin = Kotlin.kotlin.text.trimMargin_rjktp$;
   var Unit = Kotlin.kotlin.Unit;
-  var L0 = Kotlin.Long.ZERO;
+  var L100 = Kotlin.Long.fromInt(100);
   var getCallableRef = Kotlin.getCallableRef;
   var min = Kotlin.kotlin.collections.min_exjks8$;
   var contains = Kotlin.kotlin.collections.contains_2ws7j4$;
@@ -84,6 +84,8 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   Virus.prototype.constructor = Virus;
   VirusDisplay.prototype = Object.create(GameDisplay.prototype);
   VirusDisplay.prototype.constructor = VirusDisplay;
+  SimpleVirusAIPlayerType.prototype = Object.create(PlayerType.prototype);
+  SimpleVirusAIPlayerType.prototype.constructor = SimpleVirusAIPlayerType;
   function Alys(state) {
     Alys$Companion_getInstance();
     if (state === void 0)
@@ -784,7 +786,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     this.addImage_61zpoe$('T');
     this.addImage_61zpoe$('C');
     this.addImage_61zpoe$('G');
-    this.aiDelay = L0;
+    this.aiDelay = L100;
     this.gridDisplay.gridColor = '#7df';
     this.gridDisplay.outerBorder = 50.0;
     this.statusArea_0.className = 'status-area';
@@ -4683,7 +4685,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
           nextPlayer = 1;
       }
     }
-    return new VirusState(void 0, void 0, void 0, newBoard, nextPlayer);
+    return this.copy_r8hqx5$(void 0, void 0, void 0, newBoard, nextPlayer);
   };
   VirusState.prototype.findWinner = function () {
     var tmp$, tmp$_0;
@@ -4927,6 +4929,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     this.getColor_csj3a4$_0 = VirusDisplay$getColor$lambda(this);
     this.draw_rdwa6r$_0 = VirusDisplay$draw$lambda(this);
     this.playerTypes.add_11rb$(new RandomAIPlayerType());
+    this.playerTypes.add_11rb$(new SimpleVirusAIPlayerType());
     this.players.add_11rb$(new HumanPlayer('Player 1', 'yellow'));
     this.players.add_11rb$(new RandomAIPlayer('Player 2', 'red'));
     this.maxPlayers = 4;
@@ -5003,6 +5006,66 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     simpleName: 'VirusDisplay',
     interfaces: [GameDisplay]
   };
+  function SimpleVirusAIPlayerType() {
+    PlayerType.call(this, 'CPU - Medium');
+  }
+  SimpleVirusAIPlayerType.prototype.isOfType_vgc0e7$ = function (player) {
+    return Kotlin.isType(player, SimpleAIPlayer);
+  };
+  SimpleVirusAIPlayerType.prototype.getNew_puj7f4$ = function (name, color) {
+    return new SimpleAIPlayer(name, color, getCallableRef('virusUtility', function (state, action) {
+      return virusUtility(state, action);
+    }));
+  };
+  SimpleVirusAIPlayerType.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'SimpleVirusAIPlayerType',
+    interfaces: [PlayerType]
+  };
+  function virusUtility(state, action) {
+    var $receiver = state.board.fields;
+    var destination = ArrayList_init();
+    var tmp$;
+    tmp$ = $receiver.iterator();
+    while (tmp$.hasNext()) {
+      var element = tmp$.next();
+      if (element === state.currentPlayer)
+        destination.add_11rb$(element);
+    }
+    var currentDifference = destination.size;
+    var $receiver_0 = state.board.fields;
+    var destination_0 = ArrayList_init();
+    var tmp$_0;
+    tmp$_0 = $receiver_0.iterator();
+    while (tmp$_0.hasNext()) {
+      var element_0 = tmp$_0.next();
+      if (element_0 !== state.currentPlayer && element_0 !== 0)
+        destination_0.add_11rb$(element_0);
+    }
+    -destination_0.size | 0;
+    var nextState = state.nextState_11rc$(action);
+    var $receiver_1 = nextState.board.fields;
+    var destination_1 = ArrayList_init();
+    var tmp$_1;
+    tmp$_1 = $receiver_1.iterator();
+    while (tmp$_1.hasNext()) {
+      var element_1 = tmp$_1.next();
+      if (element_1 === state.currentPlayer)
+        destination_1.add_11rb$(element_1);
+    }
+    var nextDifference = destination_1.size;
+    var $receiver_2 = nextState.board.fields;
+    var destination_2 = ArrayList_init();
+    var tmp$_2;
+    tmp$_2 = $receiver_2.iterator();
+    while (tmp$_2.hasNext()) {
+      var element_2 = tmp$_2.next();
+      if (element_2 !== state.currentPlayer && element_2 !== 0)
+        destination_2.add_11rb$(element_2);
+    }
+    -destination_2.size | 0;
+    return nextDifference - currentDifference | 0;
+  }
   Object.defineProperty(Alys, 'Companion', {
     get: Alys$Companion_getInstance
   });
@@ -5117,6 +5180,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   _.VirusState = VirusState;
   _.VirusAction = VirusAction;
   _.VirusDisplay = VirusDisplay;
+  _.SimpleVirusAIPlayerType = SimpleVirusAIPlayerType;
   main([]);
   Kotlin.defineModule('Tern', _);
   return _;

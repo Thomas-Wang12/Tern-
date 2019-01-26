@@ -113,7 +113,7 @@ data class VirusState(
 					nextPlayer = 1
 			}
 		}
-		return VirusState(board = newBoard, currentPlayer = nextPlayer)
+		return this.copy(board = newBoard, currentPlayer = nextPlayer)
 	}
 
 	override fun findWinner(): Int? {

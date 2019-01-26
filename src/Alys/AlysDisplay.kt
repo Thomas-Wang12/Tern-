@@ -141,7 +141,7 @@ class AlysDisplay(canvasContainer: HTMLElement, playerArea: HTMLElement, gameAre
 		addImage("C")
 		addImage("G")
 
-		aiDelay = 0
+		aiDelay = 100
 		gridDisplay.gridColor = "#7df"
 		gridDisplay.outerBorder = 50.0
 		statusArea.className = "status-area"
