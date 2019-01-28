@@ -3,19 +3,21 @@ abstract class BoardGame<S : BoardGameState<T, A, P>, T, A, P> {
 	val players: MutableMap<P, Player> = mutableMapOf()
 	var winner: Player? = null
 
-	fun performAction(action: A): Result<*> {
+	open fun performAction(action: A): Result<*> {
 		state.confirmLegality(action).onFailure { return it }
 		state = state.nextState(action) as S
 		winner = players[state.findWinner()]
 		return Result.success()
 	}
 
+	abstract fun copyState(): S
+
 	fun currentPlayer(): Player? = players[state.currentPlayer]
 }
 
 interface BoardGameState<T, A, P> {
 	val board: Grid<T>
-	val currentPlayer: P
+	var currentPlayer: P
 	val players: List<P>
 
 	fun confirmLegality(action: A): Result<Any?>

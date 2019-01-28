@@ -2,7 +2,7 @@ import kotlin.math.min
 import kotlin.random.Random
 
 class Alys(override var state: AlysState = AlysState())
-	: BoardGame<AlysState, AlysField?, AlysAction, Int>() {
+	: AlysBoardGame<AlysState, AlysField?, AlysAction, Int>() {
 
 	companion object {
 		fun priceOf(type: AlysType): Int {
@@ -62,7 +62,7 @@ class Alys(override var state: AlysState = AlysState())
 					state.currentPlayer != info.destinationField?.player ||
 							piece.type != AlysType.Soldier ||
 							(piece.type == AlysType.Soldier &&
-							piece.strength < 4)
+									piece.strength < 4)
 				},
 				AlysRule("Must be stronger than nearby pieces") rule@{ action, state, info ->
 					val destinationField = info.destinationField ?: return@rule false
@@ -86,6 +86,23 @@ class Alys(override var state: AlysState = AlysState())
 					return@rule state.isConnected(action.origin, action.destination) && info.destinationField?.player == state.currentPlayer
 				})
 	}
+
+	override val actionTypes = listOf<ActionType<AlysState, AlysAction, Any>>(
+			ActionType("build fort",
+					{ state, action ->
+						action is AlysCreateAction && action.type == AlysType.Fort
+					},
+					{ state, action ->
+						Result.failure("")
+					},
+					listOf<(state: AlysState, action: AlysAction, newState: AlysState, actionInfo: AlysActionInfo) -> Unit>(
+							{ state, action, newState, info ->
+								if (info.originField?.player != state.currentPlayer)
+									Result.failure<Any?>("Must player bla")
+							}
+					)
+			)
+	)
 
 	fun newGame(width: Int = 15, height: Int = 15, seed: Int = 1) {
 		val creator = AlysBoardCreator(width, height, seed)

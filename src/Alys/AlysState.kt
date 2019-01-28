@@ -6,9 +6,9 @@ data class AlysState(
 		override val board: Grid<AlysField?> = Grid(width, height, { x, y ->
 			AlysField((1..playerCount).random())
 		}),
-		override val currentPlayer: Int = 1,
+		override var currentPlayer: Int = 1,
 		override val players: List<Int> = (1..playerCount).toList(),
-		val round: Int = 0
+		var round: Int = 0
 ) : BoardGameState<AlysField?, AlysAction, Int> {
 
 	override fun confirmLegality(action: AlysAction): Result<Any?> {
@@ -350,11 +350,135 @@ data class AlysState(
 	}
 }
 
-abstract class UpdateThing {
-	abstract val conditions: List<Rule<AlysState, AlysAction>>
-	abstract fun shouldHappen(state: AlysState, action: AlysAction): Boolean
-	abstract fun update(state: AlysState, action: AlysAction): AlysState
+/*
+class UpdateStep<S, A>(
+		val description: String,
+		val shouldHappen: (state: S, action: A) -> Boolean,
+		val conditions: List<Rule<S, A>>,
+		val update: (state: S, action: A, newState: S) -> Unit
+)
+
+val steps = listOf<UpdateStep<AlysState, AlysAction>>(
+		UpdateStep(
+				"Invade field",
+				{ state, action ->
+					if (!(action is AlysMoveAction || action is AlysCreateAction && action.type == AlysType.Soldier))
+						false
+					action as AlysMoveAction
+					state.board[action.destination]
+				},
+				listOf(),
+				{ state, action, newState ->
+					action as AlysMoveAction
+					val piece = state.board[action.origin]?.piece as AlysPiece
+					newState.board[action.destination] = AlysField(state.currentPlayer, piece.copy(hasMoved = true))
+				}
+		),
+
+		UpdateStep(
+				"Add towns to newly split areas",
+				{ _, action ->
+					action is AlysMoveAction || action is AlysCreateAction && action.type == AlysType.Soldier
+				},
+				listOf(),
+				{ state, action, newState ->
+					action as AlysMoveAction
+					val piece = state.board[action.origin]?.piece as AlysPiece
+					newState.board[action.destination] = AlysField(state.currentPlayer, piece.copy(hasMoved = true))
+				}
+		)
+)*/
+
+
+class ActionType<S, A, T>(
+		val description: String,
+		val shouldPerform: (state: S, action: A) -> Boolean,
+		val readyAction: (state: S, action: A) -> Result<T>,
+		val updateSteps: List<(state: S, action: A, newState: S, actionInfo: T) -> Unit>
+) {
+	fun perform(state: S, action: A, newState: S, actionInfo: T) {
+		for (step in updateSteps)
+			step(state, action, newState, actionInfo)
+	}
+}
+
+abstract class AlysBoardGame<S : BoardGameState<T, A, P>, T, A, P> : BoardGame<S, T, A, P>() {
+	abstract val actionTypes: List<ActionType<S, A, Any>>
+
+	override fun performAction(action: A): Result<*> {
+		val actionType = actionTypes.find { it.shouldPerform(state, action) }
+				?: return Result.failure<Any?>("Couldn't recognise action")
+		val actionInfo = actionType.readyAction(state, action).onFailure {
+			return Result.failure<Any?>("Couldn't ${actionType.description} - ${it.error}")
+		}
+		val newState = copyState()
+		actionType.perform(state, action, newState, actionInfo)
+		state = newState
+		winner = players[state.findWinner()]
+		return Result.success()
+	}
+}
+
+/*
+abstract class UpdateStep<S, A> {
+	abstract fun shouldHappen(state: S, action: A): Boolean
+	abstract val conditions: List<Rule<S, A>>
+	abstract fun update(state: S, action: A, newState: S)
+}
+
+class MoveSoldier : UpdateStep<AlysState, AlysAction>() {
+	override fun shouldHappen(state: AlysState, action: AlysAction): Boolean {
+		return action is AlysMoveAction || action is AlysCreateAction && action.type == AlysType.Soldier
+	}
+
+	override val conditions: List<Rule<AlysState, AlysAction>> = listOf()
+
+	override fun update(state: AlysState, action: AlysAction, newState: AlysState) {
+		action as AlysMoveAction
+		val piece = state.board[action.origin]?.piece as AlysPiece
+		newState.board[action.destination] = AlysField(state.currentPlayer, piece.copy(hasMoved = true))
+	}
+}
+
+class AddTownToSplitAreas : UpdateStep<AlysState, AlysAction>() {
+	override fun shouldHappen(state: AlysState, action: AlysAction): Boolean {
+		return action is AlysMoveAction || action is AlysCreateAction && action.type == AlysType.Soldier
+	}
+
+	override val conditions: List<Rule<AlysState, AlysAction>> = listOf()
+
+	override fun update(state: AlysState, action: AlysAction, newState: AlysState) {
+		action as AlysMoveAction
+		val piece = state.board[action.origin]?.piece as AlysPiece
+		newState.board[action.destination] = AlysField(state.currentPlayer, piece.copy(hasMoved = true))
+	}
 }
 
 
+class RemoveTownFromSingleFields : UpdateStep<AlysState, AlysAction>() {
+	override fun shouldHappen(state: AlysState, action: AlysAction): Boolean {
+		return action is AlysMoveAction || action is AlysCreateAction && action.type == AlysType.Soldier
+	}
 
+	override val conditions: List<Rule<AlysState, AlysAction>> = listOf()
+
+	override fun update(state: AlysState, action: AlysAction, newState: AlysState) {
+		action as AlysMoveAction
+		val piece = state.board[action.origin]?.piece as AlysPiece
+		newState.board[action.destination] = AlysField(state.currentPlayer, piece.copy(hasMoved = true))
+	}
+}
+
+class MergeTowns : UpdateStep<AlysState, AlysAction>() {
+	override fun shouldHappen(state: AlysState, action: AlysAction): Boolean {
+		return action is AlysMoveAction || action is AlysCreateAction && action.type == AlysType.Soldier
+	}
+
+	override val conditions: List<Rule<AlysState, AlysAction>> = listOf()
+
+	override fun update(state: AlysState, action: AlysAction, newState: AlysState) {
+		action as AlysMoveAction
+		val piece = state.board[action.origin]?.piece as AlysPiece
+		newState.board[action.destination] = AlysField(state.currentPlayer, piece.copy(hasMoved = true))
+	}
+}*/
