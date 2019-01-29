@@ -394,30 +394,32 @@ class ActionType<S, A, T>(
 		val description: String,
 		val shouldPerform: (state: S, action: A) -> Boolean,
 		val readyAction: (state: S, action: A) -> Result<T>,
-		val updateSteps: List<(state: S, action: A, newState: S, actionInfo: T) -> Unit>
+		val updateSteps: List<(sas: StateActionState<S, T>) -> Result<Any?>>
 ) {
-	fun perform(state: S, action: A, newState: S, actionInfo: T) {
+	fun perform(sas: StateActionState<S, T>) {
 		for (step in updateSteps)
-			step(state, action, newState, actionInfo)
+			step(sas)
 	}
 }
 
 abstract class AlysBoardGame<S : BoardGameState<T, A, P>, T, A, P> : BoardGame<S, T, A, P>() {
-	abstract val actionTypes: List<ActionType<S, A, Any>>
+	abstract val actionTypes: List<ActionType<S, A, *>>
 
 	override fun performAction(action: A): Result<*> {
-		val actionType = actionTypes.find { it.shouldPerform(state, action) }
-				?: return Result.failure<Any?>("Couldn't recognise action")
-		val actionInfo = actionType.readyAction(state, action).onFailure {
+		val actionType = (actionTypes.find { it.shouldPerform(state, action) }
+				?: return Result.failure<Any?>("Couldn't recognise action")) as ActionType<S, A, Any>
+		val readiedAction = actionType.readyAction(state, action).onFailure {
 			return Result.failure<Any?>("Couldn't ${actionType.description} - ${it.error}")
 		}
 		val newState = copyState()
-		actionType.perform(state, action, newState, actionInfo)
+		actionType.perform(StateActionState(state, readiedAction, newState))
 		state = newState
 		winner = players[state.findWinner()]
 		return Result.success()
 	}
 }
+
+class StateActionState<S, A>(val oldState: S, val action: A, val newState: S)
 
 /*
 abstract class UpdateStep<S, A> {

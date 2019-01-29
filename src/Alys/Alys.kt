@@ -87,19 +87,39 @@ class Alys(override var state: AlysState = AlysState())
 				})
 	}
 
-	override val actionTypes = listOf<ActionType<AlysState, AlysAction, Any>>(
+	override val actionTypes = listOf<ActionType<AlysState, AlysAction, *>>(
 			ActionType("build fort",
 					{ state, action ->
 						action is AlysCreateAction && action.type == AlysType.Fort
 					},
+					AlysActionBuild.Companion::readyAction,
+					listOf<(sas: StateActionState<AlysState, AlysActionBuild>) -> Result<Any?>>(
+							::originMustBeCurrentPlayer,
+							::destinationMustBeCurrentPlayer,
+							::subtractMoney,
+							::destinationMustBeEmpty,
+							::placePiece
+					)
+			),
+			ActionType("hire soldier",
 					{ state, action ->
-						Result.failure("")
+						action is AlysCreateAction && action.type == AlysType.Soldier
 					},
-					listOf<(state: AlysState, action: AlysAction, newState: AlysState, actionInfo: AlysActionInfo) -> Unit>(
-							{ state, action, newState, info ->
-								if (info.originField?.player != state.currentPlayer)
-									Result.failure<Any?>("Must player bla")
-							}
+					AlysActionBuild.Companion::readyAction,
+					listOf<(sas: StateActionState<AlysState, AlysActionBuild>) -> Result<Any?>>(
+							::originMustBeCurrentPlayer,
+							::subtractMoney
+					)
+			),
+			ActionType("move soldier",
+					{ state, action ->
+						action is AlysMoveAction
+					},
+					AlysActionBuild.Companion::readyAction,
+					listOf<(sas: StateActionState<AlysState, AlysActionBuild>) -> Result<Any?>>(
+							::originMustBeCurrentPlayer,
+							::originMustHaveSoldier,
+							::
 					)
 			)
 	)
@@ -109,6 +129,70 @@ class Alys(override var state: AlysState = AlysState())
 		creator.generateLand()
 		creator.fillBoard(players.size)
 		this.state = AlysState(width, height, players.size, creator.board, 1, (1..players.size).toList())
+	}
+}
+
+fun <T : AlysActionStandard> originMustBeCurrentPlayer(sas: StateActionState<AlysState, T>): Result<Any?> {
+	if (sas.action.origin.field.player != sas.oldState.currentPlayer)
+		return Failure("Must player bla")
+	return Result.success()
+}
+
+fun <T : AlysActionStandard> destinationMustBeCurrentPlayer(sas: StateActionState<AlysState, T>): Result<Any?> {
+	if (sas.action.destination.field.player != sas.oldState.currentPlayer)
+		return Failure("Must player bla")
+	return Result.success()
+}
+
+fun <T : AlysActionStandard> destinationMustBeEmpty(sas: StateActionState<AlysState, T>): Result<Any?> {
+	if (sas.action.destination.field.piece != null || sas.action.destination.field.treasury != null )
+		return Failure("Must player bla")
+	return Result.success()
+}
+
+fun subtractMoney(sas: StateActionState<AlysState, AlysActionBuild>): Result<Any?> {
+	if (sas.action.treasury < Alys.priceOf(sas.action.type))
+		return Failure("Must money bla")
+	sas.newState.board[sas.action.origin.position] = sas.action.origin.field.copy(
+			treasury = sas.action.treasury - Alys.priceOf(sas.action.type))
+	return Result.success()
+}
+
+fun placePiece(sas: StateActionState<AlysState, AlysActionBuild>): Result<Any?> {
+	sas.newState.board[sas.action.destination.position] = sas.action.destination.field.copy(
+			piece = AlysPiece(sas.action.type))
+	return Result.success()
+}
+
+class AlysActionBuild(
+		val treasury: Int,
+		val type: AlysType,
+		base: AlysActionStandard) : AlysActionStandard(base.origin, base.destination) {
+	companion object {
+		fun readyAction(state: AlysState, action: AlysAction): Result<AlysActionBuild> {
+			action as AlysCreateAction
+			val base = AlysActionStandard.readyAction(state, action.origin, action.destination).onFailure {
+				return Failure(it.error)
+			}
+			val treasury = base.origin.field.treasury
+					?: return Failure("ads")
+			return Success(AlysActionBuild(treasury, action.type, base))
+		}
+	}
+}
+
+open class AlysActionStandard(
+		val origin: PositionedField<AlysField>,
+		val destination: PositionedField<AlysField>
+) {
+	companion object {
+		fun readyAction(state: AlysState, origin: Position, destination: Position): Result<AlysActionStandard> {
+			val originField = state.board[origin]
+					?: return Failure("ads")
+			val destinationField = state.board[destination]
+					?: return Failure("ads")
+			return Success(AlysActionStandard(PositionedField(origin, originField), PositionedField(destination, destinationField)))
+		}
 	}
 }
 
