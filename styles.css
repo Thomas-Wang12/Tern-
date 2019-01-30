@@ -157,6 +157,7 @@ button:hover {
 .rules-area img {
 	width: 4rem;
 	image-rendering: pixelated;
+	image-rendering: -moz-crisp-edges;
 }
 
 input {
