@@ -420,18 +420,9 @@ open class AlysSasStandard(
 data class AlysField(val player: Int, val piece: AlysPiece? = null, val treasury: Int? = null)
 data class AlysPiece(val type: AlysType, val strength: Int = 1, val hasMoved: Boolean = false)
 enum class AlysType { Fort, Soldier, Grave, Tree, CoastTree }
-interface AlysAction
-interface WithOriginAndDestination : AlysAction {
-	val origin: Position
-	val destination: Position
-}
 
-data class AlysMoveAction(override val origin: Position, override val destination: Position) : AlysAction, WithOriginAndDestination
-data class AlysCreateAction(val type: AlysType, override val origin: Position, override val destination: Position) : AlysAction, WithOriginAndDestination
+interface AlysAction
+data class AlysMoveAction(val origin: Position, val destination: Position) : AlysAction
+data class AlysCreateAction(val type: AlysType, val origin: Position, val destination: Position) : AlysAction
 class AlysEndTurnAction : AlysAction
-data class AlysRule<A : AlysAction>(val description: String, val isLegal: (A, AlysState, AlysActionInfo) -> Boolean)
-data class AlysActionInfo(
-		var originField: AlysField? = null,
-		var destinationField: AlysField? = null,
-		var originPiece: AlysPiece? = null,
-		var destinationPiece: AlysPiece? = null)
+
