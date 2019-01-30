@@ -244,10 +244,7 @@ fun AlysSasBuild.placePiece(): Result<Any?> {
 }
 
 fun AlysSasEnd.changeCurrentPlayer(): Result<Any?> {
-	var nextPlayer = oldState.currentPlayer + 1
-	if (nextPlayer > oldState.playerCount)
-		nextPlayer = 1
-	newState.currentPlayer = nextPlayer
+	newState.currentPlayer = player
 	return Result.success()
 }
 
@@ -273,7 +270,7 @@ fun AlysSasEnd.spreadTrees(): Result<Any?> {
 							.filter { it.field.piece?.type == AlysType.Tree }.size > 1)
 				newTrees.add(place.position)
 	for (position in newTrees)
-		newState.board[position] = AlysField(oldState.currentPlayer, AlysPiece(AlysType.Tree))
+		newState.board[position] = AlysField(player, AlysPiece(AlysType.Tree))
 	return Result.success()
 }
 
@@ -286,16 +283,16 @@ fun AlysSasEnd.spreadCoastTrees(): Result<Any?> {
 				newTrees.add(place.position)
 		}
 	for (position in newTrees)
-		newState.board[position] = AlysField(oldState.currentPlayer, AlysPiece(AlysType.CoastTree))
+		newState.board[position] = AlysField(player, AlysPiece(AlysType.CoastTree))
 	return Result.success()
 }
 
 fun AlysSasEnd.overgrowGraves(): Result<Any?> {
 	for (place in playerArea.filter { it.field.piece?.type == AlysType.Grave }) {
 		if (AlysState.adjacentFields(place.position, oldState.board).size < 6)
-			newState.board[place.position] = AlysField(oldState.currentPlayer, AlysPiece(AlysType.CoastTree))
+			newState.board[place.position] = AlysField(player, AlysPiece(AlysType.CoastTree))
 		else
-			newState.board[place.position] = AlysField(oldState.currentPlayer, AlysPiece(AlysType.Tree))
+			newState.board[place.position] = AlysField(player, AlysPiece(AlysType.Tree))
 	}
 	return Result.success()
 }
@@ -303,9 +300,9 @@ fun AlysSasEnd.overgrowGraves(): Result<Any?> {
 fun AlysSasEnd.killLoneSoldiers(): Result<Any?> {
 	for (place in playerArea.filter {
 		it.field.piece?.type == AlysType.Soldier &&
-				AlysState.adjacentFields(it.position, oldState.board).none { it.field.player == oldState.currentPlayer }
+				AlysState.adjacentFields(it.position, oldState.board).none { it.field.player == player }
 	})
-		newState.board[place.position] = AlysField(oldState.currentPlayer, AlysPiece(AlysType.Grave))
+		newState.board[place.position] = AlysField(player, AlysPiece(AlysType.Grave))
 	return Result.success()
 }
 
@@ -323,7 +320,7 @@ fun AlysSasEnd.subtractUpkeep(): Result<Any?> {
 			newState.board[base.position] = base.field.copy(treasury = treasury - upkeep)
 		else
 			for (soldier in soldiers)
-				newState.board[soldier.position] = AlysField(oldState.currentPlayer, AlysPiece(AlysType.Grave))
+				newState.board[soldier.position] = AlysField(player, AlysPiece(AlysType.Grave))
 	}
 	return Result.success()
 }
@@ -331,17 +328,21 @@ fun AlysSasEnd.subtractUpkeep(): Result<Any?> {
 class AlysSasEnd(
 		val playerArea: List<PositionedField<AlysField>>,
 		val bases: List<PositionedField<AlysField>>,
+		val player: Int,
 		oldState: AlysState,
 		newState: AlysState
 ) : StateActionState<AlysState>(oldState, newState) {
 	companion object {
 		fun readyAction(oldState: AlysState, action: AlysAction, newState: AlysState): Result<AlysSasEnd> {
 			action as AlysEndTurnAction
+			var nextPlayer = oldState.currentPlayer + 1
+			if (nextPlayer > oldState.playerCount)
+				nextPlayer = 1
 			val playerArea = oldState.board.positionedFields()
-					.filter { it.field?.player == oldState.currentPlayer }
+					.filter { it.field?.player == nextPlayer }
 					.map { PositionedField(it.position, it.field as AlysField) }
 			val bases = playerArea.filter { it.field.treasury != null }
-			return Success(AlysSasEnd(playerArea, bases, oldState, newState))
+			return Success(AlysSasEnd(playerArea, bases, nextPlayer, oldState, newState))
 		}
 	}
 }
