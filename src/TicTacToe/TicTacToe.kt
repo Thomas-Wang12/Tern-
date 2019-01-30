@@ -5,15 +5,36 @@ class TicTacToe(override var state: TicTacToeState = TicTacToeState())
 		return TicTacToeState(state.board.copy(), state.currentPlayer, state.players)
 	}
 
-	companion object {
-		val rules = listOf<Rule<TicTacToeState, TicTacToeAction>>(
-				Rule("Can only place the current player's piece") { action, state ->
-					state.currentPlayer == action.piece
-				},
-				Rule("Can only place pieces on empty fields") { action, state ->
-					state.board[action.x, action.y] == null
-				})
-	}
+	override val actionTypes = listOf(
+			ActionType("place piece",
+					{ _, _ -> true },
+					{ oldState: TicTacToeState, action: TicTacToeAction, newState: TicTacToeState ->
+						Success(StandardStateActionState(oldState, action, newState))
+					},
+					listOf<ActionStep<TicTacToeSas>>(
+							TicTacToeSas::mustPlaceOwnPiece,
+							TicTacToeSas::placePiece,
+							TicTacToeSas::switchPlayer
+					)
+			)
+	)
+}
+
+private typealias TicTacToeSas = StandardStateActionState<TicTacToeState, TicTacToeAction>
+
+fun TicTacToeSas.mustPlaceOwnPiece() =
+		Result.check("must place own piece", action.piece == oldState.currentPlayer)
+
+fun TicTacToeSas.placePiece(): Result<Any?> {
+	if (oldState.board[action.x, action.y] != null)
+		Failure<Any?>("must place pieces on empty fields")
+	newState.board[action.x, action.y] = action.piece
+	return Result.success()
+}
+
+fun TicTacToeSas.switchPlayer(): Result<Any?> {
+	newState.currentPlayer = if (oldState.currentPlayer == TicTacToePiece.Cross) TicTacToePiece.Circle else TicTacToePiece.Cross
+	return Result.success()
 }
 
 data class TicTacToeState(
@@ -22,13 +43,6 @@ data class TicTacToeState(
 		override val players: List<TicTacToePiece> = listOf(TicTacToePiece.Cross, TicTacToePiece.Circle)
 ) : BoardGameState<TicTacToePiece?, TicTacToeAction, TicTacToePiece> {
 
-	override fun confirmLegality(action: TicTacToeAction): Result<Any?> {
-		for(rule in TicTacToe.rules)
-			if(!rule.isLegal(action, this))
-				return Result.failure(rule.description)
-		return Result.success()
-	}
-
 	override fun possibleActions(): List<TicTacToeAction> {
 		val actions = mutableListOf<TicTacToeAction>()
 		for (i in 0..2)
@@ -36,12 +50,6 @@ data class TicTacToeState(
 				if (board[i, j] == null)
 					actions.add(TicTacToeAction(currentPlayer, i, j))
 		return actions.toList()
-	}
-
-	override fun nextState(action: TicTacToeAction): TicTacToeState {
-		val newBoard = board.copy()
-		newBoard[action.x, action.y] = action.piece
-		return TicTacToeState(newBoard, if (currentPlayer == TicTacToePiece.Cross) TicTacToePiece.Circle else TicTacToePiece.Cross)
 	}
 
 	override fun findWinner(): TicTacToePiece? {

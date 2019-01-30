@@ -8,41 +8,41 @@ class Chess(override var state: ChessState = ChessState())
 	}
 
 	override val actionTypes = listOf(
-			ActionType("build fort",
+			ActionType("move piece",
 					{ _, _ -> true },
 					ChessSas.Companion::readyAction,
 					listOf<ActionStep<ChessSas>>(
 							ChessSas::originMustBeCurrentPlayer,
 							ChessSas::destinationMustBeEmptyOrEnemy,
 							ChessSas::moveMustBeLegal,
-							ChessSas::performMove,
-							ChessSas::kingMustNotBeInCheck,
-							ChessSas::switchPlayer
+							ChessSas::movePiece,
+							ChessSas::switchPlayer,
+							ChessSas::kingMustNotBeInCheck
 					)
 			)
 	)
 }
 
 fun ChessSas.originMustBeCurrentPlayer() =
-		Result.check("piece must not have moved", piece.player == oldState.currentPlayer)
+		Result.check("must move own piece", piece.player == oldState.currentPlayer)
 
 fun ChessSas.destinationMustBeEmptyOrEnemy() =
-		Result.check("piece must not have moved", destination.field == null || destination.field.player != oldState.currentPlayer)
+		Result.check("destination must be empty or enemy", destination.field == null || destination.field.player != oldState.currentPlayer)
 
 fun ChessSas.moveMustBeLegal() =
-		Result.check("piece must not have moved", piece.isLegal(oldState.board, action))
+		Result.check("move must be legal", piece.isLegal(oldState.board, action))
 
 fun ChessSas.kingMustNotBeInCheck(): Result<Any?> {
 	val index = newState.board.fields.indexOfFirst { it?.type == ChessPieceType.King && it.player == oldState.currentPlayer }
 	val position = Position(index % 8, index / 8)
-	return Result.check("piece must not have moved", piece.isInCheck(newState.board, position))
+	return Result.check("king must not be in check", !ChessPiece.isInCheck(newState.board, position))
 }
 
-fun ChessSas.performMove(): Result<Any?> {
+fun ChessSas.movePiece(): Result<Any?> {
 	var newPiece = piece.copy(hasMoved = true)
 	if (newPiece.type == ChessPieceType.Pawn &&
-			(action.destination.y == 0 && newPiece.player == ChessPlayer.Black) ||
-			(action.destination.y == oldState.board.height - 1 && newPiece.player == ChessPlayer.White))
+			((action.destination.y == 0 && newPiece.player == ChessPlayer.Black) ||
+			(action.destination.y == oldState.board.height - 1 && newPiece.player == ChessPlayer.White)))
 		newPiece = newPiece.copy(type = ChessPieceType.Queen)
 	if (newPiece.type == ChessPieceType.King && abs(action.origin.x - action.destination.x) == 2)
 		moveCastlingRook(action, newState)
@@ -127,10 +127,14 @@ data class ChessState(
 				val piece = board[i, j]
 				if (piece?.player != currentPlayer)
 					continue
-				actions.addAll(piece.possibleMoves(board, Position(i, j)))
+				actions.addAll(piece.possibleMoves(board, Position(i, j)). filter {
+					val sas = ChessSas.readyAction(this, it, Chess(this).copyState()).onFailure { return@filter true }
+					sas.movePiece()
+					return@filter sas.kingMustNotBeInCheck() is Success
+				})
 			}
 		}
-		return actions//.filter { confirmLegality(it) is Success }
+		return actions
 	}
 
 	override fun findWinner(): ChessPlayer? {

@@ -9,21 +9,76 @@ class Virus(override var state: VirusState = VirusState())
 		return VirusState(state.width, state.height, state.playerCount, state.board.copy(), state.currentPlayer, state.players)
 	}
 
-	companion object {
-		val rules = listOf<Rule<VirusState, VirusAction>>(
-				Rule("Cannot place piece outside board") { action, state ->
-					state.board.isWithinBounds(action.source) && state.board.isWithinBounds(action.destination)
-				},
-				Rule("Can only place the current player's piece") { action, state ->
-					state.board[action.source.x, action.source.y] == state.currentPlayer
-				},
-				Rule("Can only place pieces on empty fields") { action, state ->
-					state.board[action.destination.x, action.destination.y] == 0
-				},
-				Rule("Cannot move farther than two squares") { action, state ->
-					abs(action.source.x - action.destination.x) > 2 || abs(action.source.y - action.destination.y) <= 2
-				})
+	override val actionTypes = listOf(
+			ActionType("move piece",
+					{ _, _ -> true },
+					{ oldState: VirusState, action: VirusAction, newState: VirusState ->
+						Success(StandardStateActionState(oldState, action, newState))
+					},
+					listOf<ActionStep<VirusSas>>(
+							VirusSas::originMustBeWithinBoard,
+							VirusSas::originMustBeCurrentPlayer,
+							VirusSas::destinationMustBeWithinBoard,
+							VirusSas::destinationMustBeEmpty,
+							VirusSas::mustNotMoveTooFar,
+							VirusSas::movePiece,
+							VirusSas::turnNeighbours,
+							VirusSas::changePlayer
+					)
+			)
+	)
+}
+
+private typealias VirusSas = StandardStateActionState<VirusState, VirusAction>
+
+fun VirusSas.destinationMustBeWithinBoard() =
+		Result.check("destination must be within board", oldState.board.isWithinBounds(action.destination))
+
+fun VirusSas.originMustBeWithinBoard() =
+		Result.check("origin must be within board", oldState.board.isWithinBounds(action.origin))
+
+fun VirusSas.originMustBeCurrentPlayer() =
+		Result.check("must move own piece", oldState.board[action.origin] == oldState.currentPlayer)
+
+fun VirusSas.destinationMustBeEmpty() =
+		Result.check("destination must be empty", oldState.board[action.destination] == 0)
+
+fun VirusSas.mustNotMoveTooFar() =
+		Result.check("must not move too far", abs(action.origin.x - action.destination.x) <= 2 && abs(action.origin.y - action.destination.y) <= 2)
+
+fun VirusSas.movePiece(): Result<Any?> {
+	if (abs(action.origin.x - action.destination.x) > 1 || abs(action.origin.y - action.destination.y) > 1)
+		newState.board[action.origin.x, action.origin.y] = 0
+	newState.board[action.destination.x, action.destination.y] = oldState.currentPlayer
+	return Result.success()
+}
+
+fun VirusSas.turnNeighbours(): Result<Any?> {
+	for (n in max(0, action.destination.x - 1)..min(oldState.width - 1, action.destination.x + 1)) {
+		for (m in max(0, action.destination.y - 1)..min(oldState.height - 1, action.destination.y + 1)) {
+			if (newState.board[n, m] != 0)
+				newState.board[n, m] = oldState.currentPlayer
+		}
 	}
+	return Result.success()
+}
+
+fun VirusSas.changePlayer(): Result<Any?> {
+	val movablePlayers = newState.findMovablePlayers()
+	var nextPlayer = oldState.currentPlayer + 1
+	if (movablePlayers.none { it }) {
+		nextPlayer = 0
+	} else {
+		if (nextPlayer > oldState.playerCount)
+			nextPlayer = 1
+		while (!movablePlayers[nextPlayer]) {
+			nextPlayer++
+			if (nextPlayer > oldState.playerCount)
+				nextPlayer = 1
+		}
+	}
+	newState.currentPlayer = nextPlayer
+	return Result.success()
 }
 
 data class VirusState(
@@ -64,13 +119,6 @@ data class VirusState(
 		override val players: List<Int> = (1..playerCount).toList()
 ) : BoardGameState<Int, VirusAction, Int> {
 
-	override fun confirmLegality(action: VirusAction): Result<Any?> {
-		for(rule in Virus.rules)
-			if(!rule.isLegal(action, this))
-				return Result.failure(rule.description)
-		return Result.success()
-	}
-
 	override fun possibleActions(): List<VirusAction> {
 		val actions = mutableListOf<VirusAction>()
 		for (i in 0 until width) {
@@ -84,8 +132,8 @@ data class VirusState(
 						if (board[n, m] != currentPlayer)
 							continue
 						val action = VirusAction(Position(n, m), Position(i, j))
-						if (abs(action.source.x - action.destination.x) > 1 ||
-								abs(action.source.y - action.destination.y) > 1) {
+						if (abs(action.origin.x - action.destination.x) > 1 ||
+								abs(action.origin.y - action.destination.y) > 1) {
 							actions.add(action)
 						} else if (!exists) {
 							actions.add(action)
@@ -98,34 +146,12 @@ data class VirusState(
 		return actions.toList()
 	}
 
-	override fun nextState(action: VirusAction): VirusState {
-		val newBoard = board.copy()
-		if (abs(action.source.x - action.destination.x) > 1 || abs(action.source.y - action.destination.y) > 1)
-			newBoard[action.source.x, action.source.y] = 0
-		newBoard[action.destination.x, action.destination.y] = currentPlayer
-		switchSurroundings(action.destination, newBoard)
-		val movablePlayers = findMovablePlayers(newBoard)
-		var nextPlayer = currentPlayer + 1
-		if (movablePlayers.filter { it }.isEmpty()) {
-			nextPlayer = 0
-		} else {
-			if (nextPlayer > playerCount)
-				nextPlayer = 1
-			while (!movablePlayers[nextPlayer]) {
-				nextPlayer++
-				if (nextPlayer > playerCount)
-					nextPlayer = 1
-			}
-		}
-		return this.copy(board = newBoard, currentPlayer = nextPlayer)
-	}
-
 	override fun findWinner(): Int? {
 		val pieces = MutableList(playerCount + 1) { 0 }
 		for (field in board.fields)
 			pieces[field]++
 
-		val movablePlayers = findMovablePlayers(board)
+		val movablePlayers = findMovablePlayers()
 		if (movablePlayers.filter { it }.size > 1)
 			return null
 
@@ -144,7 +170,7 @@ data class VirusState(
 		return winner
 	}
 
-	private fun findMovablePlayers(board: Grid<Int>): List<Boolean> {
+	fun findMovablePlayers(): List<Boolean> {
 		val movablePlayers = MutableList(playerCount + 1) { false }
 		loop@ for (i in 0 until width) {
 			for (j in 0 until height) {
@@ -173,4 +199,4 @@ data class VirusState(
 	}
 }
 
-data class VirusAction(val source: Position, val destination: Position)
+data class VirusAction(val origin: Position, val destination: Position)

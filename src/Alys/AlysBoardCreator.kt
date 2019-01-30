@@ -33,6 +33,7 @@ class AlysBoardCreator(width: Int, height: Int, val seed: Int) {
 	}
 
 	fun fillBoard(playerCount: Int) {
+		val state = AlysState(board = board)
 		val random = Random(seed)
 		val remainingPositions = board.positionedFields().filter{ it.field != null }.map{it.position}.toMutableList()
 		val averageFields = 1 + remainingPositions.size / playerCount
@@ -53,7 +54,7 @@ class AlysBoardCreator(width: Int, height: Int, val seed: Int) {
 		for (position in board.positions()) {
 			if (examinedArea.any { it.position == position })
 				continue
-			val area = AlysState.connectedPositions(position, board)
+			val area = state.connectedPositions(position)
 			examinedArea.addAll(area)
 			if (area.size < 2)
 				continue
@@ -69,7 +70,7 @@ class AlysBoardCreator(width: Int, height: Int, val seed: Int) {
 		for(i in 1..trees){
 			val bla = freeFields.random(random)
 			freeFields.remove(bla)
-			val piece = if(AlysState.adjacentFields(bla.position, board).size < 5)
+			val piece = if(state.adjacentFields(bla.position).size < 5)
 				AlysPiece(AlysType.CoastTree)
 			else
 				AlysPiece(AlysType.Tree)

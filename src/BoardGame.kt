@@ -5,18 +5,22 @@ abstract class BoardGame<S : BoardGameState<T, A, P>, T, A, P> {
 	var winner: Player? = null
 
 	fun performAction(action: A): Result<*> {
-		val actionType = (actionTypes.find { it.shouldPerform(state, action) }
-				?: return Result.failure<Any?>("Couldn't recognise action")) as ActionType<S, A, StateActionState<S>>
-		val newState = copyState()
-		val sas = actionType.readyAction(state, action, newState).onFailure {
-			return Result.failure<Any?>("Couldn't ${actionType.description} - ${it.error}")
-		}
-		actionType.perform(sas).onFailure {
-			return Result.failure<Any?>("Couldn't ${actionType.description} - ${it.error}")
-		}
-		state = newState
+		state = nextState(action).onFailure { return it }
 		winner = players[state.findWinner()]
 		return Result.success()
+	}
+
+	fun nextState(action: A): Result<S> {
+		val actionType = (actionTypes.find { it.shouldPerform(state, action) }
+				?: return Result.failure("Couldn't recognise action")) as ActionType<S, A, StateActionState<S>>
+		val newState = copyState()
+		val sas = actionType.readyAction(state, action, newState).onFailure {
+			return Result.failure("Couldn't ${actionType.description} - ${it.error}")
+		}
+		actionType.perform(sas).onFailure {
+			return Result.failure("Couldn't ${actionType.description} - ${it.error}")
+		}
+		return Success(newState)
 	}
 
 	abstract fun copyState(): S
@@ -34,6 +38,8 @@ interface BoardGameState<T, A, P> {
 }
 
 open class StateActionState<S>(val oldState: S, val newState: S)
+
+open class StandardStateActionState<S, A>(oldState: S, val action: A, newState: S) : StateActionState<S>(oldState, newState)
 
 typealias ActionStep<T> = T.() -> Result<Any?>
 

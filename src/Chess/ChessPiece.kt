@@ -211,17 +211,19 @@ data class ChessPiece(val type: ChessPieceType, val player: ChessPlayer, val has
 		return true
 	}
 
-	fun isInCheck(board: Grid<ChessPiece?>, position: Position): Boolean {
-		//Checks if any enemy piece (except the king) can move to this kings position
-		for (i in 0 until board.height) {
-			for (j in 0 until board.width) {
-				val piece = board[i, j] ?: continue
-				if (piece.player != player && piece.type != ChessPieceType.King) // bit of a hack
-					if (piece.isLegal(board, ChessAction(Position(i, j), position)))
-						return true
+	companion object {
+		fun isInCheck(board: Grid<ChessPiece?>, position: Position): Boolean {
+			//Checks if any enemy piece (except the king) can move to this kings position
+			for (i in 0 until board.height) {
+				for (j in 0 until board.width) {
+					val piece = board[i, j] ?: continue
+					if (piece.player != board[position]?.player && piece.type != ChessPieceType.King) // bit of a hack
+						if (piece.isLegal(board, ChessAction(Position(i, j), position)))
+							return true
+				}
 			}
+			return false
 		}
-		return false
 	}
 
 	fun possibleMoves(board: Grid<ChessPiece?>, position: Position): List<ChessAction> {
@@ -314,30 +316,33 @@ data class ChessPiece(val type: ChessPieceType, val player: ChessPlayer, val has
 
 	private fun possibleRookMoves(board: Grid<ChessPiece?>, position: Position): List<ChessAction> {
 		val actions = mutableListOf<ChessAction>()
-		for (i in 1..7) {
-			val pos = Position(position.x + i, position.y)
-			if (pos.x < 8 && board[pos]?.player != player)
+		val addOrBreak = fun(pos: Position): Boolean {
+			if(!board.isWithinBounds(pos))
+				return true
+			if(board[pos] == null)
 				actions.add(ChessAction(position, pos))
-			else break
-		}
-		for (i in 1..7) {
-			val pos = Position(position.x - i, position.y)
-			if (pos.x >= 0 && board[pos]?.player != player)
+			else if (board[pos]?.player == player){
+				return true
+			}
+			else if (board[pos]?.player != player){
 				actions.add(ChessAction(position, pos))
-			else break
+				return true
+			}
+			return false
 		}
-		for (i in 1..7) {
-			val pos = Position(position.x, position.y + i)
-			if (pos.y < 8 && board[pos]?.player != player)
-				actions.add(ChessAction(position, pos))
-			else break
-		}
-		for (i in 1..7) {
-			val pos = Position(position.x, position.y - i)
-			if (pos.y >= 0 && board[pos]?.player != player)
-				actions.add(ChessAction(position, pos))
-			else break
-		}
+
+		for (i in 1..7)
+			if(addOrBreak(Position(position.x + i, position.y)))
+				break
+		for (i in 1..7)
+			if(addOrBreak(Position(position.x - i, position.y)))
+				break
+		for (i in 1..7)
+			if(addOrBreak(Position(position.x, position.y + i)))
+				break
+		for (i in 1..7)
+			if(addOrBreak(Position(position.x, position.y - i)))
+				break
 		return actions
 	}
 

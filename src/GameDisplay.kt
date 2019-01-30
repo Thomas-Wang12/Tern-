@@ -96,6 +96,11 @@ abstract class GameDisplay<G : BoardGame<S, T, A, P>, S : BoardGameState<T, A, P
 					messageLine.className = "message-line away"
 			}
 			updateDisplay()
+
+			console.log("Failed action:")
+			console.log(action)
+			if (game.winner == null && !game.state.possibleActions().isEmpty())
+				awaitActionFrom(game.currentPlayer())
 			return false
 		}
 		previousState = state
