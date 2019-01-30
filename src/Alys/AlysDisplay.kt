@@ -266,10 +266,10 @@ class AlysDisplay(canvasContainer: HTMLElement, playerArea: HTMLElement, gameAre
 		val selectedField = if (origin != null) game.state.board[origin] else null
 		if (selectedField?.treasury != null) {
 			statusArea.textContent = "Treasury: " + selectedField.treasury +
-					"\nExpected income: " + game.state.incomeFor(origin as Position) +
+					"\nExpected income: " + AlysState.incomeFor(origin as Position, game.state.board) +
 					"\nUpkeep: " + AlysState.connectedPositions(origin, game.state.board)
 					.mapNotNull { it.field.piece }
-					.sumBy { game.state.upkeepFor(it) }
+					.sumBy { Alys.upkeepFor(it) }
 			if (buildType == AlysType.Soldier)
 				statusArea.textContent += "\nCurrently hiring soldier"
 			if (buildType == AlysType.Fort)
@@ -369,13 +369,13 @@ private fun isUpgradeWanted(state: AlysState, place: PositionedField<AlysField>)
 }
 
 private fun canAffordUpgrade(state: AlysState, area: List<PositionedField<AlysField>>, strength: Int): Boolean {
-	val oldUpkeep = state.upkeepFor(strength)
-	val newUpkeep = state.upkeepFor(strength + 1)
+	val oldUpkeep = Alys.upkeepFor(strength)
+	val newUpkeep = Alys.upkeepFor(strength + 1)
 	val base = area.find { it.field.treasury != null } ?: return false
-	val income = state.incomeFor(base.position)
+	val income = AlysState.incomeFor(base.position, state.board)
 	val totalUpkeep = newUpkeep - oldUpkeep - 2 + area
 			.mapNotNull { it.field.piece }
-			.sumBy { state.upkeepFor(it) }
+			.sumBy { Alys.upkeepFor(it) }
 	return income + (base.field.treasury ?: 0) >= totalUpkeep
 }
 

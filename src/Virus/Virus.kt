@@ -5,6 +5,10 @@ import kotlin.math.min
 class Virus(override var state: VirusState = VirusState())
 	: BoardGame<VirusState, Int, VirusAction, Int>() {
 
+	override fun copyState(): VirusState {
+		return VirusState(state.width, state.height, state.playerCount, state.board.copy(), state.currentPlayer, state.players)
+	}
+
 	companion object {
 		val rules = listOf<Rule<VirusState, VirusAction>>(
 				Rule("Cannot place piece outside board") { action, state ->
@@ -56,7 +60,7 @@ data class VirusState(
 				}
 			} else 0
 		}),
-		override val currentPlayer: Int = 1,
+		override var currentPlayer: Int = 1,
 		override val players: List<Int> = (1..playerCount).toList()
 ) : BoardGameState<Int, VirusAction, Int> {
 
