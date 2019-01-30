@@ -34,6 +34,11 @@ abstract class Result<T> {
 		fun <F> failure(error: String): Failure<F>{
 			return Failure(error)
 		}
+		fun check(error: String, result: Boolean): Result<Any?> {
+			if(result)
+				return Success(null)
+			return Failure(error)
+		}
 	}
 
 	inline fun onFailure(callback: (result: Failure<T>)-> T): T {

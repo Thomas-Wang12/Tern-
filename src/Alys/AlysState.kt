@@ -12,38 +12,7 @@ data class AlysState(
 ) : BoardGameState<AlysField?, AlysAction, Int> {
 
 	override fun confirmLegality(action: AlysAction): Result<Any?> {
-		if (action is AlysMoveAction)
-			return confirmMoveLegality(action)
-		if (action is AlysCreateAction)
-			return confirmCreateLegality(action)
-		if (action is AlysEndTurnAction)
-			return Result.success()
-		return Result.failure("Unknown action")
-	}
-
-	fun <R : AlysRule<A>, A> confirmRules(action: A, rules: List<R>, info: AlysActionInfo): Result<Any?> {
-		for (rule in rules)
-			if (!rule.isLegal(action, this, info))
-				return Result.failure(rule.description)
-		return Result.success()
-	}
-
-	private fun confirmMoveLegality(action: AlysMoveAction, previousInfo: AlysActionInfo? = null): Result<Any?> {
-		val info = previousInfo ?: AlysActionInfo()
-		if (previousInfo == null)
-			confirmRules(action, Alys.commonRules, info).onFailure { return it }
-		return confirmRules(action, Alys.moveRules, info)
-	}
-
-	private fun confirmCreateLegality(action: AlysCreateAction): Result<Any?> {
-		val info = AlysActionInfo()
-		confirmRules(action, Alys.commonRules, info).onFailure { return it }
-		confirmRules(action, Alys.createRules, info).onFailure { return it }
-		if (action.type == AlysType.Soldier) {
-			info.originPiece = AlysPiece(AlysType.Soldier)
-			return confirmMoveLegality(AlysMoveAction(action.origin, action.destination), info)
-		}
-		return Result.success()
+		throw NotImplementedError()
 	}
 
 	fun defenseOf(field: AlysField): Int {
@@ -129,169 +98,7 @@ data class AlysState(
 	}
 
 	override fun nextState(action: AlysAction): AlysState {
-		val newBoard = board.copy()
-		if (action is AlysMoveAction)
-			return nextStateFrom(action, newBoard)
-		if (action is AlysCreateAction)
-			return nextStateFrom(action, newBoard)
-		if (action is AlysEndTurnAction)
-			return nextStateFrom(action, newBoard)
-		return this.copy(board = newBoard)
-	}
-
-	private fun nextStateFrom(action: AlysMoveAction, newBoard: Grid<AlysField?>): AlysState {
-		val piece = newBoard[action.origin]?.piece ?: return this
-		val destination = newBoard[action.destination] ?: return this
-		val newState = this.copy(board = newBoard)
-		// modifying destination
-		when {
-			destination.player != currentPlayer ->
-				invadeField(action.origin, action.destination, newState)
-			destination.piece?.type == AlysType.Soldier ->
-				newBoard[action.destination] = destination.copy(
-						piece = destination.piece.copy(strength = min(4, destination.piece.strength + piece.strength))
-				)
-			destination.piece?.type != null ->
-				newBoard[action.destination] = AlysField(currentPlayer, piece.copy(hasMoved = true))
-			else ->
-				newBoard[action.destination] = AlysField(currentPlayer, piece.copy())
-		}
-		newBoard[action.origin] = (newBoard[action.origin] as AlysField).copy(piece = null)
-		return newState
-	}
-
-	private fun invadeField(origin: Position, destination: Position, newState: AlysState) {
-		val piece = newState.board[origin]?.piece as AlysPiece
-		newState.board[destination] = AlysField(currentPlayer, piece.copy(hasMoved = true))
-		mergeAreas(destination, newState)
-		fixSplitAreas(destination, newState)
-	}
-
-	private fun mergeAreas(mergePoint: Position, newState: AlysState) {
-		val area = connectedPositions(mergePoint, newState.board)
-		val bases = area.filter { it.field.treasury != null }
-		val treasury = bases.sumBy { it.field.treasury ?: 0 }
-		val biggestBase = bases.maxBy { it.field.treasury ?: 0 } ?: return
-		for (base in bases)
-			newState.board[base.position] = base.field.copy(treasury = null)
-		newState.board[biggestBase.position] = biggestBase.field.copy(treasury = treasury)
-	}
-
-	private fun fixSplitAreas(mergePoint: Position, newState: AlysState) {
-		for (position in mergePoint.adjacentHexes()) {
-			if (!newState.board.isWithinBounds(position) || newState.board[position] == null)
-				continue
-			val area = connectedPositions(position, newState.board)
-			if (area.size == 1) {
-				newState.board[area[0].position] = area[0].field.copy(treasury = null)
-				continue
-			}
-			if (area.any { it.field.treasury != null })
-				continue
-			val emptyArea = area.filter { it.field.piece?.type != AlysType.Soldier && it.field.piece?.type != AlysType.Fort }
-			val newBase = if (emptyArea.isEmpty()) area.random() else emptyArea.random()
-			newState.board[newBase.position] = AlysField(newBase.field.player, treasury = 0)
-		}
-	}
-
-	private fun nextStateFrom(action: AlysCreateAction, newBoard: Grid<AlysField?>): AlysState {
-		val origin = newBoard[action.origin] ?: return this
-		if (action.type == AlysType.Soldier) {
-			newBoard[action.origin] = origin.copy(treasury = (origin.treasury as Int) - 10, piece = AlysPiece(AlysType.Soldier))
-			return nextStateFrom(AlysMoveAction(action.origin, action.destination), newBoard)
-		} else if (action.type == AlysType.Fort) {
-			newBoard[action.origin] = origin.copy(treasury = (origin.treasury as Int) - 15)
-			newBoard[action.destination] = (newBoard[action.destination] as AlysField).copy(piece = AlysPiece(AlysType.Fort))
-			return this.copy(board = newBoard)
-		}
-		return this
-	}
-
-	private fun nextStateFrom(action: AlysEndTurnAction, newBoard: Grid<AlysField?>): AlysState {
-		var newRound = round
-		var nextPlayer = currentPlayer + 1
-		if (nextPlayer > playerCount) {
-			nextPlayer = 1
-			newRound++
-		}
-		beginTurn(nextPlayer, newBoard)
-		return this.copy(board = newBoard, currentPlayer = nextPlayer, round = newRound)
-	}
-
-	private fun beginTurn(player: Int, newBoard: Grid<AlysField?>) {
-		val basePositions = newBoard.positions().filter { newBoard[it]?.player == player && newBoard[it]?.treasury != null }
-		for (position in basePositions) {
-			val base = newBoard[position] as AlysField
-			val treasury = (base.treasury as Int) + incomeFor(position, newBoard)
-			newBoard[position] = base.copy(treasury = treasury)
-		}
-		val playerArea = newBoard.positionedFields()
-				.filter { it.field?.player == player }
-				.map { PositionedField(it.position, it.field as AlysField) }
-		val newTrees = mutableListOf<Position>()
-		for (place in playerArea)
-			if (place.field.piece == null && place.field.treasury == null)
-				if (AlysState.adjacentFields(place.position, newBoard)
-								.filter { it.field.piece?.type == AlysType.Tree }.size > 1)
-					newTrees.add(place.position)
-		for (position in newTrees)
-			newBoard[position] = AlysField(player, AlysPiece(AlysType.Tree))
-		newTrees.clear()
-		for (place in playerArea)
-			if (place.field.piece == null && place.field.treasury == null) {
-				val adjacents = AlysState.adjacentFields(place.position, newBoard)
-				if (adjacents.size < 6 && adjacents.any { it.field.piece?.type == AlysType.CoastTree })
-					newTrees.add(place.position)
-			}
-		for (position in newTrees)
-			newBoard[position] = AlysField(player, AlysPiece(AlysType.CoastTree))
-		for (place in playerArea.filter { it.field.piece?.type == AlysType.Grave }) {
-			if (AlysState.adjacentFields(place.position, newBoard).size < 6)
-				newBoard[place.position] = AlysField(player, AlysPiece(AlysType.CoastTree))
-			else
-				newBoard[place.position] = AlysField(player, AlysPiece(AlysType.Tree))
-		}
-		for (place in playerArea.filter {
-			it.field.piece?.type == AlysType.Soldier
-					&& it.position.adjacentHexes().filter { newBoard.isWithinBounds(it) && newBoard[it]?.player == player }.isEmpty()
-		})
-			newBoard[place.position] = AlysField(player, AlysPiece(AlysType.Grave))
-		val bases = playerArea.filter { it.field.player == player && it.field.treasury != null }
-		for (base in bases) {
-			val area = connectedPositions(base.position, board)
-			val treasury = (base.field.treasury as Int)
-			+area.filter { it.field.piece?.type != AlysType.Tree && it.field.piece?.type != AlysType.CoastTree }.size
-			val soldiers = area.filter { it.field.piece?.type == AlysType.Soldier }
-			for (soldier in soldiers)
-				newBoard[soldier.position] = soldier.field.copy(piece = soldier.field.piece?.copy(hasMoved = false))
-			val upkeep = soldiers.map { upkeepFor(it.field.piece as AlysPiece) }.sum()
-			if (upkeep <= treasury)
-				newBoard[base.position] = base.field.copy(treasury = treasury - upkeep)
-			else
-				for (soldier in soldiers)
-					newBoard[soldier.position] = AlysField(player, AlysPiece(AlysType.Grave))
-		}
-	}
-
-	fun incomeFor(basePosition: Position, newBoard: Grid<AlysField?>? = null): Int {
-		val board = newBoard ?: board
-		return connectedPositions(basePosition, board).filter { it.field.piece?.type != AlysType.Tree && it.field.piece?.type != AlysType.CoastTree }.size
-	}
-
-	fun upkeepFor(piece: AlysPiece): Int {
-		if (piece.type != AlysType.Soldier)
-			return 0
-		return upkeepFor(piece.strength)
-	}
-
-	fun upkeepFor(strength: Int): Int {
-		return when (strength) {
-			1 -> 2
-			2 -> 6
-			3 -> 18
-			4 -> 54
-			else -> 0
-		}
+		throw NotImplementedError()
 	}
 
 	override fun findWinner(): Int? {
@@ -347,58 +154,25 @@ data class AlysState(
 					.filter { board.isWithinBounds(it) && board[it] != null }
 					.map { PositionedField(it, board[it] as AlysField) }
 		}
+
+		fun incomeFor(basePosition: Position, board: Grid<AlysField?>): Int {
+			return connectedPositions(basePosition, board).filter { it.field.piece?.type != AlysType.Tree && it.field.piece?.type != AlysType.CoastTree }.size
+		}
 	}
 }
 
-/*
-class UpdateStep<S, A>(
-		val description: String,
-		val shouldHappen: (state: S, action: A) -> Boolean,
-		val conditions: List<Rule<S, A>>,
-		val update: (state: S, action: A, newState: S) -> Unit
-)
+typealias ActionStep<T> = T.() -> Result<Any?>
 
-val steps = listOf<UpdateStep<AlysState, AlysAction>>(
-		UpdateStep(
-				"Invade field",
-				{ state, action ->
-					if (!(action is AlysMoveAction || action is AlysCreateAction && action.type == AlysType.Soldier))
-						false
-					action as AlysMoveAction
-					state.board[action.destination]
-				},
-				listOf(),
-				{ state, action, newState ->
-					action as AlysMoveAction
-					val piece = state.board[action.origin]?.piece as AlysPiece
-					newState.board[action.destination] = AlysField(state.currentPlayer, piece.copy(hasMoved = true))
-				}
-		),
-
-		UpdateStep(
-				"Add towns to newly split areas",
-				{ _, action ->
-					action is AlysMoveAction || action is AlysCreateAction && action.type == AlysType.Soldier
-				},
-				listOf(),
-				{ state, action, newState ->
-					action as AlysMoveAction
-					val piece = state.board[action.origin]?.piece as AlysPiece
-					newState.board[action.destination] = AlysField(state.currentPlayer, piece.copy(hasMoved = true))
-				}
-		)
-)*/
-
-
-class ActionType<S, A, T>(
+class ActionType<S, A, T : StateActionState<S>>(
 		val description: String,
 		val shouldPerform: (state: S, action: A) -> Boolean,
-		val readyAction: (state: S, action: A) -> Result<T>,
-		val updateSteps: List<(sas: StateActionState<S, T>) -> Result<Any?>>
+		val readyAction: (state: S, action: A, newState: S) -> Result<T>,
+		val updateSteps: List<ActionStep<T>>
 ) {
-	fun perform(sas: StateActionState<S, T>) {
+	fun perform(sas: T): Result<Any?> {
 		for (step in updateSteps)
-			step(sas)
+			sas.step().onFailure { return it }
+		return Result.success()
 	}
 }
 
@@ -407,80 +181,18 @@ abstract class AlysBoardGame<S : BoardGameState<T, A, P>, T, A, P> : BoardGame<S
 
 	override fun performAction(action: A): Result<*> {
 		val actionType = (actionTypes.find { it.shouldPerform(state, action) }
-				?: return Result.failure<Any?>("Couldn't recognise action")) as ActionType<S, A, Any>
-		val readiedAction = actionType.readyAction(state, action).onFailure {
+				?: return Result.failure<Any?>("Couldn't recognise action")) as ActionType<S, A, StateActionState<S>>
+		val newState = copyState()
+		val sas = actionType.readyAction(state, action, newState).onFailure {
 			return Result.failure<Any?>("Couldn't ${actionType.description} - ${it.error}")
 		}
-		val newState = copyState()
-		actionType.perform(StateActionState(state, readiedAction, newState))
+		actionType.perform(sas).onFailure {
+			return Result.failure<Any?>("Couldn't ${actionType.description} - ${it.error}")
+		}
 		state = newState
 		winner = players[state.findWinner()]
 		return Result.success()
 	}
 }
 
-class StateActionState<S, A>(val oldState: S, val action: A, val newState: S)
-
-/*
-abstract class UpdateStep<S, A> {
-	abstract fun shouldHappen(state: S, action: A): Boolean
-	abstract val conditions: List<Rule<S, A>>
-	abstract fun update(state: S, action: A, newState: S)
-}
-
-class MoveSoldier : UpdateStep<AlysState, AlysAction>() {
-	override fun shouldHappen(state: AlysState, action: AlysAction): Boolean {
-		return action is AlysMoveAction || action is AlysCreateAction && action.type == AlysType.Soldier
-	}
-
-	override val conditions: List<Rule<AlysState, AlysAction>> = listOf()
-
-	override fun update(state: AlysState, action: AlysAction, newState: AlysState) {
-		action as AlysMoveAction
-		val piece = state.board[action.origin]?.piece as AlysPiece
-		newState.board[action.destination] = AlysField(state.currentPlayer, piece.copy(hasMoved = true))
-	}
-}
-
-class AddTownToSplitAreas : UpdateStep<AlysState, AlysAction>() {
-	override fun shouldHappen(state: AlysState, action: AlysAction): Boolean {
-		return action is AlysMoveAction || action is AlysCreateAction && action.type == AlysType.Soldier
-	}
-
-	override val conditions: List<Rule<AlysState, AlysAction>> = listOf()
-
-	override fun update(state: AlysState, action: AlysAction, newState: AlysState) {
-		action as AlysMoveAction
-		val piece = state.board[action.origin]?.piece as AlysPiece
-		newState.board[action.destination] = AlysField(state.currentPlayer, piece.copy(hasMoved = true))
-	}
-}
-
-
-class RemoveTownFromSingleFields : UpdateStep<AlysState, AlysAction>() {
-	override fun shouldHappen(state: AlysState, action: AlysAction): Boolean {
-		return action is AlysMoveAction || action is AlysCreateAction && action.type == AlysType.Soldier
-	}
-
-	override val conditions: List<Rule<AlysState, AlysAction>> = listOf()
-
-	override fun update(state: AlysState, action: AlysAction, newState: AlysState) {
-		action as AlysMoveAction
-		val piece = state.board[action.origin]?.piece as AlysPiece
-		newState.board[action.destination] = AlysField(state.currentPlayer, piece.copy(hasMoved = true))
-	}
-}
-
-class MergeTowns : UpdateStep<AlysState, AlysAction>() {
-	override fun shouldHappen(state: AlysState, action: AlysAction): Boolean {
-		return action is AlysMoveAction || action is AlysCreateAction && action.type == AlysType.Soldier
-	}
-
-	override val conditions: List<Rule<AlysState, AlysAction>> = listOf()
-
-	override fun update(state: AlysState, action: AlysAction, newState: AlysState) {
-		action as AlysMoveAction
-		val piece = state.board[action.origin]?.piece as AlysPiece
-		newState.board[action.destination] = AlysField(state.currentPlayer, piece.copy(hasMoved = true))
-	}
-}*/
+open class StateActionState<S>(val oldState: S, val newState: S)

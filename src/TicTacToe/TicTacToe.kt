@@ -1,6 +1,10 @@
 class TicTacToe(override var state: TicTacToeState = TicTacToeState())
 	: BoardGame<TicTacToeState, TicTacToePiece?, TicTacToeAction, TicTacToePiece>() {
 
+	override fun copyState(): TicTacToeState {
+		return TicTacToeState(state.board.copy(), state.currentPlayer, state.players)
+	}
+
 	companion object {
 		val rules = listOf<Rule<TicTacToeState, TicTacToeAction>>(
 				Rule("Can only place the current player's piece") { action, state ->
@@ -14,7 +18,7 @@ class TicTacToe(override var state: TicTacToeState = TicTacToeState())
 
 data class TicTacToeState(
 		override val board: Grid<TicTacToePiece?> = Grid(3, 3, { _, _ -> null }),
-		override val currentPlayer: TicTacToePiece = TicTacToePiece.Cross,
+		override var currentPlayer: TicTacToePiece = TicTacToePiece.Cross,
 		override val players: List<TicTacToePiece> = listOf(TicTacToePiece.Cross, TicTacToePiece.Circle)
 ) : BoardGameState<TicTacToePiece?, TicTacToeAction, TicTacToePiece> {
 

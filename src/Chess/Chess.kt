@@ -3,6 +3,10 @@ import kotlin.math.abs
 class Chess(override var state: ChessState = ChessState())
 	: BoardGame<ChessState, ChessPiece?, ChessAction, ChessPlayer>() {
 
+	override fun copyState(): ChessState {
+		return ChessState(state.board.copy(), state.currentPlayer, state.players)
+	}
+
 }
 
 data class ChessState(
@@ -35,7 +39,7 @@ data class ChessState(
 				else -> null
 			}
 		}),
-		override val currentPlayer: ChessPlayer = ChessPlayer.White,
+		override var currentPlayer: ChessPlayer = ChessPlayer.White,
 		override val players: List<ChessPlayer> = listOf(ChessPlayer.White, ChessPlayer.Black)
 ) : BoardGameState<ChessPiece?, ChessAction, ChessPlayer> {
 
