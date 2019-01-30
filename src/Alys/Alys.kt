@@ -1,7 +1,7 @@
 import kotlin.math.min
 
 class Alys(override var state: AlysState = AlysState())
-	: AlysBoardGame<AlysState, AlysField?, AlysAction, Int>() {
+	: BoardGame<AlysState, AlysField?, AlysAction, Int>() {
 
 	override fun copyState(): AlysState {
 		return AlysState(state.width, state.height, state.playerCount, state.board.copy(), state.currentPlayer, state.players, state.round)
@@ -198,8 +198,8 @@ fun AlysSasMove.invadeDestination(): Result<Any?> {
 }
 
 fun AlysSasMove.fixSplitAreas(): Result<Any?> {
-	for (place in AlysState.adjacentFields(destination.position, newState.board)) {
-		val area = AlysState.connectedPositions(place.position, newState.board)
+	for (place in newState.adjacentFields(destination.position)) {
+		val area = newState.connectedPositions(place.position)
 		if (area.size == 1) {
 			newState.board[place.position] = place.field.copy(treasury = null)
 			continue
@@ -214,7 +214,7 @@ fun AlysSasMove.fixSplitAreas(): Result<Any?> {
 }
 
 fun AlysSasMove.fixMergedAreas(): Result<Any?> {
-	val area = AlysState.connectedPositions(destination.position, newState.board)
+	val area = newState.connectedPositions(destination.position)
 	val bases = area.filter { it.field.treasury != null }
 	val treasury = bases.sumBy { it.field.treasury ?: 0 }
 	val biggestBase = bases.maxBy { it.field.treasury ?: 0 } ?: return Failure("There was no base? This shouldn't happen")
@@ -256,7 +256,7 @@ fun AlysSasEnd.incrementRound(): Result<Any?> {
 
 fun AlysSasEnd.gainIncome(): Result<Any?> {
 	for (base in bases) {
-		val treasury = (base.field.treasury as Int) + AlysState.incomeFor(base.position, oldState.board)
+		val treasury = (base.field.treasury as Int) + oldState.incomeFor(base.position)
 		newState.board[base.position] = base.field.copy(treasury = treasury)
 	}
 	return Result.success()
@@ -266,7 +266,7 @@ fun AlysSasEnd.spreadTrees(): Result<Any?> {
 	val newTrees = mutableListOf<Position>()
 	for (place in playerArea)
 		if (place.field.piece == null && place.field.treasury == null)
-			if (AlysState.adjacentFields(place.position, oldState.board)
+			if (oldState.adjacentFields(place.position)
 							.filter { it.field.piece?.type == AlysType.Tree }.size > 1)
 				newTrees.add(place.position)
 	for (position in newTrees)
@@ -278,7 +278,7 @@ fun AlysSasEnd.spreadCoastTrees(): Result<Any?> {
 	val newTrees = mutableListOf<Position>()
 	for (place in playerArea)
 		if (place.field.piece == null && place.field.treasury == null) {
-			val adjacents = AlysState.adjacentFields(place.position, oldState.board)
+			val adjacents = oldState.adjacentFields(place.position)
 			if (adjacents.size < 6 && adjacents.any { it.field.piece?.type == AlysType.CoastTree })
 				newTrees.add(place.position)
 		}
@@ -289,7 +289,7 @@ fun AlysSasEnd.spreadCoastTrees(): Result<Any?> {
 
 fun AlysSasEnd.overgrowGraves(): Result<Any?> {
 	for (place in playerArea.filter { it.field.piece?.type == AlysType.Grave }) {
-		if (AlysState.adjacentFields(place.position, oldState.board).size < 6)
+		if (oldState.adjacentFields(place.position).size < 6)
 			newState.board[place.position] = AlysField(player, AlysPiece(AlysType.CoastTree))
 		else
 			newState.board[place.position] = AlysField(player, AlysPiece(AlysType.Tree))
@@ -300,7 +300,7 @@ fun AlysSasEnd.overgrowGraves(): Result<Any?> {
 fun AlysSasEnd.killLoneSoldiers(): Result<Any?> {
 	for (place in playerArea.filter {
 		it.field.piece?.type == AlysType.Soldier &&
-				AlysState.adjacentFields(it.position, oldState.board).none { it.field.player == player }
+				oldState.adjacentFields(it.position).none { it.field.player == player }
 	})
 		newState.board[place.position] = AlysField(player, AlysPiece(AlysType.Grave))
 	return Result.success()
@@ -308,7 +308,7 @@ fun AlysSasEnd.killLoneSoldiers(): Result<Any?> {
 
 fun AlysSasEnd.subtractUpkeep(): Result<Any?> {
 	for (base in bases) {
-		val area = AlysState.connectedPositions(base.position, oldState.board)
+		val area = oldState.connectedPositions(base.position)
 		val treasury = (base.field.treasury as Int) + area.filter {
 			it.field.piece?.type != AlysType.Tree && it.field.piece?.type != AlysType.CoastTree
 		}.size

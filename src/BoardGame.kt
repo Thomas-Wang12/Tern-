@@ -1,11 +1,20 @@
 abstract class BoardGame<S : BoardGameState<T, A, P>, T, A, P> {
 	abstract var state: S
+	abstract val actionTypes: List<ActionType<S, A, *>>
 	val players: MutableMap<P, Player> = mutableMapOf()
 	var winner: Player? = null
 
-	open fun performAction(action: A): Result<*> {
-		state.confirmLegality(action).onFailure { return it }
-		state = state.nextState(action) as S
+	fun performAction(action: A): Result<*> {
+		val actionType = (actionTypes.find { it.shouldPerform(state, action) }
+				?: return Result.failure<Any?>("Couldn't recognise action")) as ActionType<S, A, StateActionState<S>>
+		val newState = copyState()
+		val sas = actionType.readyAction(state, action, newState).onFailure {
+			return Result.failure<Any?>("Couldn't ${actionType.description} - ${it.error}")
+		}
+		actionType.perform(sas).onFailure {
+			return Result.failure<Any?>("Couldn't ${actionType.description} - ${it.error}")
+		}
+		state = newState
 		winner = players[state.findWinner()]
 		return Result.success()
 	}
@@ -20,10 +29,25 @@ interface BoardGameState<T, A, P> {
 	var currentPlayer: P
 	val players: List<P>
 
-	fun confirmLegality(action: A): Result<Any?>
 	fun possibleActions(): List<A>
-	fun nextState(action: A): BoardGameState<T, A, P>
 	fun findWinner(): P?
+}
+
+open class StateActionState<S>(val oldState: S, val newState: S)
+
+typealias ActionStep<T> = T.() -> Result<Any?>
+
+class ActionType<S, A, T : StateActionState<S>>(
+		val description: String,
+		val shouldPerform: (state: S, action: A) -> Boolean,
+		val readyAction: (state: S, action: A, newState: S) -> Result<T>,
+		val updateSteps: List<ActionStep<T>>
+) {
+	fun perform(sas: T): Result<Any?> {
+		for (step in updateSteps)
+			sas.step().onFailure { return it }
+		return Result.success()
+	}
 }
 
 abstract class Result<T> {

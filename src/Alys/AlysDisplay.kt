@@ -1,11 +1,7 @@
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import org.w3c.dom.*
 import org.w3c.dom.events.Event
 import kotlin.browser.document
 import kotlin.browser.window
-import kotlin.random.Random
 
 class AlysDisplay(canvasContainer: HTMLElement, playerArea: HTMLElement, gameAreaTop: HTMLElement, gameAreaRight: HTMLElement)
 	: GameDisplay<Alys, AlysState, AlysField?, AlysAction, Int>(canvasContainer, playerArea, gameAreaTop, gameAreaRight) {
@@ -184,7 +180,7 @@ class AlysDisplay(canvasContainer: HTMLElement, playerArea: HTMLElement, gameAre
 						selectField(it)
 						return@click
 					}
-					val selectedArea = AlysState.connectedPositions(it, game.state.board)
+					val selectedArea = game.state.connectedPositions(it)
 					selectField(selectedArea.find { it.field.treasury != null }?.position)
 					updateDisplay()
 				} else {
@@ -224,7 +220,7 @@ class AlysDisplay(canvasContainer: HTMLElement, playerArea: HTMLElement, gameAre
 	fun selectField(position: Position?) {
 		originPosition = position
 		if (position != null)
-			selectedArea = AlysState.connectedPositions(position, game.state.board).map { it.position }
+			selectedArea = game.state.connectedPositions(position).map { it.position }
 		else {
 			selectedArea = listOf()
 			buildType = null
@@ -266,8 +262,8 @@ class AlysDisplay(canvasContainer: HTMLElement, playerArea: HTMLElement, gameAre
 		val selectedField = if (origin != null) game.state.board[origin] else null
 		if (selectedField?.treasury != null) {
 			statusArea.textContent = "Treasury: " + selectedField.treasury +
-					"\nExpected income: " + AlysState.incomeFor(origin as Position, game.state.board) +
-					"\nUpkeep: " + AlysState.connectedPositions(origin, game.state.board)
+					"\nExpected income: " + game.state.incomeFor(origin as Position) +
+					"\nUpkeep: " + game.state.connectedPositions(origin)
 					.mapNotNull { it.field.piece }
 					.sumBy { Alys.upkeepFor(it) }
 			if (buildType == AlysType.Soldier)
@@ -358,10 +354,10 @@ private fun isUpgradeWanted(state: AlysState, place: PositionedField<AlysField>)
 	val strength = place.field.piece?.strength ?: return false
 	if (place.field.piece.hasMoved)
 		return false
-	val area = AlysState.connectedPositions(place.position, state.board)
+	val area = state.connectedPositions(place.position)
 	if (!canAffordUpgrade(state, area, strength))
 		return false
-	val smallestDefense = AlysState.neighbouringPositions(area, state.board).map { state.totalDefenseOf(it) }.min()
+	val smallestDefense = state.neighbouringPositions(area).map { state.totalDefenseOf(it) }.min()
 			?: return false
 	if (strength <= smallestDefense)
 		return true
@@ -372,7 +368,7 @@ private fun canAffordUpgrade(state: AlysState, area: List<PositionedField<AlysFi
 	val oldUpkeep = Alys.upkeepFor(strength)
 	val newUpkeep = Alys.upkeepFor(strength + 1)
 	val base = area.find { it.field.treasury != null } ?: return false
-	val income = AlysState.incomeFor(base.position, state.board)
+	val income = state.incomeFor(base.position)
 	val totalUpkeep = newUpkeep - oldUpkeep - 2 + area
 			.mapNotNull { it.field.piece }
 			.sumBy { Alys.upkeepFor(it) }
@@ -382,13 +378,13 @@ private fun canAffordUpgrade(state: AlysState, area: List<PositionedField<AlysFi
 private fun utilityFor(state: AlysState, action: AlysCreateAction): Int {
 	if (action.type == AlysType.Soldier)
 		return utilityFor(state, AlysMoveAction(action.origin, action.destination))
-	val adjacents = AlysState.adjacentFields(action.destination, state.board)
+	val adjacents = state.adjacentFields(action.destination)
 	val fortNearby = adjacents
 			.filter { it.field.player == state.currentPlayer }
 			.any { it.field.piece?.type == AlysType.Fort }
 	if (fortNearby)
 		return -1
 	val enemyNearby = adjacents.any { it.field.player != state.currentPlayer } ||
-			AlysState.neighbouringPositions(adjacents, state.board).any { it.field.player != state.currentPlayer }
+			state.neighbouringPositions(adjacents).any { it.field.player != state.currentPlayer }
 	return if (enemyNearby) 3 else -1
 }
