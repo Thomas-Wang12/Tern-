@@ -3,6 +3,7 @@ import org.w3c.dom.*
 class ChessDisplay(canvasContainer: HTMLElement, playerArea: HTMLElement, gameAreaTop: HTMLElement, gameAreaRight: HTMLElement)
 	: GameDisplay<Chess, ChessState, ChessPiece?, ChessAction, ChessPlayer>(canvasContainer, playerArea, gameAreaTop, gameAreaRight) {
 	override var game = Chess()
+	override val playerTypes = listOf<PlayerType<ChessState, ChessAction>>(HumanType(), RandomAIType())
 
 	var sourcePosition: Position? = null
 
@@ -33,15 +34,14 @@ class ChessDisplay(canvasContainer: HTMLElement, playerArea: HTMLElement, gameAr
 	}
 
 	init {
-		playerTypes.add(RandomAIPlayerType<ChessState, ChessAction>())
-		players.add(HumanPlayer("White", "white"))
-		players.add(RandomAIPlayer<ChessState, ChessAction>("Black", "black"))
+		players.add(Player("White", "white", HumanController()))
+		players.add(Player("Black", "black", RandomAIController()))
 		maxPlayers = 2
 		newPlayerButton.disabled = true
 
 		startNewGame()
 
-		gridDisplay.onClick = {
+		gridDisplay.onClick = onClick@{
 			if (game.currentPlayer() is Player && it.x >= 0 && it.y >= 0 && it.x < 8 && it.y < 8) {
 				val source = sourcePosition
 				if (source == null) {
@@ -49,7 +49,8 @@ class ChessDisplay(canvasContainer: HTMLElement, playerArea: HTMLElement, gameAr
 					updateDisplay()
 				} else {
 					sourcePosition = null
-					performAction(ChessAction(source, Position(it.x, it.y)))
+					val playerController = game.currentPlayer()?.controller as? HumanController ?: return@onClick
+					playerController.performAction(ChessAction(source, Position(it.x, it.y)))
 				}
 			}
 		}
@@ -59,7 +60,5 @@ class ChessDisplay(canvasContainer: HTMLElement, playerArea: HTMLElement, gameAr
 		game = Chess()
 		game.players[ChessPlayer.White] = players[0]
 		game.players[ChessPlayer.Black] = players[1]
-		awaitActionFrom(game.currentPlayer())
-		updateDisplay()
 	}
 }

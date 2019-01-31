@@ -1,8 +1,8 @@
 abstract class BoardGame<S : BoardGameState<T, A, P>, T, A, P> {
 	abstract var state: S
 	abstract val actionTypes: List<ActionType<S, A, *>>
-	val players: MutableMap<P, Player> = mutableMapOf()
-	var winner: Player? = null
+	val players: MutableMap<P, Player<S, A>> = mutableMapOf()
+	var winner: Player<S, A>? = null
 
 	fun performAction(action: A): Result<*> {
 		state = nextState(action).onFailure { return it }
@@ -25,7 +25,7 @@ abstract class BoardGame<S : BoardGameState<T, A, P>, T, A, P> {
 
 	abstract fun copyState(): S
 
-	fun currentPlayer(): Player? = players[state.currentPlayer]
+	fun currentPlayer() = players[state.currentPlayer]
 }
 
 interface BoardGameState<T, A, P> {
@@ -33,7 +33,6 @@ interface BoardGameState<T, A, P> {
 	var currentPlayer: P
 	val players: List<P>
 
-	fun possibleActions(): List<A>
 	fun findWinner(): P?
 }
 

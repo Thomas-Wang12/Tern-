@@ -118,7 +118,7 @@ data class ChessState(
 		}),
 		override var currentPlayer: ChessPlayer = ChessPlayer.White,
 		override val players: List<ChessPlayer> = listOf(ChessPlayer.White, ChessPlayer.Black)
-) : BoardGameState<ChessPiece?, ChessAction, ChessPlayer> {
+) : BoardGameState<ChessPiece?, ChessAction, ChessPlayer>, AIPlayable<ChessAction> {
 
 	override fun possibleActions(): List<ChessAction> {
 		val actions = mutableListOf<ChessAction>()

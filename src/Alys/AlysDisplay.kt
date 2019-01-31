@@ -1,3 +1,5 @@
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.w3c.dom.*
 import org.w3c.dom.events.Event
 import kotlin.browser.document
@@ -11,6 +13,7 @@ class AlysDisplay(canvasContainer: HTMLElement, playerArea: HTMLElement, gameAre
 	var buildType: AlysType? = null
 	val previousStates = mutableListOf<AlysState>()
 	var selectedArea = listOf<Position>()
+	override val playerTypes = listOf<PlayerType<AlysState, AlysAction>>(HumanType(), RandomAIType(), SimpleAlysAIType())
 	private val fortButton = document.createElement("button") as HTMLButtonElement
 	private val soldierButton = document.createElement("button") as HTMLButtonElement
 	private val undoButton = document.createElement("button") as HTMLButtonElement
@@ -159,13 +162,11 @@ class AlysDisplay(canvasContainer: HTMLElement, playerArea: HTMLElement, gameAre
 		undoButton.addEventListener("click", ::undo)
 		endTurnButton.addEventListener("click", ::endTurn)
 
-		playerTypes.add(RandomAIPlayerType<AlysState, AlysAction>())
-		playerTypes.add(SimpleAlysAIPlayerType())
-		players.add(HumanPlayer("Player 1", "#0b9"))
-		players.add(RandomAIPlayer<AlysState, AlysAction>("Player 2", "green"))
-		players.add(RandomAIPlayer<AlysState, AlysAction>("Player 3", "yellowgreen"))
-		players.add(RandomAIPlayer<AlysState, AlysAction>("Player 4", "yellow"))
-		players.add(RandomAIPlayer<AlysState, AlysAction>("Player 5", "orange"))
+		players.add(Player("Player 1", "#0b9", HumanController()))
+		players.add(Player("Player 2", "green", RandomAIController()))
+		players.add(Player("Player 3", "yellowgreen", RandomAIController()))
+		players.add(Player("Player 4", "yellow", RandomAIController()))
+		players.add(Player("Player 5", "orange", RandomAIController()))
 
 		gridDisplay.onClick = click@{
 			if (game.currentPlayer() is Player && game.state.board.isWithinBounds(it)) {
@@ -190,15 +191,18 @@ class AlysDisplay(canvasContainer: HTMLElement, playerArea: HTMLElement, gameAre
 					}
 					val sourceField = game.state.board[origin]
 					val type = buildType
-					var success = false
 					val destination = game.state.board[it]
 					if (sourceField?.piece?.type == AlysType.Soldier && destination?.treasury != null && destination.player == sourceField.player) {
 						selectField(it)
 						return@click
-					} else if (sourceField?.piece?.type == AlysType.Soldier)
-						success = performAction(AlysMoveAction(origin, it))
-					else if (type != null)
-						success = performAction(AlysCreateAction(type, origin, it))
+					} else if (sourceField?.piece?.type == AlysType.Soldier){
+						val playerController = game.currentPlayer()?.controller as? HumanController ?: return@click
+						playerController.performAction(AlysMoveAction(origin, it))
+					}
+					else if (type != null){
+						val playerController = game.currentPlayer()?.controller as? HumanController ?: return@click
+						playerController.performAction(AlysCreateAction(type, origin, it))
+					}
 					else if (sourceField?.treasury != null) {
 						if (destination?.player == game.state.currentPlayer &&
 								(destination.treasury != null || destination.piece?.type == AlysType.Soldier)) {
@@ -206,14 +210,17 @@ class AlysDisplay(canvasContainer: HTMLElement, playerArea: HTMLElement, gameAre
 							return@click
 						}
 					}
-					if (success) {
-						selectField(null)
-						val state = previousState
-						if (state != null)
-							previousStates.add(state)
-					}
 				}
 			}
+		}
+	}
+
+	override val onCompleteAction = { success: Boolean ->
+		if (success) {
+			selectField(null)
+			val state = previousState
+			if (state != null)
+				previousStates.add(state)
 		}
 	}
 
@@ -241,13 +248,10 @@ class AlysDisplay(canvasContainer: HTMLElement, playerArea: HTMLElement, gameAre
 	}
 
 	override fun startNewGame() {
-		game.players.clear()
+		game = Alys()
 		for (i in 1..players.size)
 			game.players[i] = players[i - 1]
 		game.newGame(seed = (0..100000).random())
-		awaitActionFrom(game.currentPlayer())
-		messageLine.textContent = ""
-		updateDisplay()
 	}
 
 	override fun updateDisplay() {
@@ -274,7 +278,6 @@ class AlysDisplay(canvasContainer: HTMLElement, playerArea: HTMLElement, gameAre
 			statusArea.textContent = "No town selected"
 		}
 		gridDisplay.display(game.state.board, getColor, draw)
-		updatePlayerList()
 		updateButtons()
 	}
 
@@ -311,13 +314,14 @@ class AlysDisplay(canvasContainer: HTMLElement, playerArea: HTMLElement, gameAre
 	}
 
 	private fun endTurn(event: Event) {
-		performAction(AlysEndTurnAction())
+		val playerController = game.currentPlayer()?.controller as? HumanController ?: return
+		playerController.performAction(AlysEndTurnAction())
 	}
 }
 
-class SimpleAlysAIPlayerType : PlayerType("CPU - Medium") {
-	override fun isOfType(player: Player): Boolean = player is SimpleAIPlayer<*, *>
-	override fun getNew(name: String, color: String) = SimpleAIPlayer(name, color, ::alysUtility)
+class SimpleAlysAIType : PlayerType<AlysState, AlysAction>("CPU - Medium") {
+	override fun isOfType(player: Player<AlysState, AlysAction>): Boolean = player.controller is SimpleAIController
+	override fun getController() = SimpleAIController(::alysUtility)
 }
 
 private fun alysUtility(state: AlysState, action: AlysAction): Int {

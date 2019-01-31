@@ -3,6 +3,7 @@ import org.w3c.dom.*
 class VirusDisplay(canvasContainer: HTMLElement, playerArea: HTMLElement, gameAreaTop: HTMLElement, gameAreaRight: HTMLElement)
 	: GameDisplay<Virus, VirusState, Int, VirusAction, Int>(canvasContainer, playerArea, gameAreaTop, gameAreaRight) {
 	override var game = Virus()
+	override val playerTypes = listOf<PlayerType<VirusState, VirusAction>>(HumanType(), RandomAIType(), SimpleVirusAIType())
 
 	var originPosition: Position? = null
 
@@ -22,15 +23,13 @@ class VirusDisplay(canvasContainer: HTMLElement, playerArea: HTMLElement, gameAr
 	}
 
 	init {
-		playerTypes.add(RandomAIPlayerType<VirusState, VirusAction>())
-		playerTypes.add(SimpleVirusAIPlayerType())
-		players.add(HumanPlayer("Player 1", "yellow"))
-		players.add(RandomAIPlayer<VirusState, VirusAction>("Player 2", "red"))
+		players.add(Player("Player 1", "yellow", HumanController()))
+		players.add(Player("Player 2", "red", RandomAIController()))
 		maxPlayers = 4
 
 		startNewGame()
 
-		gridDisplay.onClick = {
+		gridDisplay.onClick = onClick@{
 			if (game.currentPlayer() is Player && it.x >= 0 && it.y >= 0 && it.x < game.state.width && it.y < game.state.height) {
 				val origin = originPosition
 				if (origin == null) {
@@ -38,25 +37,24 @@ class VirusDisplay(canvasContainer: HTMLElement, playerArea: HTMLElement, gameAr
 					updateDisplay()
 				} else {
 					originPosition = null
-					performAction(VirusAction(origin, Position(it.x, it.y)))
+					val playerController = game.currentPlayer()?.controller as? HumanController ?: return@onClick
+					playerController.performAction(VirusAction(origin, Position(it.x, it.y)))
 				}
 			}
 		}
 	}
 
 	override fun startNewGame(){
-		game.players.clear()
+		game = Virus()
 		for(i in 1..players.size)
 			game.players[i] = players[i-1]
 		game.state = VirusState(8, 8, players.size)
-		awaitActionFrom(game.currentPlayer())
-		updateDisplay()
 	}
 }
 
-class SimpleVirusAIPlayerType : PlayerType("CPU - Medium") {
-	override fun isOfType(player: Player): Boolean = player is SimpleAIPlayer<*, *>
-	override fun getNew(name: String, color: String) = SimpleAIPlayer(name, color, ::virusUtility)
+class SimpleVirusAIType : PlayerType<VirusState, VirusAction>("CPU - Medium") {
+	override fun isOfType(player: Player<VirusState, VirusAction>): Boolean = player.controller is SimpleAIController
+	override fun getController() = SimpleAIController(::virusUtility)
 }
 
 private fun virusUtility(state: VirusState, action: VirusAction): Int {

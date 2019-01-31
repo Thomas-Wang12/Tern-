@@ -117,7 +117,7 @@ data class VirusState(
 		}),
 		override var currentPlayer: Int = 1,
 		override val players: List<Int> = (1..playerCount).toList()
-) : BoardGameState<Int, VirusAction, Int> {
+) : BoardGameState<Int, VirusAction, Int>, AIPlayable<VirusAction> {
 
 	override fun possibleActions(): List<VirusAction> {
 		val actions = mutableListOf<VirusAction>()

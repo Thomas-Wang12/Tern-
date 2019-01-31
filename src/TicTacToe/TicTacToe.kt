@@ -41,7 +41,7 @@ data class TicTacToeState(
 		override val board: Grid<TicTacToePiece?> = Grid(3, 3, { _, _ -> null }),
 		override var currentPlayer: TicTacToePiece = TicTacToePiece.Cross,
 		override val players: List<TicTacToePiece> = listOf(TicTacToePiece.Cross, TicTacToePiece.Circle)
-) : BoardGameState<TicTacToePiece?, TicTacToeAction, TicTacToePiece> {
+) : BoardGameState<TicTacToePiece?, TicTacToeAction, TicTacToePiece>, AIPlayable<TicTacToeAction> {
 
 	override fun possibleActions(): List<TicTacToeAction> {
 		val actions = mutableListOf<TicTacToeAction>()

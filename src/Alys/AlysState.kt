@@ -9,7 +9,7 @@ data class AlysState(
 		override var currentPlayer: Int = 1,
 		override val players: List<Int> = (1..playerCount).toList(),
 		var round: Int = 0
-) : BoardGameState<AlysField?, AlysAction, Int> {
+) : BoardGameState<AlysField?, AlysAction, Int>, AIPlayable<AlysAction> {
 
 	override fun possibleActions(): List<AlysAction> {
 		val actions = mutableListOf<AlysAction>()
