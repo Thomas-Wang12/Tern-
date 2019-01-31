@@ -48,10 +48,10 @@ abstract class GameDisplay<G : BoardGame<S, T, A, P>, S : BoardGameState<T, A, P
 		newPlayerButton.textContent = "Add player"
 		newPlayerButton.onclick = {
 			if (players.size < maxPlayers)
-				players.add(Player("Player " + players.size + 1, "blue", playerTypes[0].getController() ))
+				players.add(Player("Player " + (players.size + 1), "blue", playerTypes[0].getController() ))
 			if (players.size >= maxPlayers)
 				newPlayerButton.disabled = true
-			updateDisplay()
+			updatePlayerList()
 		}
 
 		GlobalScope.launch {

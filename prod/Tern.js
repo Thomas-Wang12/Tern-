@@ -4180,10 +4180,10 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   function GameDisplay_init$lambda_0(this$GameDisplay) {
     return function (it) {
       if (this$GameDisplay.players.size < this$GameDisplay.maxPlayers)
-        this$GameDisplay.players.add_11rb$(new Player('Player ' + toString(this$GameDisplay.players.size) + toString(1), 'blue', this$GameDisplay.playerTypes.get_za3lpa$(0).getController()));
+        this$GameDisplay.players.add_11rb$(new Player('Player ' + toString(this$GameDisplay.players.size + 1 | 0), 'blue', this$GameDisplay.playerTypes.get_za3lpa$(0).getController()));
       if (this$GameDisplay.players.size >= this$GameDisplay.maxPlayers)
         this$GameDisplay.newPlayerButton.disabled = true;
-      this$GameDisplay.updateDisplay();
+      this$GameDisplay.updatePlayerList();
       return Unit;
     };
   }
@@ -5436,7 +5436,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     };
   }
   function VirusDisplay$draw$lambda(this$VirusDisplay) {
-    return function (context, fieldSize, field, x, y) {
+    return function (context, fieldSize, f, x, y) {
       var origin = this$VirusDisplay.originPosition;
       if (origin == null || !(origin.x === x && origin.y === y))
         return;
