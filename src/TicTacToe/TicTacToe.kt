@@ -27,7 +27,7 @@ fun TicTacToeSas.mustPlaceOwnPiece() =
 
 fun TicTacToeSas.placePiece(): Result<Any?> {
 	if (oldState.board[action.x, action.y] != null)
-		Failure<Any?>("must place pieces on empty fields")
+		return Failure("must place pieces on empty fields")
 	newState.board[action.x, action.y] = action.piece
 	return Result.success()
 }
