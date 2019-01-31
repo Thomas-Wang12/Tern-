@@ -4908,7 +4908,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   }
   function placePiece_0($receiver) {
     if ($receiver.oldState.board.get_vux9f0$($receiver.action.x, $receiver.action.y) != null)
-      new Failure('must place pieces on empty fields');
+      return new Failure('must place pieces on empty fields');
     $receiver.newState.board.set_vq7693$($receiver.action.x, $receiver.action.y, $receiver.action.piece);
     return Result$Companion_getInstance().success();
   }
