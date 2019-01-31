@@ -19,6 +19,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   var Enum = Kotlin.kotlin.Enum;
   var throwISE = Kotlin.throwISE;
   var Kind_INTERFACE = Kotlin.Kind.INTERFACE;
+  var min = Kotlin.kotlin.collections.min_exjks8$;
   var Random = Kotlin.kotlin.random.Random_za3lpa$;
   var toMutableList = Kotlin.kotlin.collections.toMutableList_4c7yge$;
   var numberToInt = Kotlin.numberToInt;
@@ -29,7 +30,6 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   var trimMargin = Kotlin.kotlin.text.trimMargin_rjktp$;
   var Unit = Kotlin.kotlin.Unit;
   var L100 = Kotlin.Long.fromInt(100);
-  var min = Kotlin.kotlin.collections.min_exjks8$;
   var contains = Kotlin.kotlin.collections.contains_2ws7j4$;
   var filterNotNull = Kotlin.kotlin.collections.filterNotNull_m3lr2h$;
   var mutableListOf = Kotlin.kotlin.collections.mutableListOf_i5x0yv$;
@@ -37,13 +37,17 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   var wrapFunction = Kotlin.wrapFunction;
   var listOf_0 = Kotlin.kotlin.collections.listOf_mh5how$;
   var abs = Kotlin.kotlin.math.abs_za3lpa$;
-  var coroutines = $module$kotlinx_coroutines_core.kotlinx.coroutines;
-  var L4000 = Kotlin.Long.fromInt(4000);
-  var delay = $module$kotlinx_coroutines_core.kotlinx.coroutines.delay_s8cxhz$;
   var COROUTINE_SUSPENDED = Kotlin.kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED;
   var CoroutineImpl = Kotlin.kotlin.coroutines.CoroutineImpl;
+  var get_isActive = $module$kotlinx_coroutines_core.kotlinx.coroutines.get_isActive_e9pf1l$;
+  var coroutines = $module$kotlinx_coroutines_core.kotlinx.coroutines;
+  var delay = $module$kotlinx_coroutines_core.kotlinx.coroutines.delay_s8cxhz$;
+  var withContext = $module$kotlinx_coroutines_core.kotlinx.coroutines.withContext_i5cbzn$;
+  var L4000 = Kotlin.Long.fromInt(4000);
   var launch = $module$kotlinx_coroutines_core.kotlinx.coroutines.launch_s496o7$;
   var L200 = Kotlin.Long.fromInt(200);
+  var promise = $module$kotlinx_coroutines_core.kotlinx.coroutines.promise_pda6u4$;
+  var CompletableDeferred = $module$kotlinx_coroutines_core.kotlinx.coroutines.CompletableDeferred_xptg6w$;
   var max = Kotlin.kotlin.collections.max_exjks8$;
   Alys.prototype = Object.create(BoardGame.prototype);
   Alys.prototype.constructor = Alys;
@@ -59,10 +63,10 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   AlysSasHire.prototype.constructor = AlysSasHire;
   AlysType.prototype = Object.create(Enum.prototype);
   AlysType.prototype.constructor = AlysType;
+  SimpleAlysAIType.prototype = Object.create(PlayerType.prototype);
+  SimpleAlysAIType.prototype.constructor = SimpleAlysAIType;
   AlysDisplay.prototype = Object.create(GameDisplay.prototype);
   AlysDisplay.prototype.constructor = AlysDisplay;
-  SimpleAlysAIPlayerType.prototype = Object.create(PlayerType.prototype);
-  SimpleAlysAIPlayerType.prototype.constructor = SimpleAlysAIPlayerType;
   StandardStateActionState.prototype = Object.create(StateActionState.prototype);
   StandardStateActionState.prototype.constructor = StandardStateActionState;
   Success.prototype = Object.create(Result.prototype);
@@ -79,16 +83,10 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   ChessPlayer.prototype.constructor = ChessPlayer;
   ChessDisplay.prototype = Object.create(GameDisplay.prototype);
   ChessDisplay.prototype.constructor = ChessDisplay;
-  HumanPlayer.prototype = Object.create(Player.prototype);
-  HumanPlayer.prototype.constructor = HumanPlayer;
-  RandomAIPlayer.prototype = Object.create(Player.prototype);
-  RandomAIPlayer.prototype.constructor = RandomAIPlayer;
-  SimpleAIPlayer.prototype = Object.create(Player.prototype);
-  SimpleAIPlayer.prototype.constructor = SimpleAIPlayer;
-  HumanPlayerType.prototype = Object.create(PlayerType.prototype);
-  HumanPlayerType.prototype.constructor = HumanPlayerType;
-  RandomAIPlayerType.prototype = Object.create(PlayerType.prototype);
-  RandomAIPlayerType.prototype.constructor = RandomAIPlayerType;
+  HumanType.prototype = Object.create(PlayerType.prototype);
+  HumanType.prototype.constructor = HumanType;
+  RandomAIType.prototype = Object.create(PlayerType.prototype);
+  RandomAIType.prototype.constructor = RandomAIType;
   TicTacToe.prototype = Object.create(BoardGame.prototype);
   TicTacToe.prototype.constructor = TicTacToe;
   TicTacToePiece.prototype = Object.create(Enum.prototype);
@@ -97,10 +95,10 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   TicTacToeDisplay.prototype.constructor = TicTacToeDisplay;
   Virus.prototype = Object.create(BoardGame.prototype);
   Virus.prototype.constructor = Virus;
+  SimpleVirusAIType.prototype = Object.create(PlayerType.prototype);
+  SimpleVirusAIType.prototype.constructor = SimpleVirusAIType;
   VirusDisplay.prototype = Object.create(GameDisplay.prototype);
   VirusDisplay.prototype.constructor = VirusDisplay;
-  SimpleVirusAIPlayerType.prototype = Object.create(PlayerType.prototype);
-  SimpleVirusAIPlayerType.prototype.constructor = SimpleVirusAIPlayerType;
   function Alys(state) {
     Alys$Companion_getInstance();
     if (state === void 0)
@@ -1196,6 +1194,232 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     simpleName: 'AlysEndTurnAction',
     interfaces: [AlysAction]
   };
+  function SimpleAlysAIType() {
+    PlayerType.call(this, 'CPU - Medium');
+  }
+  SimpleAlysAIType.prototype.isOfType_afkf1m$ = function (player) {
+    return Kotlin.isType(player.controller, SimpleAIController);
+  };
+  SimpleAlysAIType.prototype.getController = function () {
+    return new SimpleAIController(getCallableRef('alysUtility', function (state, action) {
+      return alysUtility(state, action);
+    }));
+  };
+  SimpleAlysAIType.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'SimpleAlysAIType',
+    interfaces: [PlayerType]
+  };
+  function alysUtility(state, action) {
+    if (Kotlin.isType(action, AlysEndTurnAction))
+      return 0;
+    if (Kotlin.isType(action, AlysMoveAction))
+      return utilityFor(state, action);
+    if (Kotlin.isType(action, AlysCreateAction))
+      return utilityFor_0(state, action);
+    return 1;
+  }
+  function utilityFor(state, action) {
+    var tmp$, tmp$_0;
+    var destination = Kotlin.isType(tmp$ = state.board.get_dfplqh$(action.destination), AlysField) ? tmp$ : throwCCE();
+    if (destination.piece != null) {
+      if (destination.player === state.currentPlayer) {
+        switch (destination.piece.type.name) {
+          case 'Soldier':
+            tmp$_0 = isUpgradeWanted(state, new PositionedField(action.destination, destination)) ? 10 : -1;
+            break;
+          case 'Tree':
+            tmp$_0 = 3;
+            break;
+          case 'CoastTree':
+            tmp$_0 = 10;
+            break;
+          default:tmp$_0 = 1;
+            break;
+        }
+      }
+       else {
+        switch (destination.piece.type.name) {
+          case 'Soldier':
+            tmp$_0 = 5;
+            break;
+          case 'CoastTree':
+            tmp$_0 = 9;
+            break;
+          case 'Fort':
+            tmp$_0 = 5;
+            break;
+          default:tmp$_0 = 1;
+            break;
+        }
+      }
+      return tmp$_0;
+    }
+    return 0;
+  }
+  function isUpgradeWanted(state, place) {
+    var tmp$, tmp$_0, tmp$_1;
+    tmp$_0 = (tmp$ = place.field.piece) != null ? tmp$.strength : null;
+    if (tmp$_0 == null) {
+      return false;
+    }
+    var strength = tmp$_0;
+    if (place.field.piece.hasMoved)
+      return false;
+    var area = state.connectedPositions_dfplqh$(place.position);
+    if (!canAffordUpgrade(state, area, strength))
+      return false;
+    var $receiver = state.neighbouringPositions_wmyzew$(area);
+    var destination = ArrayList_init_0(collectionSizeOrDefault($receiver, 10));
+    var tmp$_2;
+    tmp$_2 = $receiver.iterator();
+    while (tmp$_2.hasNext()) {
+      var item = tmp$_2.next();
+      destination.add_11rb$(state.totalDefenseOf_qx8qel$(item));
+    }
+    tmp$_1 = min(destination);
+    if (tmp$_1 == null) {
+      return false;
+    }
+    var smallestDefense = tmp$_1;
+    if (strength <= smallestDefense)
+      return true;
+    return false;
+  }
+  var mapNotNullTo$lambda = wrapFunction(function () {
+    return function (closure$transform, closure$destination) {
+      return function (element) {
+        var tmp$;
+        if ((tmp$ = closure$transform(element)) != null) {
+          closure$destination.add_11rb$(tmp$);
+        }
+        return Unit;
+      };
+    };
+  });
+  function canAffordUpgrade(state, area, strength) {
+    var tmp$, tmp$_0;
+    var oldUpkeep = Alys$Companion_getInstance().upkeepFor_za3lpa$(strength);
+    var newUpkeep = Alys$Companion_getInstance().upkeepFor_za3lpa$(strength + 1 | 0);
+    var firstOrNull$result;
+    firstOrNull$break: do {
+      var tmp$_1;
+      tmp$_1 = area.iterator();
+      while (tmp$_1.hasNext()) {
+        var element = tmp$_1.next();
+        if (element.field.treasury != null) {
+          firstOrNull$result = element;
+          break firstOrNull$break;
+        }
+      }
+      firstOrNull$result = null;
+    }
+     while (false);
+    tmp$ = firstOrNull$result;
+    if (tmp$ == null) {
+      return false;
+    }
+    var base = tmp$;
+    var income = state.incomeFor_dfplqh$(base.position);
+    var tmp$_2 = newUpkeep - oldUpkeep - 2;
+    var destination = ArrayList_init();
+    var tmp$_3;
+    tmp$_3 = area.iterator();
+    while (tmp$_3.hasNext()) {
+      var element_0 = tmp$_3.next();
+      var tmp$_0_0;
+      if ((tmp$_0_0 = element_0.field.piece) != null) {
+        destination.add_11rb$(tmp$_0_0);
+      }
+    }
+    var tmp$_4;
+    var sum = 0;
+    tmp$_4 = destination.iterator();
+    while (tmp$_4.hasNext()) {
+      var element_1 = tmp$_4.next();
+      sum = sum + Alys$Companion_getInstance().upkeepFor_ibj32h$(element_1) | 0;
+    }
+    var totalUpkeep = tmp$_2 + sum | 0;
+    return (income + ((tmp$_0 = base.field.treasury) != null ? tmp$_0 : 0) | 0) >= totalUpkeep;
+  }
+  function utilityFor_0(state, action) {
+    if (action.type === AlysType$Soldier_getInstance())
+      return utilityFor(state, new AlysMoveAction(action.origin, action.destination));
+    var adjacents = state.adjacentFields_dfplqh$(action.destination);
+    var destination = ArrayList_init();
+    var tmp$;
+    tmp$ = adjacents.iterator();
+    while (tmp$.hasNext()) {
+      var element = tmp$.next();
+      if (element.field.player === state.currentPlayer)
+        destination.add_11rb$(element);
+    }
+    var any$result;
+    any$break: do {
+      var tmp$_0;
+      if (Kotlin.isType(destination, Collection) && destination.isEmpty()) {
+        any$result = false;
+        break any$break;
+      }
+      tmp$_0 = destination.iterator();
+      while (tmp$_0.hasNext()) {
+        var element_0 = tmp$_0.next();
+        var tmp$_1;
+        if (equals((tmp$_1 = element_0.field.piece) != null ? tmp$_1.type : null, AlysType$Fort_getInstance())) {
+          any$result = true;
+          break any$break;
+        }
+      }
+      any$result = false;
+    }
+     while (false);
+    var fortNearby = any$result;
+    if (fortNearby)
+      return -1;
+    var any$result_0;
+    any$break: do {
+      var tmp$_2;
+      if (Kotlin.isType(adjacents, Collection) && adjacents.isEmpty()) {
+        any$result_0 = false;
+        break any$break;
+      }
+      tmp$_2 = adjacents.iterator();
+      while (tmp$_2.hasNext()) {
+        var element_1 = tmp$_2.next();
+        if (element_1.field.player !== state.currentPlayer) {
+          any$result_0 = true;
+          break any$break;
+        }
+      }
+      any$result_0 = false;
+    }
+     while (false);
+    var tmp$_3 = any$result_0;
+    if (!tmp$_3) {
+      var $receiver = state.neighbouringPositions_wmyzew$(adjacents);
+      var any$result_1;
+      any$break: do {
+        var tmp$_4;
+        if (Kotlin.isType($receiver, Collection) && $receiver.isEmpty()) {
+          any$result_1 = false;
+          break any$break;
+        }
+        tmp$_4 = $receiver.iterator();
+        while (tmp$_4.hasNext()) {
+          var element_2 = tmp$_4.next();
+          if (element_2.field.player !== state.currentPlayer) {
+            any$result_1 = true;
+            break any$break;
+          }
+        }
+        any$result_1 = false;
+      }
+       while (false);
+      tmp$_3 = any$result_1;
+    }
+    var enemyNearby = tmp$_3;
+    return enemyNearby ? 3 : -1;
+  }
   function AlysBoardCreator(width, height, seed) {
     this.seed = seed;
     this.board = new Grid(width, height, AlysBoardCreator$board$lambda);
@@ -1369,34 +1593,35 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   function AlysDisplay(canvasContainer, playerArea, gameAreaTop, gameAreaRight) {
     GameDisplay.call(this, canvasContainer, playerArea, gameAreaTop, gameAreaRight);
     this.game_6mofcn$_0 = new Alys();
-    this.originPosition = null;
-    this.buildType = null;
-    this.previousStates = ArrayList_init();
-    this.selectedArea = emptyList();
+    this.originPosition_0 = null;
+    this.buildType_0 = null;
+    this.previousStates_0 = ArrayList_init();
+    this.selectedArea_0 = emptyList();
+    this.playerTypes_ftta0d$_0 = listOf([new HumanType(), new RandomAIType(), new SimpleAlysAIType()]);
     var tmp$, tmp$_0, tmp$_1, tmp$_2, tmp$_3;
     this.fortButton_0 = Kotlin.isType(tmp$ = document.createElement('button'), HTMLButtonElement) ? tmp$ : throwCCE();
     this.soldierButton_0 = Kotlin.isType(tmp$_0 = document.createElement('button'), HTMLButtonElement) ? tmp$_0 : throwCCE();
     this.undoButton_0 = Kotlin.isType(tmp$_1 = document.createElement('button'), HTMLButtonElement) ? tmp$_1 : throwCCE();
     this.endTurnButton_0 = Kotlin.isType(tmp$_2 = document.createElement('button'), HTMLButtonElement) ? tmp$_2 : throwCCE();
     this.statusArea_0 = Kotlin.isType(tmp$_3 = document.createElement('div'), HTMLDivElement) ? tmp$_3 : throwCCE();
-    this.images = LinkedHashMap_init();
-    this.ruleArea = new RuleArea(trimMargin('Alys is a game about conquering an island.\n\t\t\t|<img src="assets/B.png" /> <img src="assets/S1.png" />\n\t\t\t|You expand your territory by recruiting soldiers in town and using them to take new fields. Towns, forts and soldiers all protect the fields next to them, which means you need stronger soldiers to take them.\n\t\t\t|<img src="assets/F.png" /> <img src="assets/T.png" />\n\t\t\t|Towns collect money from the surrounding area every turn, and allow you to buy soldier and forts. Forts provide more protection than towns, so higher rank soldiers are needed to take them. Soldiers are upgraded by moving onto each other.\n\t\t'), listOf([new RuleSection('Gameplay', trimMargin('<img src="assets/BR.png" /> <img src="assets/S1R.png" />\n\t\t\t\t\t\t\t|Flags indicate when towns or soldiers are ready to do something. Clicking on an area with a town that has a flag will let you create soldiers and forts. With a town selected, you\'ll be able to press the buttons above the map.\n\t\t\t\t\t\t\t|\n\t\t\t\t\t\t\t|<img src="assets/F.png" />\n\t\t\t\t\t\t\t|Press the "Build Fort" button and select an empty field in the highlighted area to build a fort there.\n\t\t\t\t\t\t\t|<img src="assets/S1.png" /> <img src="assets/S2.png" />\n\t\t\t\t\t\t\t|Press the "Hire Soldier" button and select a field in or next to the highlighted area to place a soldier there. You can also click an existing soldier with a flag to give it orders.\n\t\t\t\t\t\t\t|\n\t\t\t\t\t\t\t|A soldier can be placed on any field in your own area, other than on forts or towns, and on any enemy field whose defense it is strong enough to beat. Placing one soldier onto another create an upgraded soldier.\n\t\t\t\t\t\t')), new RuleSection('Towns', trimMargin('<img src="assets/B.png" /> <img src="assets/BR.png" />\n\t\t\t\t\t\t\t|Towns are the centers of your areas. Each area consisting of at least two fields will have a town, which collects the money you gain from the area. You can see those details in the top right corner.\n\t\t\t\t\t\t\t|\n\t\t\t\t\t\t\t|At the beginning of every turn, the town\'s treasury grows by one per field in its area, except those that are overgrown. Then the upkeep for soldiers in the area is paid. If there\'s not enough money to pay your soldiers, they\'ll die and leave a grave.\n\t\t\t\t\t\t\t|\n\t\t\t\t\t\t\t|When two areas with a town each are connected, the town with the smaller treasury transfers its money to the other and disappears.\n\t\t\t\t\t\t\t|\n\t\t\t\t\t\t\t|A town protects the fields you own next to it, so a soldier of at least Veteran rank is needed to take it. When a town is destroyed, its treasury is lost.\n\t\t\t\t\t\t')), new RuleSection('Soldiers', trimMargin('<img src="assets/S1.png" /> <img src="assets/S2.png" /> <img src="assets/S3.png" /> <img src="assets/S4.png" />\n\t\t\t\t\t\t\t|Soldiers are used to conquer the enemies\' fields. They can move to any field neighbouring the area they are in. Like towns, soldiers protect the fields around them. Soldiers come in four ranks. Stronger soldiers beat weaker soldiers, but cost more upkeep.\n\t\t\t\t\t\t\t|\n\t\t\t\t\t\t\t|Upgrade a soldier by moving another soldier onto it.\n\t\t\t\t\t\t\t|<img src="assets/S1.png" /> <img src="assets/S1R.png" />\n\t\t\t\t\t\t\t|Recruits (upkeep 2) are only able to take undefended fields.\n\t\t\t\t\t\t\t|<img src="assets/S2.png" /> <img src="assets/S2R.png" />\n\t\t\t\t\t\t\t|Veterans (upkeep 6) can take fields defended by towns and recruits.\n\t\t\t\t\t\t\t|<img src="assets/S3.png" /> <img src="assets/S3R.png" />\n\t\t\t\t\t\t\t|Elites (upkeep 18) can take fields defended by forts and lower rank soldiers.\n\t\t\t\t\t\t\t|<img src="assets/S4.png" /> <img src="assets/S4R.png" />\n\t\t\t\t\t\t\t|Generals (upkeep 54) can take any field.\n\t\t\t\t\t\t\t|\n\t\t\t\t\t\t\t|Soldiers can generally only do one thing per turn, but are able to move freely between your empty fields.\n\t\t\t\t\t\t')), new RuleSection('Other details', trimMargin('<img src="assets/F.png" />\n\t\t\t\t\t\t\t|Fort defend and area and cost no upkeep. Only a soldier of at least Knight rank can destroy it.\n\t\t\t\t\t\t\t|<img src="assets/T.png" /> <img src="assets/C.png" />\n\t\t\t\t\t\t\t|Some fields are overgrown by trees or bushes. Overgrown fields provide no money to the town in the area, but can be removed by soldiers\n\t\t\t\t\t\t\t|\n\t\t\t\t\t\t\t|Whenever an empty field is adjacent to two trees, the trees will spread to that area. Bushes only grow on coastal fields, and spread to adjacent empty coastal fields. Try not to get overwhelmed.\n\t\t\t\t\t\t\t|<img src="assets/G.png" />\n\t\t\t\t\t\t\t|Graves are left by soldiers when their upkeep wasn\'t paid. The following turn they\'ll overgrow and turn into trees or bushes, depending on whether they\'re near the coast or not.\n\t\t\t\t\t\t\t|\n\t\t\t\t\t\t\t|The game is won when there are no enemy towns left.\n\t\t\t\t\t\t'))]));
+    this.images_0 = LinkedHashMap_init();
+    this.ruleArea_0 = new RuleArea(trimMargin('Alys is a game about conquering an island.\n\t\t\t|<img src="assets/B.png" /> <img src="assets/S1.png" />\n\t\t\t|You expand your territory by recruiting soldiers in town and using them to take new fields. Towns, forts and soldiers all protect the fields next to them, which means you need stronger soldiers to take them.\n\t\t\t|<img src="assets/F.png" /> <img src="assets/T.png" />\n\t\t\t|Towns collect money from the surrounding area every turn, and allow you to buy soldier and forts. Forts provide more protection than towns, so higher rank soldiers are needed to take them. Soldiers are upgraded by moving onto each other.\n\t\t'), listOf([new RuleSection('Gameplay', trimMargin('<img src="assets/BR.png" /> <img src="assets/S1R.png" />\n\t\t\t\t\t\t\t|Flags indicate when towns or soldiers are ready to do something. Clicking on an area with a town that has a flag will let you create soldiers and forts. With a town selected, you\'ll be able to press the buttons above the map.\n\t\t\t\t\t\t\t|\n\t\t\t\t\t\t\t|<img src="assets/F.png" />\n\t\t\t\t\t\t\t|Press the "Build Fort" button and select an empty field in the highlighted area to build a fort there.\n\t\t\t\t\t\t\t|<img src="assets/S1.png" /> <img src="assets/S2.png" />\n\t\t\t\t\t\t\t|Press the "Hire Soldier" button and select a field in or next to the highlighted area to place a soldier there. You can also click an existing soldier with a flag to give it orders.\n\t\t\t\t\t\t\t|\n\t\t\t\t\t\t\t|A soldier can be placed on any field in your own area, other than on forts or towns, and on any enemy field whose defense it is strong enough to beat. Placing one soldier onto another create an upgraded soldier.\n\t\t\t\t\t\t')), new RuleSection('Towns', trimMargin('<img src="assets/B.png" /> <img src="assets/BR.png" />\n\t\t\t\t\t\t\t|Towns are the centers of your areas. Each area consisting of at least two fields will have a town, which collects the money you gain from the area. You can see those details in the top right corner.\n\t\t\t\t\t\t\t|\n\t\t\t\t\t\t\t|At the beginning of every turn, the town\'s treasury grows by one per field in its area, except those that are overgrown. Then the upkeep for soldiers in the area is paid. If there\'s not enough money to pay your soldiers, they\'ll die and leave a grave.\n\t\t\t\t\t\t\t|\n\t\t\t\t\t\t\t|When two areas with a town each are connected, the town with the smaller treasury transfers its money to the other and disappears.\n\t\t\t\t\t\t\t|\n\t\t\t\t\t\t\t|A town protects the fields you own next to it, so a soldier of at least Veteran rank is needed to take it. When a town is destroyed, its treasury is lost.\n\t\t\t\t\t\t')), new RuleSection('Soldiers', trimMargin('<img src="assets/S1.png" /> <img src="assets/S2.png" /> <img src="assets/S3.png" /> <img src="assets/S4.png" />\n\t\t\t\t\t\t\t|Soldiers are used to conquer the enemies\' fields. They can move to any field neighbouring the area they are in. Like towns, soldiers protect the fields around them. Soldiers come in four ranks. Stronger soldiers beat weaker soldiers, but cost more upkeep.\n\t\t\t\t\t\t\t|\n\t\t\t\t\t\t\t|Upgrade a soldier by moving another soldier onto it.\n\t\t\t\t\t\t\t|<img src="assets/S1.png" /> <img src="assets/S1R.png" />\n\t\t\t\t\t\t\t|Recruits (upkeep 2) are only able to take undefended fields.\n\t\t\t\t\t\t\t|<img src="assets/S2.png" /> <img src="assets/S2R.png" />\n\t\t\t\t\t\t\t|Veterans (upkeep 6) can take fields defended by towns and recruits.\n\t\t\t\t\t\t\t|<img src="assets/S3.png" /> <img src="assets/S3R.png" />\n\t\t\t\t\t\t\t|Elites (upkeep 18) can take fields defended by forts and lower rank soldiers.\n\t\t\t\t\t\t\t|<img src="assets/S4.png" /> <img src="assets/S4R.png" />\n\t\t\t\t\t\t\t|Generals (upkeep 54) can take any field.\n\t\t\t\t\t\t\t|\n\t\t\t\t\t\t\t|Soldiers can generally only do one thing per turn, but are able to move freely between your empty fields.\n\t\t\t\t\t\t')), new RuleSection('Other details', trimMargin('<img src="assets/F.png" />\n\t\t\t\t\t\t\t|Fort defend and area and cost no upkeep. Only a soldier of at least Knight rank can destroy it.\n\t\t\t\t\t\t\t|<img src="assets/T.png" /> <img src="assets/C.png" />\n\t\t\t\t\t\t\t|Some fields are overgrown by trees or bushes. Overgrown fields provide no money to the town in the area, but can be removed by soldiers\n\t\t\t\t\t\t\t|\n\t\t\t\t\t\t\t|Whenever an empty field is adjacent to two trees, the trees will spread to that area. Bushes only grow on coastal fields, and spread to adjacent empty coastal fields. Try not to get overwhelmed.\n\t\t\t\t\t\t\t|<img src="assets/G.png" />\n\t\t\t\t\t\t\t|Graves are left by soldiers when their upkeep wasn\'t paid. The following turn they\'ll overgrow and turn into trees or bushes, depending on whether they\'re near the coast or not.\n\t\t\t\t\t\t\t|\n\t\t\t\t\t\t\t|The game is won when there are no enemy towns left.\n\t\t\t\t\t\t'))]));
     this.getColor_vm40yk$_0 = AlysDisplay$getColor$lambda(this);
     this.draw_6lbnvp$_0 = AlysDisplay$draw$lambda(this);
-    this.addImage_61zpoe$('S1');
-    this.addImage_61zpoe$('S1R');
-    this.addImage_61zpoe$('S2');
-    this.addImage_61zpoe$('S2R');
-    this.addImage_61zpoe$('S3');
-    this.addImage_61zpoe$('S3R');
-    this.addImage_61zpoe$('S4');
-    this.addImage_61zpoe$('S4R');
-    this.addImage_61zpoe$('B');
-    this.addImage_61zpoe$('BR');
-    this.addImage_61zpoe$('F');
-    this.addImage_61zpoe$('T');
-    this.addImage_61zpoe$('C');
-    this.addImage_61zpoe$('G');
+    this.addImage_0('S1');
+    this.addImage_0('S1R');
+    this.addImage_0('S2');
+    this.addImage_0('S2R');
+    this.addImage_0('S3');
+    this.addImage_0('S3R');
+    this.addImage_0('S4');
+    this.addImage_0('S4R');
+    this.addImage_0('B');
+    this.addImage_0('BR');
+    this.addImage_0('F');
+    this.addImage_0('T');
+    this.addImage_0('C');
+    this.addImage_0('G');
     this.aiDelay = L100;
     this.gridDisplay.gridColor = '#7df';
     this.gridDisplay.outerBorder = 50.0;
@@ -1418,14 +1643,13 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     this.endTurnButton_0.addEventListener('click', getCallableRef('endTurn', function ($receiver, event) {
       return $receiver.endTurn_0(event), Unit;
     }.bind(null, this)));
-    this.playerTypes.add_11rb$(new RandomAIPlayerType());
-    this.playerTypes.add_11rb$(new SimpleAlysAIPlayerType());
-    this.players.add_11rb$(new HumanPlayer('Player 1', '#0b9'));
-    this.players.add_11rb$(new RandomAIPlayer('Player 2', 'green'));
-    this.players.add_11rb$(new RandomAIPlayer('Player 3', 'yellowgreen'));
-    this.players.add_11rb$(new RandomAIPlayer('Player 4', 'yellow'));
-    this.players.add_11rb$(new RandomAIPlayer('Player 5', 'orange'));
+    this.players.add_11rb$(new Player('Player 1', '#0b9', new HumanController()));
+    this.players.add_11rb$(new Player('Player 2', 'green', new RandomAIController()));
+    this.players.add_11rb$(new Player('Player 3', 'yellowgreen', new RandomAIController()));
+    this.players.add_11rb$(new Player('Player 4', 'yellow', new RandomAIController()));
+    this.players.add_11rb$(new Player('Player 5', 'orange', new RandomAIController()));
     this.gridDisplay.onClick = AlysDisplay_init$lambda(this);
+    this.onCompleteAction_1nmxi3$_0 = AlysDisplay$onCompleteAction$lambda(this);
     this.onShowGame_59dkf9$_0 = AlysDisplay$onShowGame$lambda(this, gameAreaTop, gameAreaRight);
   }
   Object.defineProperty(AlysDisplay.prototype, 'game', {
@@ -1434,6 +1658,11 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     },
     set: function (game) {
       this.game_6mofcn$_0 = game;
+    }
+  });
+  Object.defineProperty(AlysDisplay.prototype, 'playerTypes', {
+    get: function () {
+      return this.playerTypes_ftta0d$_0;
     }
   });
   Object.defineProperty(AlysDisplay.prototype, 'getColor', {
@@ -1446,7 +1675,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
       return this.draw_6lbnvp$_0;
     }
   });
-  AlysDisplay.prototype.soldierImage_vz30o2$ = function (piece, showReady) {
+  AlysDisplay.prototype.soldierImage_0 = function (piece, showReady) {
     var tmp$;
     var flag = piece.hasMoved || !showReady ? '' : 'R';
     switch (piece.strength) {
@@ -1467,21 +1696,26 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     }
     return tmp$;
   };
-  AlysDisplay.prototype.addImage_61zpoe$ = function (name) {
+  AlysDisplay.prototype.addImage_0 = function (name) {
     var tmp$, tmp$_0;
-    var $receiver = this.images;
+    var $receiver = this.images_0;
     var value = Kotlin.isType(tmp$ = document.createElement('img'), HTMLImageElement) ? tmp$ : throwCCE();
     $receiver.put_xwzc9p$(name, value);
-    (tmp$_0 = this.images.get_11rb$(name)) != null ? (tmp$_0.src = 'assets/' + name + '.png') : null;
+    (tmp$_0 = this.images_0.get_11rb$(name)) != null ? (tmp$_0.src = 'assets/' + name + '.png') : null;
   };
-  AlysDisplay.prototype.resize = function () {
+  AlysDisplay.prototype.resize_0 = function () {
     var scale = window.devicePixelRatio;
     var size = numberToInt((this.canvas.width / scale - this.gridDisplay.outerBorder * 2) / this.game.state.width - 1);
     this.gridDisplay.fieldSize = size % 2 === 0 ? size - 1 | 0 : size;
     this.gridDisplay.showHexagons();
   };
-  AlysDisplay.prototype.selectField_9nmm0a$ = function (position) {
-    this.originPosition = position;
+  Object.defineProperty(AlysDisplay.prototype, 'onCompleteAction', {
+    get: function () {
+      return this.onCompleteAction_1nmxi3$_0;
+    }
+  });
+  AlysDisplay.prototype.selectField_0 = function (position) {
+    this.originPosition_0 = position;
     if (position != null) {
       var $receiver = this.game.state.connectedPositions_dfplqh$(position);
       var destination = ArrayList_init_0(collectionSizeOrDefault($receiver, 10));
@@ -1491,11 +1725,11 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
         var item = tmp$.next();
         destination.add_11rb$(item.position);
       }
-      this.selectedArea = destination;
+      this.selectedArea_0 = destination;
     }
      else {
-      this.selectedArea = emptyList();
-      this.buildType = null;
+      this.selectedArea_0 = emptyList();
+      this.buildType_0 = null;
     }
     this.updateDisplay();
   };
@@ -1506,7 +1740,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   });
   AlysDisplay.prototype.startNewGame = function () {
     var tmp$;
-    this.game.players.clear();
+    this.game = new Alys();
     tmp$ = this.players.size;
     for (var i = 1; i <= tmp$; i++) {
       var $receiver = this.game.players;
@@ -1514,11 +1748,8 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
       $receiver.put_xwzc9p$(i, value);
     }
     this.game.newGame_qt1dr2$(void 0, void 0, random_0(new IntRange(0, 100000), Random_0.Default));
-    this.awaitActionFrom_s8jyv4$(this.game.currentPlayer());
-    this.messageLine.textContent = '';
-    this.updateDisplay();
   };
-  var mapNotNullTo$lambda = wrapFunction(function () {
+  var mapNotNullTo$lambda_0 = wrapFunction(function () {
     return function (closure$transform, closure$destination) {
       return function (element) {
         var tmp$;
@@ -1539,7 +1770,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
      else {
       this.turnLine.textContent = 'Current player: ' + ((tmp$ = this.game.currentPlayer()) != null ? tmp$.name : null);
     }
-    var origin = this.originPosition;
+    var origin = this.originPosition_0;
     var selectedField = origin != null ? this.game.state.board.get_dfplqh$(origin) : null;
     if ((selectedField != null ? selectedField.treasury : null) != null) {
       tmp$_1 = this.statusArea_0;
@@ -1563,11 +1794,11 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
         sum = sum + Alys$Companion_getInstance().upkeepFor_ibj32h$(element_0) | 0;
       }
       tmp$_1.textContent = tmp$_4 + toString(sum);
-      if (equals(this.buildType, AlysType$Soldier_getInstance())) {
+      if (equals(this.buildType_0, AlysType$Soldier_getInstance())) {
         tmp$_2 = this.statusArea_0;
         tmp$_2.textContent = tmp$_2.textContent + '\nCurrently hiring soldier';
       }
-      if (equals(this.buildType, AlysType$Fort_getInstance())) {
+      if (equals(this.buildType_0, AlysType$Fort_getInstance())) {
         tmp$_3 = this.statusArea_0;
         tmp$_3.textContent = tmp$_3.textContent + '\nCurrently building fort';
       }
@@ -1576,50 +1807,55 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
       this.statusArea_0.textContent = 'No town selected';
     }
     this.gridDisplay.display_31tjs9$(this.game.state.board, this.getColor, this.draw);
-    this.updatePlayerList();
     this.updateButtons_0();
   };
   AlysDisplay.prototype.updateButtons_0 = function () {
     var tmp$;
-    var source = this.originPosition;
+    var source = this.originPosition_0;
     var base = source != null ? this.game.state.board.get_dfplqh$(source) : null;
     if ((base != null ? base.treasury : null) != null) {
-      this.fortButton_0.disabled = equals(this.buildType, AlysType$Fort_getInstance()) || base.treasury < 15;
-      this.soldierButton_0.disabled = equals(this.buildType, AlysType$Soldier_getInstance()) || base.treasury < 10;
+      this.fortButton_0.disabled = equals(this.buildType_0, AlysType$Fort_getInstance()) || base.treasury < 15;
+      this.soldierButton_0.disabled = equals(this.buildType_0, AlysType$Soldier_getInstance()) || base.treasury < 10;
     }
      else {
       this.fortButton_0.disabled = true;
       this.soldierButton_0.disabled = true;
     }
     if (((tmp$ = this.previousState) != null ? tmp$.currentPlayer : null) !== this.game.state.currentPlayer)
-      this.previousStates.clear();
-    this.undoButton_0.disabled = this.previousStates.isEmpty();
+      this.previousStates_0.clear();
+    this.undoButton_0.disabled = this.previousStates_0.isEmpty();
   };
   AlysDisplay.prototype.hireSoldier_0 = function (event) {
     var tmp$;
-    this.buildType = AlysType$Soldier_getInstance();
+    this.buildType_0 = AlysType$Soldier_getInstance();
     this.updateButtons_0();
     tmp$ = this.statusArea_0;
     tmp$.textContent = tmp$.textContent + '\nCurrently hiring soldier';
   };
   AlysDisplay.prototype.buildFort_0 = function (event) {
     var tmp$;
-    this.buildType = AlysType$Fort_getInstance();
+    this.buildType_0 = AlysType$Fort_getInstance();
     this.updateButtons_0();
     tmp$ = this.statusArea_0;
     tmp$.textContent = tmp$.textContent + '\nCurrently building fort';
   };
   AlysDisplay.prototype.undo_0 = function (event) {
-    this.game.state = this.previousStates.removeAt_za3lpa$(this.previousStates.size - 1 | 0);
+    this.game.state = this.previousStates_0.removeAt_za3lpa$(this.previousStates_0.size - 1 | 0);
     this.updateDisplay();
   };
   AlysDisplay.prototype.endTurn_0 = function (event) {
-    this.performAction_11re$(new AlysEndTurnAction());
+    var tmp$, tmp$_0, tmp$_1;
+    tmp$_1 = Kotlin.isType(tmp$_0 = (tmp$ = this.game.currentPlayer()) != null ? tmp$.controller : null, HumanController) ? tmp$_0 : null;
+    if (tmp$_1 == null) {
+      return;
+    }
+    var playerController = tmp$_1;
+    playerController.performAction_11rc$(new AlysEndTurnAction());
   };
   function AlysDisplay$getColor$lambda(this$AlysDisplay) {
     return function (f, x, y) {
       var tmp$;
-      var origin = this$AlysDisplay.originPosition;
+      var origin = this$AlysDisplay.originPosition_0;
       if (origin != null && origin.x === x && origin.y === y)
         return 'white';
       tmp$ = this$AlysDisplay.game.state.board.get_vux9f0$(x, y);
@@ -1639,7 +1875,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
       if (field == null)
         return;
       context.lineWidth = 2.0;
-      if (this$AlysDisplay.selectedArea.contains_11rb$(new Position(x, y))) {
+      if (this$AlysDisplay.selectedArea_0.contains_11rb$(new Position(x, y))) {
         context.strokeStyle = 'white';
         context.stroke(this$AlysDisplay.gridDisplay.hexPathOffset);
       }
@@ -1647,7 +1883,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
       if (equals(tmp$_0, AlysType$Fort_getInstance()))
         tmp$_1 = 'F';
       else if (equals(tmp$_0, AlysType$Soldier_getInstance()))
-        tmp$_1 = this$AlysDisplay.soldierImage_vz30o2$(field.piece, field.player === this$AlysDisplay.game.state.currentPlayer);
+        tmp$_1 = this$AlysDisplay.soldierImage_0(field.piece, field.player === this$AlysDisplay.game.state.currentPlayer);
       else if (equals(tmp$_0, AlysType$Tree_getInstance()))
         tmp$_1 = 'T';
       else if (equals(tmp$_0, AlysType$CoastTree_getInstance()))
@@ -1658,15 +1894,15 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
         tmp$_1 = field.treasury != null && field.treasury >= 10 && field.player === this$AlysDisplay.game.state.currentPlayer ? 'BR' : field.treasury != null ? 'B' : null;
       var image = tmp$_1;
       if (image != null)
-        context.drawImage(this$AlysDisplay.images.get_11rb$(image), 0.0, 0.0, fieldSize, fieldSize);
+        context.drawImage(this$AlysDisplay.images_0.get_11rb$(image), 0.0, 0.0, fieldSize, fieldSize);
       return Unit;
     };
   }
   function AlysDisplay_init$lambda(this$AlysDisplay) {
     return function (it) {
-      var tmp$, tmp$_0, tmp$_1, tmp$_2, tmp$_3, tmp$_4, tmp$_5;
+      var tmp$, tmp$_0, tmp$_1, tmp$_2, tmp$_3, tmp$_4, tmp$_5, tmp$_6, tmp$_7, tmp$_8, tmp$_9, tmp$_10, tmp$_11;
       if (Kotlin.isType(this$AlysDisplay.game.currentPlayer(), Player) && this$AlysDisplay.game.state.board.isWithinBounds_dfplqh$(it)) {
-        var origin = this$AlysDisplay.originPosition;
+        var origin = this$AlysDisplay.originPosition_0;
         if (origin == null) {
           tmp$ = this$AlysDisplay.game.state.board.get_dfplqh$(it);
           if (tmp$ == null) {
@@ -1678,16 +1914,16 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
           if (equals((tmp$_0 = selectedField.piece) != null ? tmp$_0.type : null, AlysType$Soldier_getInstance())) {
             if (selectedField.piece.hasMoved)
               return;
-            this$AlysDisplay.selectField_9nmm0a$(it);
+            this$AlysDisplay.selectField_0(it);
             return;
           }
           var selectedArea = this$AlysDisplay.game.state.connectedPositions_dfplqh$(it);
           var firstOrNull$result;
           firstOrNull$break: do {
-            var tmp$_6;
-            tmp$_6 = selectedArea.iterator();
-            while (tmp$_6.hasNext()) {
-              var element = tmp$_6.next();
+            var tmp$_12;
+            tmp$_12 = selectedArea.iterator();
+            while (tmp$_12.hasNext()) {
+              var element = tmp$_12.next();
               if (element.field.treasury != null) {
                 firstOrNull$result = element;
                 break firstOrNull$break;
@@ -1697,39 +1933,55 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
           }
            while (false);
           tmp$_2 = (tmp$_1 = firstOrNull$result) != null ? tmp$_1.position : null;
-          this$AlysDisplay.selectField_9nmm0a$(tmp$_2);
+          this$AlysDisplay.selectField_0(tmp$_2);
           this$AlysDisplay.updateDisplay();
         }
          else {
           if (equals(origin, it)) {
-            this$AlysDisplay.selectField_9nmm0a$(null);
+            this$AlysDisplay.selectField_0(null);
             return;
           }
           var sourceField = this$AlysDisplay.game.state.board.get_dfplqh$(origin);
-          var type = this$AlysDisplay.buildType;
-          var success = false;
+          var type = this$AlysDisplay.buildType_0;
           var destination = this$AlysDisplay.game.state.board.get_dfplqh$(it);
           if (equals((tmp$_3 = sourceField != null ? sourceField.piece : null) != null ? tmp$_3.type : null, AlysType$Soldier_getInstance()) && (destination != null ? destination.treasury : null) != null && destination.player === sourceField.player) {
-            this$AlysDisplay.selectField_9nmm0a$(it);
+            this$AlysDisplay.selectField_0(it);
             return;
           }
-           else if (equals((tmp$_4 = sourceField != null ? sourceField.piece : null) != null ? tmp$_4.type : null, AlysType$Soldier_getInstance()))
-            success = this$AlysDisplay.performAction_11re$(new AlysMoveAction(origin, it));
-          else if (type != null)
-            success = this$AlysDisplay.performAction_11re$(new AlysCreateAction(type, origin, it));
-          else if ((sourceField != null ? sourceField.treasury : null) != null) {
-            if ((destination != null ? destination.player : null) === this$AlysDisplay.game.state.currentPlayer && (destination.treasury != null || equals((tmp$_5 = destination.piece) != null ? tmp$_5.type : null, AlysType$Soldier_getInstance()))) {
-              this$AlysDisplay.selectField_9nmm0a$(it);
+           else if (equals((tmp$_4 = sourceField != null ? sourceField.piece : null) != null ? tmp$_4.type : null, AlysType$Soldier_getInstance())) {
+            tmp$_7 = Kotlin.isType(tmp$_6 = (tmp$_5 = this$AlysDisplay.game.currentPlayer()) != null ? tmp$_5.controller : null, HumanController) ? tmp$_6 : null;
+            if (tmp$_7 == null) {
+              return;
+            }
+            var playerController = tmp$_7;
+            playerController.performAction_11rc$(new AlysMoveAction(origin, it));
+          }
+           else if (type != null) {
+            tmp$_10 = Kotlin.isType(tmp$_9 = (tmp$_8 = this$AlysDisplay.game.currentPlayer()) != null ? tmp$_8.controller : null, HumanController) ? tmp$_9 : null;
+            if (tmp$_10 == null) {
+              return;
+            }
+            var playerController_0 = tmp$_10;
+            playerController_0.performAction_11rc$(new AlysCreateAction(type, origin, it));
+          }
+           else if ((sourceField != null ? sourceField.treasury : null) != null) {
+            if ((destination != null ? destination.player : null) === this$AlysDisplay.game.state.currentPlayer && (destination.treasury != null || equals((tmp$_11 = destination.piece) != null ? tmp$_11.type : null, AlysType$Soldier_getInstance()))) {
+              this$AlysDisplay.selectField_0(it);
               return;
             }
           }
-          if (success) {
-            this$AlysDisplay.selectField_9nmm0a$(null);
-            var state = this$AlysDisplay.previousState;
-            if (state != null)
-              this$AlysDisplay.previousStates.add_11rb$(state);
-          }
         }
+      }
+      return Unit;
+    };
+  }
+  function AlysDisplay$onCompleteAction$lambda(this$AlysDisplay) {
+    return function (success) {
+      if (success) {
+        this$AlysDisplay.selectField_0(null);
+        var state = this$AlysDisplay.previousState;
+        if (state != null)
+          this$AlysDisplay.previousStates_0.add_11rb$(state);
       }
       return Unit;
     };
@@ -1744,8 +1996,8 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
       closure$gameAreaTop.appendChild(this$AlysDisplay.fortButton_0);
       closure$gameAreaTop.appendChild(this$AlysDisplay.endTurnButton_0);
       closure$gameAreaRight.appendChild(this$AlysDisplay.statusArea_0);
-      this$AlysDisplay.ruleArea.showRules_lt8gi4$(closure$gameAreaRight);
-      this$AlysDisplay.resize();
+      this$AlysDisplay.ruleArea_0.showRules_lt8gi4$(closure$gameAreaRight);
+      this$AlysDisplay.resize_0();
       return Unit;
     };
   }
@@ -1754,232 +2006,6 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     simpleName: 'AlysDisplay',
     interfaces: [GameDisplay]
   };
-  function SimpleAlysAIPlayerType() {
-    PlayerType.call(this, 'CPU - Medium');
-  }
-  SimpleAlysAIPlayerType.prototype.isOfType_vgc0e7$ = function (player) {
-    return Kotlin.isType(player, SimpleAIPlayer);
-  };
-  SimpleAlysAIPlayerType.prototype.getNew_puj7f4$ = function (name, color) {
-    return new SimpleAIPlayer(name, color, getCallableRef('alysUtility', function (state, action) {
-      return alysUtility(state, action);
-    }));
-  };
-  SimpleAlysAIPlayerType.$metadata$ = {
-    kind: Kind_CLASS,
-    simpleName: 'SimpleAlysAIPlayerType',
-    interfaces: [PlayerType]
-  };
-  function alysUtility(state, action) {
-    if (Kotlin.isType(action, AlysEndTurnAction))
-      return 0;
-    if (Kotlin.isType(action, AlysMoveAction))
-      return utilityFor(state, action);
-    if (Kotlin.isType(action, AlysCreateAction))
-      return utilityFor_0(state, action);
-    return 1;
-  }
-  function utilityFor(state, action) {
-    var tmp$, tmp$_0;
-    var destination = Kotlin.isType(tmp$ = state.board.get_dfplqh$(action.destination), AlysField) ? tmp$ : throwCCE();
-    if (destination.piece != null) {
-      if (destination.player === state.currentPlayer) {
-        switch (destination.piece.type.name) {
-          case 'Soldier':
-            tmp$_0 = isUpgradeWanted(state, new PositionedField(action.destination, destination)) ? 10 : -1;
-            break;
-          case 'Tree':
-            tmp$_0 = 3;
-            break;
-          case 'CoastTree':
-            tmp$_0 = 10;
-            break;
-          default:tmp$_0 = 1;
-            break;
-        }
-      }
-       else {
-        switch (destination.piece.type.name) {
-          case 'Soldier':
-            tmp$_0 = 5;
-            break;
-          case 'CoastTree':
-            tmp$_0 = 9;
-            break;
-          case 'Fort':
-            tmp$_0 = 5;
-            break;
-          default:tmp$_0 = 1;
-            break;
-        }
-      }
-      return tmp$_0;
-    }
-    return 0;
-  }
-  function isUpgradeWanted(state, place) {
-    var tmp$, tmp$_0, tmp$_1;
-    tmp$_0 = (tmp$ = place.field.piece) != null ? tmp$.strength : null;
-    if (tmp$_0 == null) {
-      return false;
-    }
-    var strength = tmp$_0;
-    if (place.field.piece.hasMoved)
-      return false;
-    var area = state.connectedPositions_dfplqh$(place.position);
-    if (!canAffordUpgrade(state, area, strength))
-      return false;
-    var $receiver = state.neighbouringPositions_wmyzew$(area);
-    var destination = ArrayList_init_0(collectionSizeOrDefault($receiver, 10));
-    var tmp$_2;
-    tmp$_2 = $receiver.iterator();
-    while (tmp$_2.hasNext()) {
-      var item = tmp$_2.next();
-      destination.add_11rb$(state.totalDefenseOf_qx8qel$(item));
-    }
-    tmp$_1 = min(destination);
-    if (tmp$_1 == null) {
-      return false;
-    }
-    var smallestDefense = tmp$_1;
-    if (strength <= smallestDefense)
-      return true;
-    return false;
-  }
-  var mapNotNullTo$lambda_0 = wrapFunction(function () {
-    return function (closure$transform, closure$destination) {
-      return function (element) {
-        var tmp$;
-        if ((tmp$ = closure$transform(element)) != null) {
-          closure$destination.add_11rb$(tmp$);
-        }
-        return Unit;
-      };
-    };
-  });
-  function canAffordUpgrade(state, area, strength) {
-    var tmp$, tmp$_0;
-    var oldUpkeep = Alys$Companion_getInstance().upkeepFor_za3lpa$(strength);
-    var newUpkeep = Alys$Companion_getInstance().upkeepFor_za3lpa$(strength + 1 | 0);
-    var firstOrNull$result;
-    firstOrNull$break: do {
-      var tmp$_1;
-      tmp$_1 = area.iterator();
-      while (tmp$_1.hasNext()) {
-        var element = tmp$_1.next();
-        if (element.field.treasury != null) {
-          firstOrNull$result = element;
-          break firstOrNull$break;
-        }
-      }
-      firstOrNull$result = null;
-    }
-     while (false);
-    tmp$ = firstOrNull$result;
-    if (tmp$ == null) {
-      return false;
-    }
-    var base = tmp$;
-    var income = state.incomeFor_dfplqh$(base.position);
-    var tmp$_2 = newUpkeep - oldUpkeep - 2;
-    var destination = ArrayList_init();
-    var tmp$_3;
-    tmp$_3 = area.iterator();
-    while (tmp$_3.hasNext()) {
-      var element_0 = tmp$_3.next();
-      var tmp$_0_0;
-      if ((tmp$_0_0 = element_0.field.piece) != null) {
-        destination.add_11rb$(tmp$_0_0);
-      }
-    }
-    var tmp$_4;
-    var sum = 0;
-    tmp$_4 = destination.iterator();
-    while (tmp$_4.hasNext()) {
-      var element_1 = tmp$_4.next();
-      sum = sum + Alys$Companion_getInstance().upkeepFor_ibj32h$(element_1) | 0;
-    }
-    var totalUpkeep = tmp$_2 + sum | 0;
-    return (income + ((tmp$_0 = base.field.treasury) != null ? tmp$_0 : 0) | 0) >= totalUpkeep;
-  }
-  function utilityFor_0(state, action) {
-    if (action.type === AlysType$Soldier_getInstance())
-      return utilityFor(state, new AlysMoveAction(action.origin, action.destination));
-    var adjacents = state.adjacentFields_dfplqh$(action.destination);
-    var destination = ArrayList_init();
-    var tmp$;
-    tmp$ = adjacents.iterator();
-    while (tmp$.hasNext()) {
-      var element = tmp$.next();
-      if (element.field.player === state.currentPlayer)
-        destination.add_11rb$(element);
-    }
-    var any$result;
-    any$break: do {
-      var tmp$_0;
-      if (Kotlin.isType(destination, Collection) && destination.isEmpty()) {
-        any$result = false;
-        break any$break;
-      }
-      tmp$_0 = destination.iterator();
-      while (tmp$_0.hasNext()) {
-        var element_0 = tmp$_0.next();
-        var tmp$_1;
-        if (equals((tmp$_1 = element_0.field.piece) != null ? tmp$_1.type : null, AlysType$Fort_getInstance())) {
-          any$result = true;
-          break any$break;
-        }
-      }
-      any$result = false;
-    }
-     while (false);
-    var fortNearby = any$result;
-    if (fortNearby)
-      return -1;
-    var any$result_0;
-    any$break: do {
-      var tmp$_2;
-      if (Kotlin.isType(adjacents, Collection) && adjacents.isEmpty()) {
-        any$result_0 = false;
-        break any$break;
-      }
-      tmp$_2 = adjacents.iterator();
-      while (tmp$_2.hasNext()) {
-        var element_1 = tmp$_2.next();
-        if (element_1.field.player !== state.currentPlayer) {
-          any$result_0 = true;
-          break any$break;
-        }
-      }
-      any$result_0 = false;
-    }
-     while (false);
-    var tmp$_3 = any$result_0;
-    if (!tmp$_3) {
-      var $receiver = state.neighbouringPositions_wmyzew$(adjacents);
-      var any$result_1;
-      any$break: do {
-        var tmp$_4;
-        if (Kotlin.isType($receiver, Collection) && $receiver.isEmpty()) {
-          any$result_1 = false;
-          break any$break;
-        }
-        tmp$_4 = $receiver.iterator();
-        while (tmp$_4.hasNext()) {
-          var element_2 = tmp$_4.next();
-          if (element_2.field.player !== state.currentPlayer) {
-            any$result_1 = true;
-            break any$break;
-          }
-        }
-        any$result_1 = false;
-      }
-       while (false);
-      tmp$_3 = any$result_1;
-    }
-    var enemyNearby = tmp$_3;
-    return enemyNearby ? 3 : -1;
-  }
   function AlysState(width, height, playerCount, board, currentPlayer, players, round) {
     if (width === void 0)
       width = 10;
@@ -2417,7 +2443,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   AlysState.$metadata$ = {
     kind: Kind_CLASS,
     simpleName: 'AlysState',
-    interfaces: [BoardGameState]
+    interfaces: [AIPlayable, BoardGameState]
   };
   AlysState.prototype.component1 = function () {
     return this.width;
@@ -2785,158 +2811,6 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     simpleName: 'ChessSas',
     interfaces: [StateActionState]
   };
-  function ChessState(board, currentPlayer, players) {
-    if (board === void 0)
-      board = new Grid(8, 8, ChessState_init$lambda);
-    if (currentPlayer === void 0)
-      currentPlayer = ChessPlayer$White_getInstance();
-    if (players === void 0)
-      players = listOf([ChessPlayer$White_getInstance(), ChessPlayer$Black_getInstance()]);
-    this.board_mlguen$_0 = board;
-    this.currentPlayer_mainy5$_0 = currentPlayer;
-    this.players_otp1fp$_0 = players;
-  }
-  Object.defineProperty(ChessState.prototype, 'board', {
-    get: function () {
-      return this.board_mlguen$_0;
-    }
-  });
-  Object.defineProperty(ChessState.prototype, 'currentPlayer', {
-    get: function () {
-      return this.currentPlayer_mainy5$_0;
-    },
-    set: function (currentPlayer) {
-      this.currentPlayer_mainy5$_0 = currentPlayer;
-    }
-  });
-  Object.defineProperty(ChessState.prototype, 'players', {
-    get: function () {
-      return this.players_otp1fp$_0;
-    }
-  });
-  ChessState.prototype.possibleActions = function () {
-    var actions = ArrayList_init();
-    for (var i = 0; i < 8; i++) {
-      for (var j = 0; j < 8; j++) {
-        var piece = this.board.get_vux9f0$(i, j);
-        if (!equals(piece != null ? piece.player : null, this.currentPlayer))
-          continue;
-        var $receiver = piece.possibleMoves_wzxs7i$(this.board, new Position(i, j));
-        var destination = ArrayList_init();
-        var tmp$;
-        tmp$ = $receiver.iterator();
-        loop_label: while (tmp$.hasNext()) {
-          var element = tmp$.next();
-          var predicate$result;
-          predicate$break: do {
-            var $this = ChessSas$Companion_getInstance().readyAction_mh9kn2$(this, element, (new Chess(this)).copyState());
-            var tmp$_0;
-            var tmp$_1;
-            if (Kotlin.isType($this, Failure)) {
-              predicate$result = true;
-              break predicate$break;
-            }
-             else
-              tmp$_1 = (Kotlin.isType(tmp$_0 = $this, Success) ? tmp$_0 : throwCCE()).value;
-            var sas = tmp$_1;
-            movePiece(sas);
-            predicate$result = Kotlin.isType(kingMustNotBeInCheck(sas), Success);
-          }
-           while (false);
-          if (predicate$result)
-            destination.add_11rb$(element);
-        }
-        actions.addAll_brywnq$(destination);
-      }
-    }
-    return actions;
-  };
-  ChessState.prototype.findWinner = function () {
-    if (!this.possibleActions().isEmpty())
-      return null;
-    return this.currentPlayer === ChessPlayer$Black_getInstance() ? ChessPlayer$White_getInstance() : ChessPlayer$Black_getInstance();
-  };
-  function ChessState_init$lambda(x, y) {
-    switch (y) {
-      case 0:
-        switch (x) {
-          case 0:
-            return new ChessPiece(ChessPieceType$Rook_getInstance(), ChessPlayer$White_getInstance());
-          case 1:
-            return new ChessPiece(ChessPieceType$Knight_getInstance(), ChessPlayer$White_getInstance());
-          case 2:
-            return new ChessPiece(ChessPieceType$Bishop_getInstance(), ChessPlayer$White_getInstance());
-          case 3:
-            return new ChessPiece(ChessPieceType$Queen_getInstance(), ChessPlayer$White_getInstance());
-          case 4:
-            return new ChessPiece(ChessPieceType$King_getInstance(), ChessPlayer$White_getInstance());
-          case 5:
-            return new ChessPiece(ChessPieceType$Bishop_getInstance(), ChessPlayer$White_getInstance());
-          case 6:
-            return new ChessPiece(ChessPieceType$Knight_getInstance(), ChessPlayer$White_getInstance());
-          case 7:
-            return new ChessPiece(ChessPieceType$Rook_getInstance(), ChessPlayer$White_getInstance());
-          default:return null;
-        }
-
-      case 1:
-        return new ChessPiece(ChessPieceType$Pawn_getInstance(), ChessPlayer$White_getInstance());
-      case 6:
-        return new ChessPiece(ChessPieceType$Pawn_getInstance(), ChessPlayer$Black_getInstance());
-      case 7:
-        switch (x) {
-          case 0:
-            return new ChessPiece(ChessPieceType$Rook_getInstance(), ChessPlayer$Black_getInstance());
-          case 1:
-            return new ChessPiece(ChessPieceType$Knight_getInstance(), ChessPlayer$Black_getInstance());
-          case 2:
-            return new ChessPiece(ChessPieceType$Bishop_getInstance(), ChessPlayer$Black_getInstance());
-          case 3:
-            return new ChessPiece(ChessPieceType$Queen_getInstance(), ChessPlayer$Black_getInstance());
-          case 4:
-            return new ChessPiece(ChessPieceType$King_getInstance(), ChessPlayer$Black_getInstance());
-          case 5:
-            return new ChessPiece(ChessPieceType$Bishop_getInstance(), ChessPlayer$Black_getInstance());
-          case 6:
-            return new ChessPiece(ChessPieceType$Knight_getInstance(), ChessPlayer$Black_getInstance());
-          case 7:
-            return new ChessPiece(ChessPieceType$Rook_getInstance(), ChessPlayer$Black_getInstance());
-          default:return null;
-        }
-
-      default:return null;
-    }
-  }
-  ChessState.$metadata$ = {
-    kind: Kind_CLASS,
-    simpleName: 'ChessState',
-    interfaces: [BoardGameState]
-  };
-  ChessState.prototype.component1 = function () {
-    return this.board;
-  };
-  ChessState.prototype.component2 = function () {
-    return this.currentPlayer;
-  };
-  ChessState.prototype.component3 = function () {
-    return this.players;
-  };
-  ChessState.prototype.copy_d7oxyc$ = function (board, currentPlayer, players) {
-    return new ChessState(board === void 0 ? this.board : board, currentPlayer === void 0 ? this.currentPlayer : currentPlayer, players === void 0 ? this.players : players);
-  };
-  ChessState.prototype.toString = function () {
-    return 'ChessState(board=' + Kotlin.toString(this.board) + (', currentPlayer=' + Kotlin.toString(this.currentPlayer)) + (', players=' + Kotlin.toString(this.players)) + ')';
-  };
-  ChessState.prototype.hashCode = function () {
-    var result = 0;
-    result = result * 31 + Kotlin.hashCode(this.board) | 0;
-    result = result * 31 + Kotlin.hashCode(this.currentPlayer) | 0;
-    result = result * 31 + Kotlin.hashCode(this.players) | 0;
-    return result;
-  };
-  ChessState.prototype.equals = function (other) {
-    return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.board, other.board) && Kotlin.equals(this.currentPlayer, other.currentPlayer) && Kotlin.equals(this.players, other.players)))));
-  };
   function ChessAction(origin, destination) {
     this.origin = origin;
     this.destination = destination;
@@ -3082,12 +2956,12 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   function ChessDisplay(canvasContainer, playerArea, gameAreaTop, gameAreaRight) {
     GameDisplay.call(this, canvasContainer, playerArea, gameAreaTop, gameAreaRight);
     this.game_vohlt0$_0 = new Chess();
+    this.playerTypes_tldf02$_0 = listOf([new HumanType(), new RandomAIType()]);
     this.sourcePosition = null;
     this.getColor_tn0utd$_0 = ChessDisplay$getColor$lambda(this);
     this.draw_vpud9y$_0 = ChessDisplay$draw$lambda;
-    this.playerTypes.add_11rb$(new RandomAIPlayerType());
-    this.players.add_11rb$(new HumanPlayer('White', 'white'));
-    this.players.add_11rb$(new RandomAIPlayer('Black', 'black'));
+    this.players.add_11rb$(new Player('White', 'white', new HumanController()));
+    this.players.add_11rb$(new Player('Black', 'black', new RandomAIController()));
     this.maxPlayers = 2;
     this.newPlayerButton.disabled = true;
     this.startNewGame();
@@ -3099,6 +2973,11 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     },
     set: function (game) {
       this.game_vohlt0$_0 = game;
+    }
+  });
+  Object.defineProperty(ChessDisplay.prototype, 'playerTypes', {
+    get: function () {
+      return this.playerTypes_tldf02$_0;
     }
   });
   Object.defineProperty(ChessDisplay.prototype, 'getColor', {
@@ -3121,8 +3000,6 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     var key_0 = ChessPlayer$Black_getInstance();
     var value_0 = this.players.get_za3lpa$(1);
     $receiver_0.put_xwzc9p$(key_0, value_0);
-    this.awaitActionFrom_s8jyv4$(this.game.currentPlayer());
-    this.updateDisplay();
   };
   function ChessDisplay$getColor$lambda(this$ChessDisplay) {
     return function (f, x, y) {
@@ -3159,6 +3036,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   }
   function ChessDisplay_init$lambda(this$ChessDisplay) {
     return function (it) {
+      var tmp$, tmp$_0, tmp$_1;
       if (Kotlin.isType(this$ChessDisplay.game.currentPlayer(), Player) && it.x >= 0 && it.y >= 0 && it.x < 8 && it.y < 8) {
         var source = this$ChessDisplay.sourcePosition;
         if (source == null) {
@@ -3167,7 +3045,12 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
         }
          else {
           this$ChessDisplay.sourcePosition = null;
-          this$ChessDisplay.performAction_11re$(new ChessAction(source, new Position(it.x, it.y)));
+          tmp$_1 = Kotlin.isType(tmp$_0 = (tmp$ = this$ChessDisplay.game.currentPlayer()) != null ? tmp$.controller : null, HumanController) ? tmp$_0 : null;
+          if (tmp$_1 == null) {
+            return;
+          }
+          var playerController = tmp$_1;
+          playerController.performAction_11rc$(new ChessAction(source, new Position(it.x, it.y)));
         }
       }
       return Unit;
@@ -3621,6 +3504,158 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   ChessPiece.prototype.equals = function (other) {
     return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.type, other.type) && Kotlin.equals(this.player, other.player) && Kotlin.equals(this.hasMoved, other.hasMoved)))));
   };
+  function ChessState(board, currentPlayer, players) {
+    if (board === void 0)
+      board = new Grid(8, 8, ChessState_init$lambda);
+    if (currentPlayer === void 0)
+      currentPlayer = ChessPlayer$White_getInstance();
+    if (players === void 0)
+      players = listOf([ChessPlayer$White_getInstance(), ChessPlayer$Black_getInstance()]);
+    this.board_mlguen$_0 = board;
+    this.currentPlayer_mainy5$_0 = currentPlayer;
+    this.players_otp1fp$_0 = players;
+  }
+  Object.defineProperty(ChessState.prototype, 'board', {
+    get: function () {
+      return this.board_mlguen$_0;
+    }
+  });
+  Object.defineProperty(ChessState.prototype, 'currentPlayer', {
+    get: function () {
+      return this.currentPlayer_mainy5$_0;
+    },
+    set: function (currentPlayer) {
+      this.currentPlayer_mainy5$_0 = currentPlayer;
+    }
+  });
+  Object.defineProperty(ChessState.prototype, 'players', {
+    get: function () {
+      return this.players_otp1fp$_0;
+    }
+  });
+  ChessState.prototype.possibleActions = function () {
+    var actions = ArrayList_init();
+    for (var i = 0; i < 8; i++) {
+      for (var j = 0; j < 8; j++) {
+        var piece = this.board.get_vux9f0$(i, j);
+        if (!equals(piece != null ? piece.player : null, this.currentPlayer))
+          continue;
+        var $receiver = piece.possibleMoves_wzxs7i$(this.board, new Position(i, j));
+        var destination = ArrayList_init();
+        var tmp$;
+        tmp$ = $receiver.iterator();
+        loop_label: while (tmp$.hasNext()) {
+          var element = tmp$.next();
+          var predicate$result;
+          predicate$break: do {
+            var $this = ChessSas$Companion_getInstance().readyAction_mh9kn2$(this, element, (new Chess(this)).copyState());
+            var tmp$_0;
+            var tmp$_1;
+            if (Kotlin.isType($this, Failure)) {
+              predicate$result = true;
+              break predicate$break;
+            }
+             else
+              tmp$_1 = (Kotlin.isType(tmp$_0 = $this, Success) ? tmp$_0 : throwCCE()).value;
+            var sas = tmp$_1;
+            movePiece(sas);
+            predicate$result = Kotlin.isType(kingMustNotBeInCheck(sas), Success);
+          }
+           while (false);
+          if (predicate$result)
+            destination.add_11rb$(element);
+        }
+        actions.addAll_brywnq$(destination);
+      }
+    }
+    return actions;
+  };
+  ChessState.prototype.findWinner = function () {
+    if (!this.possibleActions().isEmpty())
+      return null;
+    return this.currentPlayer === ChessPlayer$Black_getInstance() ? ChessPlayer$White_getInstance() : ChessPlayer$Black_getInstance();
+  };
+  function ChessState_init$lambda(x, y) {
+    switch (y) {
+      case 0:
+        switch (x) {
+          case 0:
+            return new ChessPiece(ChessPieceType$Rook_getInstance(), ChessPlayer$White_getInstance());
+          case 1:
+            return new ChessPiece(ChessPieceType$Knight_getInstance(), ChessPlayer$White_getInstance());
+          case 2:
+            return new ChessPiece(ChessPieceType$Bishop_getInstance(), ChessPlayer$White_getInstance());
+          case 3:
+            return new ChessPiece(ChessPieceType$Queen_getInstance(), ChessPlayer$White_getInstance());
+          case 4:
+            return new ChessPiece(ChessPieceType$King_getInstance(), ChessPlayer$White_getInstance());
+          case 5:
+            return new ChessPiece(ChessPieceType$Bishop_getInstance(), ChessPlayer$White_getInstance());
+          case 6:
+            return new ChessPiece(ChessPieceType$Knight_getInstance(), ChessPlayer$White_getInstance());
+          case 7:
+            return new ChessPiece(ChessPieceType$Rook_getInstance(), ChessPlayer$White_getInstance());
+          default:return null;
+        }
+
+      case 1:
+        return new ChessPiece(ChessPieceType$Pawn_getInstance(), ChessPlayer$White_getInstance());
+      case 6:
+        return new ChessPiece(ChessPieceType$Pawn_getInstance(), ChessPlayer$Black_getInstance());
+      case 7:
+        switch (x) {
+          case 0:
+            return new ChessPiece(ChessPieceType$Rook_getInstance(), ChessPlayer$Black_getInstance());
+          case 1:
+            return new ChessPiece(ChessPieceType$Knight_getInstance(), ChessPlayer$Black_getInstance());
+          case 2:
+            return new ChessPiece(ChessPieceType$Bishop_getInstance(), ChessPlayer$Black_getInstance());
+          case 3:
+            return new ChessPiece(ChessPieceType$Queen_getInstance(), ChessPlayer$Black_getInstance());
+          case 4:
+            return new ChessPiece(ChessPieceType$King_getInstance(), ChessPlayer$Black_getInstance());
+          case 5:
+            return new ChessPiece(ChessPieceType$Bishop_getInstance(), ChessPlayer$Black_getInstance());
+          case 6:
+            return new ChessPiece(ChessPieceType$Knight_getInstance(), ChessPlayer$Black_getInstance());
+          case 7:
+            return new ChessPiece(ChessPieceType$Rook_getInstance(), ChessPlayer$Black_getInstance());
+          default:return null;
+        }
+
+      default:return null;
+    }
+  }
+  ChessState.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'ChessState',
+    interfaces: [AIPlayable, BoardGameState]
+  };
+  ChessState.prototype.component1 = function () {
+    return this.board;
+  };
+  ChessState.prototype.component2 = function () {
+    return this.currentPlayer;
+  };
+  ChessState.prototype.component3 = function () {
+    return this.players;
+  };
+  ChessState.prototype.copy_d7oxyc$ = function (board, currentPlayer, players) {
+    return new ChessState(board === void 0 ? this.board : board, currentPlayer === void 0 ? this.currentPlayer : currentPlayer, players === void 0 ? this.players : players);
+  };
+  ChessState.prototype.toString = function () {
+    return 'ChessState(board=' + Kotlin.toString(this.board) + (', currentPlayer=' + Kotlin.toString(this.currentPlayer)) + (', players=' + Kotlin.toString(this.players)) + ')';
+  };
+  ChessState.prototype.hashCode = function () {
+    var result = 0;
+    result = result * 31 + Kotlin.hashCode(this.board) | 0;
+    result = result * 31 + Kotlin.hashCode(this.currentPlayer) | 0;
+    result = result * 31 + Kotlin.hashCode(this.players) | 0;
+    return result;
+  };
+  ChessState.prototype.equals = function (other) {
+    return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.board, other.board) && Kotlin.equals(this.currentPlayer, other.currentPlayer) && Kotlin.equals(this.players, other.players)))));
+  };
   function GameDisplay(canvasContainer, playerArea, gameAreaTop, gameAreaRight) {
     this.canvasContainer = canvasContainer;
     this.playerArea = playerArea;
@@ -3630,7 +3665,6 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     this.canvas = Kotlin.isType(tmp$ = document.createElement('canvas'), HTMLCanvasElement) ? tmp$ : throwCCE();
     this.gridDisplay = new GridDisplay(this.canvas);
     this.aiDelay = L200;
-    this.playerTypes = mutableListOf([new HumanPlayerType()]);
     this.players = ArrayList_init();
     this.minPlayers = 2;
     this.maxPlayers = 8;
@@ -3640,6 +3674,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     this.turnLine = Kotlin.isType(tmp$_3 = document.createElement('div'), HTMLDivElement) ? tmp$_3 : throwCCE();
     this.messageLine = Kotlin.isType(tmp$_4 = document.createElement('div'), HTMLDivElement) ? tmp$_4 : throwCCE();
     this.previousState = null;
+    this.loopJop = null;
     this.turnLine.className = 'message-line';
     this.messageLine.className = 'message-line';
     this.newGameButton.className = 'new-game';
@@ -3649,6 +3684,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     this.newPlayerButton.onclick = GameDisplay_init$lambda_0(this);
     launch(coroutines.GlobalScope, void 0, void 0, GameDisplay_init$lambda_1(this));
     this.onShowGame_qijy9e$_0 = null;
+    this.onCompleteAction_a7tkmq$_0 = null;
   }
   GameDisplay.prototype.showGame = function () {
     var tmp$;
@@ -3665,6 +3701,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     this.playerArea.appendChild(this.messageLine);
     (tmp$ = this.onShowGame) != null ? tmp$() : null;
     this.updateDisplay();
+    this.updatePlayerList();
   };
   Object.defineProperty(GameDisplay.prototype, 'onShowGame', {
     get: function () {
@@ -3686,6 +3723,142 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     var context = Kotlin.isType(tmp$_0 = this.canvas.getContext('2d'), CanvasRenderingContext2D) ? tmp$_0 : throwCCE();
     context.setTransform(1.0, 0.0, 0.0, 1.0, 0.0, 0.0);
     context.scale(dpr, dpr);
+  };
+  function Coroutine$GameDisplay$turnLoop$lambda(this$GameDisplay_0, closure$controller_0, $receiver_0, controller, continuation_0) {
+    CoroutineImpl.call(this, continuation_0);
+    this.$controller = controller;
+    this.exceptionState_0 = 1;
+    this.local$this$GameDisplay = this$GameDisplay_0;
+    this.local$closure$controller = closure$controller_0;
+  }
+  Coroutine$GameDisplay$turnLoop$lambda.$metadata$ = {
+    kind: Kotlin.Kind.CLASS,
+    simpleName: null,
+    interfaces: [CoroutineImpl]
+  };
+  Coroutine$GameDisplay$turnLoop$lambda.prototype = Object.create(CoroutineImpl.prototype);
+  Coroutine$GameDisplay$turnLoop$lambda.prototype.constructor = Coroutine$GameDisplay$turnLoop$lambda;
+  Coroutine$GameDisplay$turnLoop$lambda.prototype.doResume = function () {
+    do
+      try {
+        switch (this.state_0) {
+          case 0:
+            this.state_0 = 2;
+            this.result_0 = delay(this.local$this$GameDisplay.aiDelay, this);
+            if (this.result_0 === COROUTINE_SUSPENDED)
+              return COROUTINE_SUSPENDED;
+            continue;
+          case 1:
+            throw this.exception_0;
+          case 2:
+            this.state_0 = 3;
+            this.result_0 = this.local$closure$controller.requestAction_11rb$(this.local$this$GameDisplay.game.state, this);
+            if (this.result_0 === COROUTINE_SUSPENDED)
+              return COROUTINE_SUSPENDED;
+            continue;
+          case 3:
+            return this.result_0;
+          default:this.state_0 = 1;
+            throw new Error('State Machine Unreachable execution');
+        }
+      }
+       catch (e) {
+        if (this.state_0 === 1) {
+          this.exceptionState_0 = this.state_0;
+          throw e;
+        }
+         else {
+          this.state_0 = this.exceptionState_0;
+          this.exception_0 = e;
+        }
+      }
+     while (true);
+  };
+  function GameDisplay$turnLoop$lambda(this$GameDisplay_0, closure$controller_0) {
+    return function ($receiver_0, continuation_0, suspended) {
+      var instance = new Coroutine$GameDisplay$turnLoop$lambda(this$GameDisplay_0, closure$controller_0, $receiver_0, this, continuation_0);
+      if (suspended)
+        return instance;
+      else
+        return instance.doResume(null);
+    };
+  }
+  function Coroutine$turnLoop_gkk88$($this, scope_0, continuation_0) {
+    CoroutineImpl.call(this, continuation_0);
+    this.exceptionState_0 = 1;
+    this.$this = $this;
+    this.local$controller = void 0;
+    this.local$scope = scope_0;
+  }
+  Coroutine$turnLoop_gkk88$.$metadata$ = {
+    kind: Kotlin.Kind.CLASS,
+    simpleName: null,
+    interfaces: [CoroutineImpl]
+  };
+  Coroutine$turnLoop_gkk88$.prototype = Object.create(CoroutineImpl.prototype);
+  Coroutine$turnLoop_gkk88$.prototype.constructor = Coroutine$turnLoop_gkk88$;
+  Coroutine$turnLoop_gkk88$.prototype.doResume = function () {
+    do
+      try {
+        switch (this.state_0) {
+          case 0:
+            var tmp$, tmp$_0;
+            this.state_0 = 2;
+            continue;
+          case 1:
+            throw this.exception_0;
+          case 2:
+            if (this.$this.game.winner != null || !get_isActive(this.local$scope)) {
+              this.state_0 = 5;
+              continue;
+            }
+
+            this.local$controller = (tmp$ = this.$this.game.currentPlayer()) != null ? tmp$.controller : null;
+            if (this.local$controller == null) {
+              this.$this.messageLine.textContent = 'No current player?';
+              return;
+            }
+             else {
+              this.state_0 = 3;
+              continue;
+            }
+
+          case 3:
+            this.state_0 = 4;
+            this.result_0 = withContext(coroutines.Dispatchers.Unconfined, GameDisplay$turnLoop$lambda(this.$this, this.local$controller), this);
+            if (this.result_0 === COROUTINE_SUSPENDED)
+              return COROUTINE_SUSPENDED;
+            continue;
+          case 4:
+            var action = this.result_0;
+            var success = this.$this.performAction_x22ubb$_0(action);
+            (tmp$_0 = this.$this.onCompleteAction) != null ? tmp$_0(success) : null;
+            this.state_0 = 2;
+            continue;
+          case 5:
+            return;
+          default:this.state_0 = 1;
+            throw new Error('State Machine Unreachable execution');
+        }
+      }
+       catch (e) {
+        if (this.state_0 === 1) {
+          this.exceptionState_0 = this.state_0;
+          throw e;
+        }
+         else {
+          this.state_0 = this.exceptionState_0;
+          this.exception_0 = e;
+        }
+      }
+     while (true);
+  };
+  GameDisplay.prototype.turnLoop_gkk88$ = function (scope_0, continuation_0, suspended) {
+    var instance = new Coroutine$turnLoop_gkk88$(this, scope_0, continuation_0);
+    if (suspended)
+      return instance;
+    else
+      return instance.doResume(null);
   };
   function Coroutine$GameDisplay$performAction$lambda$lambda(this$GameDisplay_0, $receiver_0, controller, continuation_0) {
     CoroutineImpl.call(this, continuation_0);
@@ -3748,7 +3921,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
         return instance.doResume(null);
     };
   }
-  GameDisplay.prototype.performAction_11re$ = function (action) {
+  GameDisplay.prototype.performAction_x22ubb$_0 = function (action) {
     var state = this.game.state;
     var $this = this.game.performAction_11rd$(action);
     if (Kotlin.isType($this, Failure)) {
@@ -3758,19 +3931,19 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
       this.updateDisplay();
       console.log('Failed action:');
       console.log(action);
-      if (this.game.winner == null && !this.game.state.possibleActions().isEmpty())
-        this.awaitActionFrom_s8jyv4$(this.game.currentPlayer());
       return false;
     }
      else
       Kotlin.isType($this, Success) || throwCCE();
     this.previousState = state;
     this.updateDisplay();
-    if (this.game.winner != null || this.game.state.possibleActions().isEmpty())
-      return true;
-    this.awaitActionFrom_s8jyv4$(this.game.currentPlayer());
     return true;
   };
+  Object.defineProperty(GameDisplay.prototype, 'onCompleteAction', {
+    get: function () {
+      return this.onCompleteAction_a7tkmq$_0;
+    }
+  });
   GameDisplay.prototype.updateDisplay = function () {
     var tmp$;
     var winner = this.game.winner;
@@ -3782,36 +3955,54 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
       this.turnLine.textContent = 'Current player: ' + ((tmp$ = this.game.currentPlayer()) != null ? tmp$.name : null);
     }
     this.gridDisplay.display_31tjs9$(this.game.state.board, this.getColor, this.draw);
-    this.updatePlayerList();
   };
-  function Coroutine$GameDisplay$awaitActionFrom$lambda(this$GameDisplay_0, closure$player_0, $receiver_0, controller, continuation_0) {
+  GameDisplay.prototype.updatePlayerList = function () {
+    var tmp$, tmp$_0, tmp$_1, tmp$_2, tmp$_3;
+    this.playerList.innerHTML = '';
+    tmp$ = this.players.size;
+    for (var i = 0; i < tmp$; i++) {
+      var player = this.players.get_za3lpa$(i);
+      var playerElement = Kotlin.isType(tmp$_0 = document.createElement('div'), HTMLDivElement) ? tmp$_0 : throwCCE();
+      var playerName = Kotlin.isType(tmp$_1 = document.createElement('input'), HTMLInputElement) ? tmp$_1 : throwCCE();
+      var playerType = Kotlin.isType(tmp$_2 = document.createElement('select'), HTMLSelectElement) ? tmp$_2 : throwCCE();
+      var playerColor = Kotlin.isType(tmp$_3 = document.createElement('input'), HTMLInputElement) ? tmp$_3 : throwCCE();
+      playerElement.append(playerName, playerType, playerColor);
+      this.setupNameInput_jb80ym$(player, playerName);
+      this.setupTypeSelect_ibh1p2$(player, i, playerType);
+      this.setupColorInput_jb80ym$(player, playerColor);
+      playerElement.className = 'player';
+      playerElement.style.backgroundColor = player.color;
+      this.playerList.appendChild(playerElement);
+    }
+  };
+  function Coroutine$GameDisplay$setupTypeSelect$lambda$lambda(this$GameDisplay_0, $receiver_0, controller, continuation_0) {
     CoroutineImpl.call(this, continuation_0);
     this.$controller = controller;
     this.exceptionState_0 = 1;
     this.local$this$GameDisplay = this$GameDisplay_0;
-    this.local$closure$player = closure$player_0;
+    this.local$$receiver = $receiver_0;
   }
-  Coroutine$GameDisplay$awaitActionFrom$lambda.$metadata$ = {
+  Coroutine$GameDisplay$setupTypeSelect$lambda$lambda.$metadata$ = {
     kind: Kotlin.Kind.CLASS,
     simpleName: null,
     interfaces: [CoroutineImpl]
   };
-  Coroutine$GameDisplay$awaitActionFrom$lambda.prototype = Object.create(CoroutineImpl.prototype);
-  Coroutine$GameDisplay$awaitActionFrom$lambda.prototype.constructor = Coroutine$GameDisplay$awaitActionFrom$lambda;
-  Coroutine$GameDisplay$awaitActionFrom$lambda.prototype.doResume = function () {
+  Coroutine$GameDisplay$setupTypeSelect$lambda$lambda.prototype = Object.create(CoroutineImpl.prototype);
+  Coroutine$GameDisplay$setupTypeSelect$lambda$lambda.prototype.constructor = Coroutine$GameDisplay$setupTypeSelect$lambda$lambda;
+  Coroutine$GameDisplay$setupTypeSelect$lambda$lambda.prototype.doResume = function () {
     do
       try {
         switch (this.state_0) {
           case 0:
             this.state_0 = 2;
-            this.result_0 = delay(this.local$this$GameDisplay.aiDelay, this);
+            this.result_0 = this.local$this$GameDisplay.turnLoop_gkk88$(this.local$$receiver, this);
             if (this.result_0 === COROUTINE_SUSPENDED)
               return COROUTINE_SUSPENDED;
             continue;
           case 1:
             throw this.exception_0;
           case 2:
-            return this.local$this$GameDisplay.performAction_11re$(this.local$closure$player.requestAction_11rb$(this.local$this$GameDisplay.game.state));
+            return this.result_0;
           default:this.state_0 = 1;
             throw new Error('State Machine Unreachable execution');
         }
@@ -3828,59 +4019,34 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
       }
      while (true);
   };
-  function GameDisplay$awaitActionFrom$lambda(this$GameDisplay_0, closure$player_0) {
+  function GameDisplay$setupTypeSelect$lambda$lambda(this$GameDisplay_0) {
     return function ($receiver_0, continuation_0, suspended) {
-      var instance = new Coroutine$GameDisplay$awaitActionFrom$lambda(this$GameDisplay_0, closure$player_0, $receiver_0, this, continuation_0);
+      var instance = new Coroutine$GameDisplay$setupTypeSelect$lambda$lambda(this$GameDisplay_0, $receiver_0, this, continuation_0);
       if (suspended)
         return instance;
       else
         return instance.doResume(null);
     };
   }
-  GameDisplay.prototype.awaitActionFrom_s8jyv4$ = function (player) {
-    var tmp$;
-    if (Kotlin.isType(player, AIPlayer)) {
-      Kotlin.isType(tmp$ = player, AIPlayer) ? tmp$ : throwCCE();
-      launch(coroutines.GlobalScope, void 0, void 0, GameDisplay$awaitActionFrom$lambda(this, player));
-    }
-  };
-  GameDisplay.prototype.updatePlayerList = function () {
-    var tmp$, tmp$_0, tmp$_1, tmp$_2, tmp$_3;
-    this.playerList.innerHTML = '';
-    tmp$ = this.players.size;
-    for (var i = 0; i < tmp$; i++) {
-      var player = this.players.get_za3lpa$(i);
-      var playerElement = Kotlin.isType(tmp$_0 = document.createElement('div'), HTMLDivElement) ? tmp$_0 : throwCCE();
-      var playerName = Kotlin.isType(tmp$_1 = document.createElement('input'), HTMLInputElement) ? tmp$_1 : throwCCE();
-      var playerType = Kotlin.isType(tmp$_2 = document.createElement('select'), HTMLSelectElement) ? tmp$_2 : throwCCE();
-      var playerColor = Kotlin.isType(tmp$_3 = document.createElement('input'), HTMLInputElement) ? tmp$_3 : throwCCE();
-      playerElement.append(playerName, playerType, playerColor);
-      this.setupNameInput_n4oh5n$(player, playerName);
-      this.setupTypeSelect_vyg389$(player, i, playerType);
-      this.setupColorInput_n4oh5n$(player, playerColor);
-      playerElement.className = 'player';
-      playerElement.style.backgroundColor = player.color;
-      this.playerList.appendChild(playerElement);
-    }
-  };
   function GameDisplay$setupTypeSelect$lambda(this$GameDisplay, closure$index, closure$player) {
     return function (event) {
-      var tmp$, tmp$_0;
+      var tmp$, tmp$_0, tmp$_1;
       var value = (Kotlin.isType(tmp$ = event.target, HTMLSelectElement) ? tmp$ : throwCCE()).value;
       if (equals(value, 'delete')) {
         this$GameDisplay.players.removeAt_za3lpa$(closure$index);
         if (this$GameDisplay.players.size < this$GameDisplay.maxPlayers)
           this$GameDisplay.newPlayerButton.disabled = false;
         this$GameDisplay.updateDisplay();
+        this$GameDisplay.updatePlayerList();
         return null;
       }
       var $receiver = this$GameDisplay.playerTypes;
       var firstOrNull$result;
       firstOrNull$break: do {
-        var tmp$_1;
-        tmp$_1 = $receiver.iterator();
-        while (tmp$_1.hasNext()) {
-          var element = tmp$_1.next();
+        var tmp$_2;
+        tmp$_2 = $receiver.iterator();
+        while (tmp$_2.hasNext()) {
+          var element = tmp$_2.next();
           if (equals(element.name, value)) {
             firstOrNull$result = element;
             break firstOrNull$break;
@@ -3890,12 +4056,15 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
       }
        while (false);
       var playerType = Kotlin.isType(tmp$_0 = firstOrNull$result, PlayerType) ? tmp$_0 : throwCCE();
-      this$GameDisplay.players.set_wxm5ur$(closure$index, playerType.getNew_puj7f4$(closure$player.name, closure$player.color));
+      closure$player.controller = playerType.getController();
+      (tmp$_1 = this$GameDisplay.loopJop) != null ? (tmp$_1.cancel(), Unit) : null;
+      this$GameDisplay.loopJop = launch(coroutines.GlobalScope, void 0, void 0, GameDisplay$setupTypeSelect$lambda$lambda(this$GameDisplay));
       this$GameDisplay.updateDisplay();
+      this$GameDisplay.updatePlayerList();
       return null;
     };
   }
-  GameDisplay.prototype.setupTypeSelect_vyg389$ = function (player, index, element) {
+  GameDisplay.prototype.setupTypeSelect_ibh1p2$ = function (player, index, element) {
     var tmp$, tmp$_0, tmp$_1;
     element.className = 'player-type';
     tmp$ = this.playerTypes.iterator();
@@ -3904,7 +4073,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
       var option = Kotlin.isType(tmp$_0 = document.createElement('option'), HTMLOptionElement) ? tmp$_0 : throwCCE();
       option.value = type.name;
       option.text = type.name;
-      if (type.isOfType_vgc0e7$(player))
+      if (type.isOfType_afkf1m$(player))
         option.selected = true;
       element.appendChild(option);
     }
@@ -3921,10 +4090,11 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
       var tmp$;
       closure$player.name = (Kotlin.isType(tmp$ = it.target, HTMLInputElement) ? tmp$ : throwCCE()).value;
       this$GameDisplay.updateDisplay();
+      this$GameDisplay.updatePlayerList();
       return null;
     };
   }
-  GameDisplay.prototype.setupNameInput_n4oh5n$ = function (player, element) {
+  GameDisplay.prototype.setupNameInput_jb80ym$ = function (player, element) {
     element.className = 'player-name';
     element.value = player.name;
     element.onchange = GameDisplay$setupNameInput$lambda(player, this);
@@ -3934,28 +4104,187 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
       var tmp$;
       closure$player.color = (Kotlin.isType(tmp$ = it.target, HTMLInputElement) ? tmp$ : throwCCE()).value;
       this$GameDisplay.updateDisplay();
+      this$GameDisplay.updatePlayerList();
       return null;
     };
   }
-  GameDisplay.prototype.setupColorInput_n4oh5n$ = function (player, element) {
+  GameDisplay.prototype.setupColorInput_jb80ym$ = function (player, element) {
     element.className = 'player-color';
     element.value = player.color;
     element.onchange = GameDisplay$setupColorInput$lambda(player, this);
   };
+  function Coroutine$GameDisplay_init$lambda$lambda(this$GameDisplay_0, $receiver_0, controller, continuation_0) {
+    CoroutineImpl.call(this, continuation_0);
+    this.$controller = controller;
+    this.exceptionState_0 = 1;
+    this.local$this$GameDisplay = this$GameDisplay_0;
+    this.local$$receiver = $receiver_0;
+  }
+  Coroutine$GameDisplay_init$lambda$lambda.$metadata$ = {
+    kind: Kotlin.Kind.CLASS,
+    simpleName: null,
+    interfaces: [CoroutineImpl]
+  };
+  Coroutine$GameDisplay_init$lambda$lambda.prototype = Object.create(CoroutineImpl.prototype);
+  Coroutine$GameDisplay_init$lambda$lambda.prototype.constructor = Coroutine$GameDisplay_init$lambda$lambda;
+  Coroutine$GameDisplay_init$lambda$lambda.prototype.doResume = function () {
+    do
+      try {
+        switch (this.state_0) {
+          case 0:
+            this.state_0 = 2;
+            this.result_0 = this.local$this$GameDisplay.turnLoop_gkk88$(this.local$$receiver, this);
+            if (this.result_0 === COROUTINE_SUSPENDED)
+              return COROUTINE_SUSPENDED;
+            continue;
+          case 1:
+            throw this.exception_0;
+          case 2:
+            return this.result_0;
+          default:this.state_0 = 1;
+            throw new Error('State Machine Unreachable execution');
+        }
+      }
+       catch (e) {
+        if (this.state_0 === 1) {
+          this.exceptionState_0 = this.state_0;
+          throw e;
+        }
+         else {
+          this.state_0 = this.exceptionState_0;
+          this.exception_0 = e;
+        }
+      }
+     while (true);
+  };
+  function GameDisplay_init$lambda$lambda(this$GameDisplay_0) {
+    return function ($receiver_0, continuation_0, suspended) {
+      var instance = new Coroutine$GameDisplay_init$lambda$lambda(this$GameDisplay_0, $receiver_0, this, continuation_0);
+      if (suspended)
+        return instance;
+      else
+        return instance.doResume(null);
+    };
+  }
   function GameDisplay_init$lambda(this$GameDisplay) {
     return function (it) {
+      var tmp$;
       this$GameDisplay.startNewGame();
-      return Unit;
+      this$GameDisplay.messageLine.textContent = '';
+      this$GameDisplay.updateDisplay();
+      (tmp$ = this$GameDisplay.loopJop) != null ? (tmp$.cancel(), Unit) : null;
+      this$GameDisplay.loopJop = launch(coroutines.GlobalScope, void 0, void 0, GameDisplay_init$lambda$lambda(this$GameDisplay));
+      return null;
     };
   }
   function GameDisplay_init$lambda_0(this$GameDisplay) {
     return function (it) {
       if (this$GameDisplay.players.size < this$GameDisplay.maxPlayers)
-        this$GameDisplay.players.add_11rb$(new HumanPlayer());
+        this$GameDisplay.players.add_11rb$(new Player('Player ' + toString(this$GameDisplay.players.size) + toString(1), 'blue', this$GameDisplay.playerTypes.get_za3lpa$(0).getController()));
       if (this$GameDisplay.players.size >= this$GameDisplay.maxPlayers)
         this$GameDisplay.newPlayerButton.disabled = true;
       this$GameDisplay.updateDisplay();
       return Unit;
+    };
+  }
+  function Coroutine$GameDisplay_init$lambda$lambda$lambda($receiver_0, controller, continuation_0) {
+    CoroutineImpl.call(this, continuation_0);
+    this.$controller = controller;
+    this.exceptionState_0 = 1;
+  }
+  Coroutine$GameDisplay_init$lambda$lambda$lambda.$metadata$ = {
+    kind: Kotlin.Kind.CLASS,
+    simpleName: null,
+    interfaces: [CoroutineImpl]
+  };
+  Coroutine$GameDisplay_init$lambda$lambda$lambda.prototype = Object.create(CoroutineImpl.prototype);
+  Coroutine$GameDisplay_init$lambda$lambda$lambda.prototype.constructor = Coroutine$GameDisplay_init$lambda$lambda$lambda;
+  Coroutine$GameDisplay_init$lambda$lambda$lambda.prototype.doResume = function () {
+    do
+      try {
+        switch (this.state_0) {
+          case 0:
+            return Unit;
+          case 1:
+            throw this.exception_0;
+          default:this.state_0 = 1;
+            throw new Error('State Machine Unreachable execution');
+        }
+      }
+       catch (e) {
+        if (this.state_0 === 1) {
+          this.exceptionState_0 = this.state_0;
+          throw e;
+        }
+         else {
+          this.state_0 = this.exceptionState_0;
+          this.exception_0 = e;
+        }
+      }
+     while (true);
+  };
+  function GameDisplay_init$lambda$lambda$lambda($receiver_0, continuation_0, suspended) {
+    var instance = new Coroutine$GameDisplay_init$lambda$lambda$lambda($receiver_0, this, continuation_0);
+    if (suspended)
+      return instance;
+    else
+      return instance.doResume(null);
+  }
+  function GameDisplay_init$lambda$lambda$lambda_0(it) {
+    return Unit;
+  }
+  function Coroutine$GameDisplay_init$lambda$lambda_0(this$GameDisplay_0, $receiver_0, controller, continuation_0) {
+    CoroutineImpl.call(this, continuation_0);
+    this.$controller = controller;
+    this.exceptionState_0 = 1;
+    this.local$this$GameDisplay = this$GameDisplay_0;
+    this.local$$receiver = $receiver_0;
+  }
+  Coroutine$GameDisplay_init$lambda$lambda_0.$metadata$ = {
+    kind: Kotlin.Kind.CLASS,
+    simpleName: null,
+    interfaces: [CoroutineImpl]
+  };
+  Coroutine$GameDisplay_init$lambda$lambda_0.prototype = Object.create(CoroutineImpl.prototype);
+  Coroutine$GameDisplay_init$lambda$lambda_0.prototype.constructor = Coroutine$GameDisplay_init$lambda$lambda_0;
+  Coroutine$GameDisplay_init$lambda$lambda_0.prototype.doResume = function () {
+    do
+      try {
+        switch (this.state_0) {
+          case 0:
+            this.state_0 = 2;
+            this.result_0 = this.local$this$GameDisplay.turnLoop_gkk88$(this.local$$receiver, this);
+            if (this.result_0 === COROUTINE_SUSPENDED)
+              return COROUTINE_SUSPENDED;
+            continue;
+          case 1:
+            throw this.exception_0;
+          case 2:
+            var bla = promise(this.local$$receiver, void 0, void 0, GameDisplay_init$lambda$lambda$lambda);
+            return bla.then(GameDisplay_init$lambda$lambda$lambda_0);
+          default:this.state_0 = 1;
+            throw new Error('State Machine Unreachable execution');
+        }
+      }
+       catch (e) {
+        if (this.state_0 === 1) {
+          this.exceptionState_0 = this.state_0;
+          throw e;
+        }
+         else {
+          this.state_0 = this.exceptionState_0;
+          this.exception_0 = e;
+        }
+      }
+     while (true);
+  };
+  function GameDisplay_init$lambda$lambda_0(this$GameDisplay_0) {
+    return function ($receiver_0, continuation_0, suspended) {
+      var instance = new Coroutine$GameDisplay_init$lambda$lambda_0(this$GameDisplay_0, $receiver_0, this, continuation_0);
+      if (suspended)
+        return instance;
+      else
+        return instance.doResume(null);
     };
   }
   function Coroutine$GameDisplay_init$lambda(this$GameDisplay_0, $receiver_0, controller, continuation_0) {
@@ -3976,7 +4305,10 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
       try {
         switch (this.state_0) {
           case 0:
-            return this.local$this$GameDisplay.startNewGame(), Unit;
+            this.local$this$GameDisplay.startNewGame();
+            this.local$this$GameDisplay.messageLine.textContent = '';
+            this.local$this$GameDisplay.updateDisplay();
+            return this.local$this$GameDisplay.loopJop = launch(coroutines.GlobalScope, void 0, void 0, GameDisplay_init$lambda$lambda_0(this.local$this$GameDisplay)), Unit;
           case 1:
             throw this.exception_0;
           default:this.state_0 = 1;
@@ -4008,136 +4340,6 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     kind: Kind_CLASS,
     simpleName: 'GameDisplay',
     interfaces: []
-  };
-  function Player(name, color) {
-    if (name === void 0)
-      name = 'Player';
-    if (color === void 0)
-      color = 'blue';
-    this.name = name;
-    this.color = color;
-  }
-  Player.$metadata$ = {
-    kind: Kind_CLASS,
-    simpleName: 'Player',
-    interfaces: []
-  };
-  function HumanPlayer(name, color) {
-    if (name === void 0)
-      name = 'Player';
-    if (color === void 0)
-      color = 'blue';
-    Player.call(this, name, color);
-  }
-  HumanPlayer.$metadata$ = {
-    kind: Kind_CLASS,
-    simpleName: 'HumanPlayer',
-    interfaces: [Player]
-  };
-  function AIPlayer() {
-  }
-  AIPlayer.$metadata$ = {
-    kind: Kind_INTERFACE,
-    simpleName: 'AIPlayer',
-    interfaces: []
-  };
-  function RandomAIPlayer(name, color) {
-    if (name === void 0)
-      name = 'Player';
-    if (color === void 0)
-      color = 'blue';
-    Player.call(this, name, color);
-  }
-  RandomAIPlayer.prototype.requestAction_11rb$ = function (state) {
-    var actions = state.possibleActions();
-    return random(actions, Random_0.Default);
-  };
-  RandomAIPlayer.prototype.endGame_iuyhfk$ = function (state, won) {
-  };
-  RandomAIPlayer.$metadata$ = {
-    kind: Kind_CLASS,
-    simpleName: 'RandomAIPlayer',
-    interfaces: [AIPlayer, Player]
-  };
-  function SimpleAIPlayer(name, color, utility) {
-    if (name === void 0)
-      name = 'Player';
-    if (color === void 0)
-      color = 'blue';
-    if (utility === void 0)
-      utility = SimpleAIPlayer_init$lambda;
-    Player.call(this, name, color);
-    this.utility = utility;
-  }
-  var checkIndexOverflow = Kotlin.kotlin.collections.checkIndexOverflow_za3lpa$;
-  SimpleAIPlayer.prototype.requestAction_11rb$ = function (state) {
-    var tmp$;
-    var actions = state.possibleActions();
-    var destination = ArrayList_init_0(collectionSizeOrDefault(actions, 10));
-    var tmp$_0;
-    tmp$_0 = actions.iterator();
-    while (tmp$_0.hasNext()) {
-      var item = tmp$_0.next();
-      destination.add_11rb$(this.utility(state, item));
-    }
-    var utilities = destination;
-    var max_0 = (tmp$ = max(utilities)) != null ? tmp$ : random(actions, Random_0.Default);
-    var destination_0 = ArrayList_init();
-    var tmp$_1, tmp$_0_0;
-    var index = 0;
-    tmp$_1 = actions.iterator();
-    while (tmp$_1.hasNext()) {
-      var item_0 = tmp$_1.next();
-      if (equals(utilities.get_za3lpa$(checkIndexOverflow((tmp$_0_0 = index, index = tmp$_0_0 + 1 | 0, tmp$_0_0))), max_0))
-        destination_0.add_11rb$(item_0);
-    }
-    return random(destination_0, Random_0.Default);
-  };
-  SimpleAIPlayer.prototype.endGame_iuyhfk$ = function (state, won) {
-  };
-  function SimpleAIPlayer_init$lambda(f, f_0) {
-    return 1;
-  }
-  SimpleAIPlayer.$metadata$ = {
-    kind: Kind_CLASS,
-    simpleName: 'SimpleAIPlayer',
-    interfaces: [AIPlayer, Player]
-  };
-  function PlayerType(name) {
-    this.name = name;
-  }
-  PlayerType.$metadata$ = {
-    kind: Kind_CLASS,
-    simpleName: 'PlayerType',
-    interfaces: []
-  };
-  function HumanPlayerType() {
-    PlayerType.call(this, 'Human');
-  }
-  HumanPlayerType.prototype.isOfType_vgc0e7$ = function (player) {
-    return Kotlin.isType(player, HumanPlayer);
-  };
-  HumanPlayerType.prototype.getNew_puj7f4$ = function (name, color) {
-    return new HumanPlayer(name, color);
-  };
-  HumanPlayerType.$metadata$ = {
-    kind: Kind_CLASS,
-    simpleName: 'HumanPlayerType',
-    interfaces: [PlayerType]
-  };
-  function RandomAIPlayerType() {
-    PlayerType.call(this, 'CPU - Weak');
-  }
-  RandomAIPlayerType.prototype.isOfType_vgc0e7$ = function (player) {
-    return Kotlin.isType(player, RandomAIPlayer);
-  };
-  RandomAIPlayerType.prototype.getNew_puj7f4$ = function (name, color) {
-    return new RandomAIPlayer(name, color);
-  };
-  RandomAIPlayerType.$metadata$ = {
-    kind: Kind_CLASS,
-    simpleName: 'RandomAIPlayerType',
-    interfaces: [PlayerType]
   };
   function Grid(width, height, init, fields) {
     if (fields === void 0) {
@@ -4399,6 +4601,139 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     navElement.appendChild(button);
     button.addEventListener('click', addButton$lambda(name, header, gameDisplay));
   }
+  function AIPlayable() {
+  }
+  AIPlayable.$metadata$ = {
+    kind: Kind_INTERFACE,
+    simpleName: 'AIPlayable',
+    interfaces: []
+  };
+  function Player(name, color, controller) {
+    if (name === void 0)
+      name = 'Player';
+    if (color === void 0)
+      color = 'blue';
+    this.name = name;
+    this.color = color;
+    this.controller = controller;
+  }
+  Player.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'Player',
+    interfaces: []
+  };
+  function PlayerController() {
+  }
+  PlayerController.$metadata$ = {
+    kind: Kind_INTERFACE,
+    simpleName: 'PlayerController',
+    interfaces: []
+  };
+  function HumanController() {
+    this.deferred = CompletableDeferred();
+  }
+  HumanController.prototype.requestAction_11rb$ = function (state, continuation) {
+    this.deferred = CompletableDeferred();
+    return this.deferred.await(continuation);
+  };
+  HumanController.prototype.endGame_iuyhfk$ = function (state, won) {
+  };
+  HumanController.prototype.performAction_11rc$ = function (action) {
+    this.deferred.complete_11rb$(action);
+  };
+  HumanController.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'HumanController',
+    interfaces: [PlayerController]
+  };
+  function RandomAIController() {
+  }
+  RandomAIController.prototype.requestAction_11rb$ = function (state, continuation) {
+    var actions = state.possibleActions();
+    return random(actions, Random_0.Default);
+  };
+  RandomAIController.prototype.endGame_iuyhfk$ = function (state, won) {
+  };
+  RandomAIController.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'RandomAIController',
+    interfaces: [PlayerController]
+  };
+  function SimpleAIController(utility) {
+    if (utility === void 0)
+      utility = SimpleAIController_init$lambda;
+    this.utility = utility;
+  }
+  var checkIndexOverflow = Kotlin.kotlin.collections.checkIndexOverflow_za3lpa$;
+  SimpleAIController.prototype.requestAction_11rb$ = function (state, continuation) {
+    var tmp$;
+    var actions = state.possibleActions();
+    var destination = ArrayList_init_0(collectionSizeOrDefault(actions, 10));
+    var tmp$_0;
+    tmp$_0 = actions.iterator();
+    while (tmp$_0.hasNext()) {
+      var item = tmp$_0.next();
+      destination.add_11rb$(this.utility(state, item));
+    }
+    var utilities = destination;
+    var max_0 = (tmp$ = max(utilities)) != null ? tmp$ : random(actions, Random_0.Default);
+    var destination_0 = ArrayList_init();
+    var tmp$_1, tmp$_0_0;
+    var index = 0;
+    tmp$_1 = actions.iterator();
+    while (tmp$_1.hasNext()) {
+      var item_0 = tmp$_1.next();
+      if (equals(utilities.get_za3lpa$(checkIndexOverflow((tmp$_0_0 = index, index = tmp$_0_0 + 1 | 0, tmp$_0_0))), max_0))
+        destination_0.add_11rb$(item_0);
+    }
+    return random(destination_0, Random_0.Default);
+  };
+  SimpleAIController.prototype.endGame_iuyhfk$ = function (state, won) {
+  };
+  function SimpleAIController_init$lambda(f, f_0) {
+    return 1;
+  }
+  SimpleAIController.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'SimpleAIController',
+    interfaces: [PlayerController]
+  };
+  function PlayerType(name) {
+    this.name = name;
+  }
+  PlayerType.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'PlayerType',
+    interfaces: []
+  };
+  function HumanType() {
+    PlayerType.call(this, 'Human');
+  }
+  HumanType.prototype.isOfType_afkf1m$ = function (player) {
+    return Kotlin.isType(player.controller, HumanController);
+  };
+  HumanType.prototype.getController = function () {
+    return new HumanController();
+  };
+  HumanType.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'HumanType',
+    interfaces: [PlayerType]
+  };
+  function RandomAIType() {
+    PlayerType.call(this, 'CPU - Weak');
+  }
+  RandomAIType.prototype.isOfType_afkf1m$ = function (player) {
+    return Kotlin.isType(player.controller, RandomAIController);
+  };
+  RandomAIType.prototype.getController = function () {
+    return new RandomAIController();
+  };
+  RandomAIType.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'RandomAIType',
+    interfaces: [PlayerType]
+  };
   function Position(x, y) {
     this.x = x;
     this.y = y;
@@ -4581,93 +4916,6 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     $receiver.newState.currentPlayer = $receiver.oldState.currentPlayer === TicTacToePiece$Cross_getInstance() ? TicTacToePiece$Circle_getInstance() : TicTacToePiece$Cross_getInstance();
     return Result$Companion_getInstance().success();
   }
-  function TicTacToeState(board, currentPlayer, players) {
-    if (board === void 0)
-      board = new Grid(3, 3, TicTacToeState_init$lambda);
-    if (currentPlayer === void 0)
-      currentPlayer = TicTacToePiece$Cross_getInstance();
-    if (players === void 0)
-      players = listOf([TicTacToePiece$Cross_getInstance(), TicTacToePiece$Circle_getInstance()]);
-    this.board_pqdyqb$_0 = board;
-    this.currentPlayer_itk6nz$_0 = currentPlayer;
-    this.players_f3gykn$_0 = players;
-  }
-  Object.defineProperty(TicTacToeState.prototype, 'board', {
-    get: function () {
-      return this.board_pqdyqb$_0;
-    }
-  });
-  Object.defineProperty(TicTacToeState.prototype, 'currentPlayer', {
-    get: function () {
-      return this.currentPlayer_itk6nz$_0;
-    },
-    set: function (currentPlayer) {
-      this.currentPlayer_itk6nz$_0 = currentPlayer;
-    }
-  });
-  Object.defineProperty(TicTacToeState.prototype, 'players', {
-    get: function () {
-      return this.players_f3gykn$_0;
-    }
-  });
-  TicTacToeState.prototype.possibleActions = function () {
-    var actions = ArrayList_init();
-    for (var i = 0; i <= 2; i++) {
-      for (var j = 0; j <= 2; j++)
-        if (this.board.get_vux9f0$(i, j) == null)
-          actions.add_11rb$(new TicTacToeAction(this.currentPlayer, i, j));
-    }
-    return toList(actions);
-  };
-  TicTacToeState.prototype.findWinner = function () {
-    if (this.hasPieceWon_0(TicTacToePiece$Cross_getInstance()))
-      return TicTacToePiece$Cross_getInstance();
-    else if (this.hasPieceWon_0(TicTacToePiece$Circle_getInstance()))
-      return TicTacToePiece$Circle_getInstance();
-    return null;
-  };
-  TicTacToeState.prototype.hasPieceWon_0 = function (piece) {
-    if (equals(this.board.get_vux9f0$(0, 0), piece) && equals(this.board.get_vux9f0$(0, 1), piece) && equals(this.board.get_vux9f0$(0, 2), piece) || (equals(this.board.get_vux9f0$(1, 0), piece) && equals(this.board.get_vux9f0$(1, 1), piece) && equals(this.board.get_vux9f0$(1, 2), piece)) || (equals(this.board.get_vux9f0$(2, 0), piece) && equals(this.board.get_vux9f0$(2, 1), piece) && equals(this.board.get_vux9f0$(2, 2), piece)))
-      return true;
-    if (equals(this.board.get_vux9f0$(0, 0), piece) && equals(this.board.get_vux9f0$(1, 0), piece) && equals(this.board.get_vux9f0$(2, 0), piece) || (equals(this.board.get_vux9f0$(0, 1), piece) && equals(this.board.get_vux9f0$(1, 1), piece) && equals(this.board.get_vux9f0$(2, 1), piece)) || (equals(this.board.get_vux9f0$(0, 2), piece) && equals(this.board.get_vux9f0$(1, 2), piece) && equals(this.board.get_vux9f0$(2, 2), piece)))
-      return true;
-    if (equals(this.board.get_vux9f0$(0, 0), piece) && equals(this.board.get_vux9f0$(1, 1), piece) && equals(this.board.get_vux9f0$(2, 2), piece) || (equals(this.board.get_vux9f0$(0, 2), piece) && equals(this.board.get_vux9f0$(1, 1), piece) && equals(this.board.get_vux9f0$(2, 0), piece)))
-      return true;
-    return false;
-  };
-  function TicTacToeState_init$lambda(f, f_0) {
-    return null;
-  }
-  TicTacToeState.$metadata$ = {
-    kind: Kind_CLASS,
-    simpleName: 'TicTacToeState',
-    interfaces: [BoardGameState]
-  };
-  TicTacToeState.prototype.component1 = function () {
-    return this.board;
-  };
-  TicTacToeState.prototype.component2 = function () {
-    return this.currentPlayer;
-  };
-  TicTacToeState.prototype.component3 = function () {
-    return this.players;
-  };
-  TicTacToeState.prototype.copy_2sqnw4$ = function (board, currentPlayer, players) {
-    return new TicTacToeState(board === void 0 ? this.board : board, currentPlayer === void 0 ? this.currentPlayer : currentPlayer, players === void 0 ? this.players : players);
-  };
-  TicTacToeState.prototype.toString = function () {
-    return 'TicTacToeState(board=' + Kotlin.toString(this.board) + (', currentPlayer=' + Kotlin.toString(this.currentPlayer)) + (', players=' + Kotlin.toString(this.players)) + ')';
-  };
-  TicTacToeState.prototype.hashCode = function () {
-    var result = 0;
-    result = result * 31 + Kotlin.hashCode(this.board) | 0;
-    result = result * 31 + Kotlin.hashCode(this.currentPlayer) | 0;
-    result = result * 31 + Kotlin.hashCode(this.players) | 0;
-    return result;
-  };
-  TicTacToeState.prototype.equals = function (other) {
-    return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.board, other.board) && Kotlin.equals(this.currentPlayer, other.currentPlayer) && Kotlin.equals(this.players, other.players)))));
-  };
   function TicTacToePiece(name, ordinal) {
     Enum.call(this);
     this.name$ = name;
@@ -4746,11 +4994,11 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   function TicTacToeDisplay(canvasContainer, playerArea, gameAreaTop, gameAreaRight) {
     GameDisplay.call(this, canvasContainer, playerArea, gameAreaTop, gameAreaRight);
     this.game_p4bo12$_0 = new TicTacToe();
+    this.playerTypes_x2bwa8$_0 = listOf([new HumanType(), new RandomAIType()]);
     this.getColor_fajsqn$_0 = null;
     this.draw_p5ofi0$_0 = TicTacToeDisplay$draw$lambda;
-    this.playerTypes.add_11rb$(new RandomAIPlayerType());
-    this.players.add_11rb$(new HumanPlayer('Cross'));
-    this.players.add_11rb$(new RandomAIPlayer('Circle'));
+    this.players.add_11rb$(new Player('Cross', void 0, new HumanController()));
+    this.players.add_11rb$(new Player('Circle', void 0, new RandomAIController()));
     this.gridDisplay.outerBorder = 0.0;
     this.maxPlayers = 2;
     this.newPlayerButton.disabled = true;
@@ -4763,6 +5011,11 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     },
     set: function (game) {
       this.game_p4bo12$_0 = game;
+    }
+  });
+  Object.defineProperty(TicTacToeDisplay.prototype, 'playerTypes', {
+    get: function () {
+      return this.playerTypes_x2bwa8$_0;
     }
   });
   Object.defineProperty(TicTacToeDisplay.prototype, 'getColor', {
@@ -4785,8 +5038,6 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     var key_0 = TicTacToePiece$Circle_getInstance();
     var value_0 = this.players.get_za3lpa$(1);
     $receiver_0.put_xwzc9p$(key_0, value_0);
-    this.awaitActionFrom_s8jyv4$(this.game.currentPlayer());
-    this.updateDisplay();
   };
   function TicTacToeDisplay$draw$lambda(context, fieldSize, piece, f, f_0) {
     context.fillStyle = 'black';
@@ -4800,8 +5051,15 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   }
   function TicTacToeDisplay_init$lambda(this$TicTacToeDisplay) {
     return function (it) {
-      if (Kotlin.isType(this$TicTacToeDisplay.game.currentPlayer(), Player) && it.x >= 0 && it.y >= 0 && it.x < 3 && it.y < 3)
-        this$TicTacToeDisplay.performAction_11re$(new TicTacToeAction(this$TicTacToeDisplay.game.state.currentPlayer, it.x, it.y));
+      var tmp$, tmp$_0, tmp$_1;
+      if (Kotlin.isType(this$TicTacToeDisplay.game.currentPlayer(), Player) && it.x >= 0 && it.y >= 0 && it.x < 3 && it.y < 3) {
+        tmp$_1 = Kotlin.isType(tmp$_0 = (tmp$ = this$TicTacToeDisplay.game.currentPlayer()) != null ? tmp$.controller : null, HumanController) ? tmp$_0 : null;
+        if (tmp$_1 == null) {
+          return;
+        }
+        var playerController = tmp$_1;
+        playerController.performAction_11rc$(new TicTacToeAction(this$TicTacToeDisplay.game.state.currentPlayer, it.x, it.y));
+      }
       return Unit;
     };
   }
@@ -4809,6 +5067,93 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     kind: Kind_CLASS,
     simpleName: 'TicTacToeDisplay',
     interfaces: [GameDisplay]
+  };
+  function TicTacToeState(board, currentPlayer, players) {
+    if (board === void 0)
+      board = new Grid(3, 3, TicTacToeState_init$lambda);
+    if (currentPlayer === void 0)
+      currentPlayer = TicTacToePiece$Cross_getInstance();
+    if (players === void 0)
+      players = listOf([TicTacToePiece$Cross_getInstance(), TicTacToePiece$Circle_getInstance()]);
+    this.board_pqdyqb$_0 = board;
+    this.currentPlayer_itk6nz$_0 = currentPlayer;
+    this.players_f3gykn$_0 = players;
+  }
+  Object.defineProperty(TicTacToeState.prototype, 'board', {
+    get: function () {
+      return this.board_pqdyqb$_0;
+    }
+  });
+  Object.defineProperty(TicTacToeState.prototype, 'currentPlayer', {
+    get: function () {
+      return this.currentPlayer_itk6nz$_0;
+    },
+    set: function (currentPlayer) {
+      this.currentPlayer_itk6nz$_0 = currentPlayer;
+    }
+  });
+  Object.defineProperty(TicTacToeState.prototype, 'players', {
+    get: function () {
+      return this.players_f3gykn$_0;
+    }
+  });
+  TicTacToeState.prototype.possibleActions = function () {
+    var actions = ArrayList_init();
+    for (var i = 0; i <= 2; i++) {
+      for (var j = 0; j <= 2; j++)
+        if (this.board.get_vux9f0$(i, j) == null)
+          actions.add_11rb$(new TicTacToeAction(this.currentPlayer, i, j));
+    }
+    return toList(actions);
+  };
+  TicTacToeState.prototype.findWinner = function () {
+    if (this.hasPieceWon_0(TicTacToePiece$Cross_getInstance()))
+      return TicTacToePiece$Cross_getInstance();
+    else if (this.hasPieceWon_0(TicTacToePiece$Circle_getInstance()))
+      return TicTacToePiece$Circle_getInstance();
+    return null;
+  };
+  TicTacToeState.prototype.hasPieceWon_0 = function (piece) {
+    if (equals(this.board.get_vux9f0$(0, 0), piece) && equals(this.board.get_vux9f0$(0, 1), piece) && equals(this.board.get_vux9f0$(0, 2), piece) || (equals(this.board.get_vux9f0$(1, 0), piece) && equals(this.board.get_vux9f0$(1, 1), piece) && equals(this.board.get_vux9f0$(1, 2), piece)) || (equals(this.board.get_vux9f0$(2, 0), piece) && equals(this.board.get_vux9f0$(2, 1), piece) && equals(this.board.get_vux9f0$(2, 2), piece)))
+      return true;
+    if (equals(this.board.get_vux9f0$(0, 0), piece) && equals(this.board.get_vux9f0$(1, 0), piece) && equals(this.board.get_vux9f0$(2, 0), piece) || (equals(this.board.get_vux9f0$(0, 1), piece) && equals(this.board.get_vux9f0$(1, 1), piece) && equals(this.board.get_vux9f0$(2, 1), piece)) || (equals(this.board.get_vux9f0$(0, 2), piece) && equals(this.board.get_vux9f0$(1, 2), piece) && equals(this.board.get_vux9f0$(2, 2), piece)))
+      return true;
+    if (equals(this.board.get_vux9f0$(0, 0), piece) && equals(this.board.get_vux9f0$(1, 1), piece) && equals(this.board.get_vux9f0$(2, 2), piece) || (equals(this.board.get_vux9f0$(0, 2), piece) && equals(this.board.get_vux9f0$(1, 1), piece) && equals(this.board.get_vux9f0$(2, 0), piece)))
+      return true;
+    return false;
+  };
+  function TicTacToeState_init$lambda(f, f_0) {
+    return null;
+  }
+  TicTacToeState.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'TicTacToeState',
+    interfaces: [AIPlayable, BoardGameState]
+  };
+  TicTacToeState.prototype.component1 = function () {
+    return this.board;
+  };
+  TicTacToeState.prototype.component2 = function () {
+    return this.currentPlayer;
+  };
+  TicTacToeState.prototype.component3 = function () {
+    return this.players;
+  };
+  TicTacToeState.prototype.copy_2sqnw4$ = function (board, currentPlayer, players) {
+    return new TicTacToeState(board === void 0 ? this.board : board, currentPlayer === void 0 ? this.currentPlayer : currentPlayer, players === void 0 ? this.players : players);
+  };
+  TicTacToeState.prototype.toString = function () {
+    return 'TicTacToeState(board=' + Kotlin.toString(this.board) + (', currentPlayer=' + Kotlin.toString(this.currentPlayer)) + (', players=' + Kotlin.toString(this.players)) + ')';
+  };
+  TicTacToeState.prototype.hashCode = function () {
+    var result = 0;
+    result = result * 31 + Kotlin.hashCode(this.board) | 0;
+    result = result * 31 + Kotlin.hashCode(this.currentPlayer) | 0;
+    result = result * 31 + Kotlin.hashCode(this.players) | 0;
+    return result;
+  };
+  TicTacToeState.prototype.equals = function (other) {
+    return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.board, other.board) && Kotlin.equals(this.currentPlayer, other.currentPlayer) && Kotlin.equals(this.players, other.players)))));
   };
   function Virus(state) {
     if (state === void 0)
@@ -4937,6 +5282,196 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     $receiver.newState.currentPlayer = nextPlayer;
     return Result$Companion_getInstance().success();
   }
+  function VirusAction(origin, destination) {
+    this.origin = origin;
+    this.destination = destination;
+  }
+  VirusAction.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'VirusAction',
+    interfaces: []
+  };
+  VirusAction.prototype.component1 = function () {
+    return this.origin;
+  };
+  VirusAction.prototype.component2 = function () {
+    return this.destination;
+  };
+  VirusAction.prototype.copy_vwqnnw$ = function (origin, destination) {
+    return new VirusAction(origin === void 0 ? this.origin : origin, destination === void 0 ? this.destination : destination);
+  };
+  VirusAction.prototype.toString = function () {
+    return 'VirusAction(origin=' + Kotlin.toString(this.origin) + (', destination=' + Kotlin.toString(this.destination)) + ')';
+  };
+  VirusAction.prototype.hashCode = function () {
+    var result = 0;
+    result = result * 31 + Kotlin.hashCode(this.origin) | 0;
+    result = result * 31 + Kotlin.hashCode(this.destination) | 0;
+    return result;
+  };
+  VirusAction.prototype.equals = function (other) {
+    return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.origin, other.origin) && Kotlin.equals(this.destination, other.destination)))));
+  };
+  function SimpleVirusAIType() {
+    PlayerType.call(this, 'CPU - Medium');
+  }
+  SimpleVirusAIType.prototype.isOfType_afkf1m$ = function (player) {
+    return Kotlin.isType(player.controller, SimpleAIController);
+  };
+  SimpleVirusAIType.prototype.getController = function () {
+    return new SimpleAIController(getCallableRef('virusUtility', function (state, action) {
+      return virusUtility(state, action);
+    }));
+  };
+  SimpleVirusAIType.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'SimpleVirusAIType',
+    interfaces: [PlayerType]
+  };
+  function virusUtility(state, action) {
+    var $receiver = state.board.fields;
+    var destination = ArrayList_init();
+    var tmp$;
+    tmp$ = $receiver.iterator();
+    while (tmp$.hasNext()) {
+      var element = tmp$.next();
+      if (element === state.currentPlayer)
+        destination.add_11rb$(element);
+    }
+    var currentDifference = destination.size;
+    var $receiver_0 = state.board.fields;
+    var destination_0 = ArrayList_init();
+    var tmp$_0;
+    tmp$_0 = $receiver_0.iterator();
+    while (tmp$_0.hasNext()) {
+      var element_0 = tmp$_0.next();
+      if (element_0 !== state.currentPlayer && element_0 !== 0)
+        destination_0.add_11rb$(element_0);
+    }
+    -destination_0.size | 0;
+    var $this = (new Virus(state)).nextState_11rd$(action);
+    var tmp$_1;
+    var tmp$_2;
+    if (Kotlin.isType($this, Failure)) {
+      return 0;
+    }
+     else
+      tmp$_2 = (Kotlin.isType(tmp$_1 = $this, Success) ? tmp$_1 : throwCCE()).value;
+    var nextState = tmp$_2;
+    var $receiver_1 = nextState.board.fields;
+    var destination_1 = ArrayList_init();
+    var tmp$_3;
+    tmp$_3 = $receiver_1.iterator();
+    while (tmp$_3.hasNext()) {
+      var element_1 = tmp$_3.next();
+      if (element_1 === state.currentPlayer)
+        destination_1.add_11rb$(element_1);
+    }
+    var nextDifference = destination_1.size;
+    var $receiver_2 = nextState.board.fields;
+    var destination_2 = ArrayList_init();
+    var tmp$_4;
+    tmp$_4 = $receiver_2.iterator();
+    while (tmp$_4.hasNext()) {
+      var element_2 = tmp$_4.next();
+      if (element_2 !== state.currentPlayer && element_2 !== 0)
+        destination_2.add_11rb$(element_2);
+    }
+    -destination_2.size | 0;
+    return nextDifference - currentDifference | 0;
+  }
+  function VirusDisplay(canvasContainer, playerArea, gameAreaTop, gameAreaRight) {
+    GameDisplay.call(this, canvasContainer, playerArea, gameAreaTop, gameAreaRight);
+    this.game_rcjipt$_0 = new Virus();
+    this.playerTypes_e0ec7f$_0 = listOf([new HumanType(), new RandomAIType(), new SimpleVirusAIType()]);
+    this.originPosition = null;
+    this.getColor_csj3a4$_0 = VirusDisplay$getColor$lambda(this);
+    this.draw_rdwa6r$_0 = VirusDisplay$draw$lambda(this);
+    this.players.add_11rb$(new Player('Player 1', 'yellow', new HumanController()));
+    this.players.add_11rb$(new Player('Player 2', 'red', new RandomAIController()));
+    this.maxPlayers = 4;
+    this.startNewGame();
+    this.gridDisplay.onClick = VirusDisplay_init$lambda(this);
+  }
+  Object.defineProperty(VirusDisplay.prototype, 'game', {
+    get: function () {
+      return this.game_rcjipt$_0;
+    },
+    set: function (game) {
+      this.game_rcjipt$_0 = game;
+    }
+  });
+  Object.defineProperty(VirusDisplay.prototype, 'playerTypes', {
+    get: function () {
+      return this.playerTypes_e0ec7f$_0;
+    }
+  });
+  Object.defineProperty(VirusDisplay.prototype, 'getColor', {
+    get: function () {
+      return this.getColor_csj3a4$_0;
+    }
+  });
+  Object.defineProperty(VirusDisplay.prototype, 'draw', {
+    get: function () {
+      return this.draw_rdwa6r$_0;
+    }
+  });
+  VirusDisplay.prototype.startNewGame = function () {
+    var tmp$;
+    this.game = new Virus();
+    tmp$ = this.players.size;
+    for (var i = 1; i <= tmp$; i++) {
+      var $receiver = this.game.players;
+      var value = this.players.get_za3lpa$(i - 1 | 0);
+      $receiver.put_xwzc9p$(i, value);
+    }
+    this.game.state = new VirusState(8, 8, this.players.size);
+  };
+  function VirusDisplay$getColor$lambda(this$VirusDisplay) {
+    return function (piece, f, f_0) {
+      var player = this$VirusDisplay.game.players.get_11rb$(piece);
+      if (player != null)
+        return player.color;
+      return 'white';
+    };
+  }
+  function VirusDisplay$draw$lambda(this$VirusDisplay) {
+    return function (context, fieldSize, field, x, y) {
+      var origin = this$VirusDisplay.originPosition;
+      if (origin == null || !(origin.x === x && origin.y === y))
+        return;
+      context.fillStyle = 'white';
+      context.fillRect(fieldSize / 4, fieldSize / 4, fieldSize / 2, fieldSize / 2);
+      return Unit;
+    };
+  }
+  function VirusDisplay_init$lambda(this$VirusDisplay) {
+    return function (it) {
+      var tmp$, tmp$_0, tmp$_1;
+      if (Kotlin.isType(this$VirusDisplay.game.currentPlayer(), Player) && it.x >= 0 && it.y >= 0 && it.x < this$VirusDisplay.game.state.width && it.y < this$VirusDisplay.game.state.height) {
+        var origin = this$VirusDisplay.originPosition;
+        if (origin == null) {
+          this$VirusDisplay.originPosition = new Position(it.x, it.y);
+          this$VirusDisplay.updateDisplay();
+        }
+         else {
+          this$VirusDisplay.originPosition = null;
+          tmp$_1 = Kotlin.isType(tmp$_0 = (tmp$ = this$VirusDisplay.game.currentPlayer()) != null ? tmp$.controller : null, HumanController) ? tmp$_0 : null;
+          if (tmp$_1 == null) {
+            return;
+          }
+          var playerController = tmp$_1;
+          playerController.performAction_11rc$(new VirusAction(origin, new Position(it.x, it.y)));
+        }
+      }
+      return Unit;
+    };
+  }
+  VirusDisplay.$metadata$ = {
+    kind: Kind_CLASS,
+    simpleName: 'VirusDisplay',
+    interfaces: [GameDisplay]
+  };
   function VirusState(width, height, playerCount, board, currentPlayer, players) {
     if (width === void 0)
       width = 8;
@@ -5179,7 +5714,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   VirusState.$metadata$ = {
     kind: Kind_CLASS,
     simpleName: 'VirusState',
-    interfaces: [BoardGameState]
+    interfaces: [AIPlayable, BoardGameState]
   };
   VirusState.prototype.component1 = function () {
     return this.width;
@@ -5218,188 +5753,6 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   VirusState.prototype.equals = function (other) {
     return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.width, other.width) && Kotlin.equals(this.height, other.height) && Kotlin.equals(this.playerCount, other.playerCount) && Kotlin.equals(this.board, other.board) && Kotlin.equals(this.currentPlayer, other.currentPlayer) && Kotlin.equals(this.players, other.players)))));
   };
-  function VirusAction(origin, destination) {
-    this.origin = origin;
-    this.destination = destination;
-  }
-  VirusAction.$metadata$ = {
-    kind: Kind_CLASS,
-    simpleName: 'VirusAction',
-    interfaces: []
-  };
-  VirusAction.prototype.component1 = function () {
-    return this.origin;
-  };
-  VirusAction.prototype.component2 = function () {
-    return this.destination;
-  };
-  VirusAction.prototype.copy_vwqnnw$ = function (origin, destination) {
-    return new VirusAction(origin === void 0 ? this.origin : origin, destination === void 0 ? this.destination : destination);
-  };
-  VirusAction.prototype.toString = function () {
-    return 'VirusAction(origin=' + Kotlin.toString(this.origin) + (', destination=' + Kotlin.toString(this.destination)) + ')';
-  };
-  VirusAction.prototype.hashCode = function () {
-    var result = 0;
-    result = result * 31 + Kotlin.hashCode(this.origin) | 0;
-    result = result * 31 + Kotlin.hashCode(this.destination) | 0;
-    return result;
-  };
-  VirusAction.prototype.equals = function (other) {
-    return this === other || (other !== null && (typeof other === 'object' && (Object.getPrototypeOf(this) === Object.getPrototypeOf(other) && (Kotlin.equals(this.origin, other.origin) && Kotlin.equals(this.destination, other.destination)))));
-  };
-  function VirusDisplay(canvasContainer, playerArea, gameAreaTop, gameAreaRight) {
-    GameDisplay.call(this, canvasContainer, playerArea, gameAreaTop, gameAreaRight);
-    this.game_rcjipt$_0 = new Virus();
-    this.originPosition = null;
-    this.getColor_csj3a4$_0 = VirusDisplay$getColor$lambda(this);
-    this.draw_rdwa6r$_0 = VirusDisplay$draw$lambda(this);
-    this.playerTypes.add_11rb$(new RandomAIPlayerType());
-    this.playerTypes.add_11rb$(new SimpleVirusAIPlayerType());
-    this.players.add_11rb$(new HumanPlayer('Player 1', 'yellow'));
-    this.players.add_11rb$(new RandomAIPlayer('Player 2', 'red'));
-    this.maxPlayers = 4;
-    this.startNewGame();
-    this.gridDisplay.onClick = VirusDisplay_init$lambda(this);
-  }
-  Object.defineProperty(VirusDisplay.prototype, 'game', {
-    get: function () {
-      return this.game_rcjipt$_0;
-    },
-    set: function (game) {
-      this.game_rcjipt$_0 = game;
-    }
-  });
-  Object.defineProperty(VirusDisplay.prototype, 'getColor', {
-    get: function () {
-      return this.getColor_csj3a4$_0;
-    }
-  });
-  Object.defineProperty(VirusDisplay.prototype, 'draw', {
-    get: function () {
-      return this.draw_rdwa6r$_0;
-    }
-  });
-  VirusDisplay.prototype.startNewGame = function () {
-    var tmp$;
-    this.game.players.clear();
-    tmp$ = this.players.size;
-    for (var i = 1; i <= tmp$; i++) {
-      var $receiver = this.game.players;
-      var value = this.players.get_za3lpa$(i - 1 | 0);
-      $receiver.put_xwzc9p$(i, value);
-    }
-    this.game.state = new VirusState(8, 8, this.players.size);
-    this.awaitActionFrom_s8jyv4$(this.game.currentPlayer());
-    this.updateDisplay();
-  };
-  function VirusDisplay$getColor$lambda(this$VirusDisplay) {
-    return function (piece, f, f_0) {
-      var player = this$VirusDisplay.game.players.get_11rb$(piece);
-      if (player != null)
-        return player.color;
-      return 'white';
-    };
-  }
-  function VirusDisplay$draw$lambda(this$VirusDisplay) {
-    return function (context, fieldSize, field, x, y) {
-      var origin = this$VirusDisplay.originPosition;
-      if (origin == null || !(origin.x === x && origin.y === y))
-        return;
-      context.fillStyle = 'white';
-      context.fillRect(fieldSize / 4, fieldSize / 4, fieldSize / 2, fieldSize / 2);
-      return Unit;
-    };
-  }
-  function VirusDisplay_init$lambda(this$VirusDisplay) {
-    return function (it) {
-      if (Kotlin.isType(this$VirusDisplay.game.currentPlayer(), Player) && it.x >= 0 && it.y >= 0 && it.x < this$VirusDisplay.game.state.width && it.y < this$VirusDisplay.game.state.height) {
-        var origin = this$VirusDisplay.originPosition;
-        if (origin == null) {
-          this$VirusDisplay.originPosition = new Position(it.x, it.y);
-          this$VirusDisplay.updateDisplay();
-        }
-         else {
-          this$VirusDisplay.originPosition = null;
-          this$VirusDisplay.performAction_11re$(new VirusAction(origin, new Position(it.x, it.y)));
-        }
-      }
-      return Unit;
-    };
-  }
-  VirusDisplay.$metadata$ = {
-    kind: Kind_CLASS,
-    simpleName: 'VirusDisplay',
-    interfaces: [GameDisplay]
-  };
-  function SimpleVirusAIPlayerType() {
-    PlayerType.call(this, 'CPU - Medium');
-  }
-  SimpleVirusAIPlayerType.prototype.isOfType_vgc0e7$ = function (player) {
-    return Kotlin.isType(player, SimpleAIPlayer);
-  };
-  SimpleVirusAIPlayerType.prototype.getNew_puj7f4$ = function (name, color) {
-    return new SimpleAIPlayer(name, color, getCallableRef('virusUtility', function (state, action) {
-      return virusUtility(state, action);
-    }));
-  };
-  SimpleVirusAIPlayerType.$metadata$ = {
-    kind: Kind_CLASS,
-    simpleName: 'SimpleVirusAIPlayerType',
-    interfaces: [PlayerType]
-  };
-  function virusUtility(state, action) {
-    var $receiver = state.board.fields;
-    var destination = ArrayList_init();
-    var tmp$;
-    tmp$ = $receiver.iterator();
-    while (tmp$.hasNext()) {
-      var element = tmp$.next();
-      if (element === state.currentPlayer)
-        destination.add_11rb$(element);
-    }
-    var currentDifference = destination.size;
-    var $receiver_0 = state.board.fields;
-    var destination_0 = ArrayList_init();
-    var tmp$_0;
-    tmp$_0 = $receiver_0.iterator();
-    while (tmp$_0.hasNext()) {
-      var element_0 = tmp$_0.next();
-      if (element_0 !== state.currentPlayer && element_0 !== 0)
-        destination_0.add_11rb$(element_0);
-    }
-    -destination_0.size | 0;
-    var $this = (new Virus(state)).nextState_11rd$(action);
-    var tmp$_1;
-    var tmp$_2;
-    if (Kotlin.isType($this, Failure)) {
-      return 0;
-    }
-     else
-      tmp$_2 = (Kotlin.isType(tmp$_1 = $this, Success) ? tmp$_1 : throwCCE()).value;
-    var nextState = tmp$_2;
-    var $receiver_1 = nextState.board.fields;
-    var destination_1 = ArrayList_init();
-    var tmp$_3;
-    tmp$_3 = $receiver_1.iterator();
-    while (tmp$_3.hasNext()) {
-      var element_1 = tmp$_3.next();
-      if (element_1 === state.currentPlayer)
-        destination_1.add_11rb$(element_1);
-    }
-    var nextDifference = destination_1.size;
-    var $receiver_2 = nextState.board.fields;
-    var destination_2 = ArrayList_init();
-    var tmp$_4;
-    tmp$_4 = $receiver_2.iterator();
-    while (tmp$_4.hasNext()) {
-      var element_2 = tmp$_4.next();
-      if (element_2 !== state.currentPlayer && element_2 !== 0)
-        destination_2.add_11rb$(element_2);
-    }
-    -destination_2.size | 0;
-    return nextDifference - currentDifference | 0;
-  }
   Object.defineProperty(Alys, 'Companion', {
     get: Alys$Companion_getInstance
   });
@@ -5474,9 +5827,9 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   _.AlysMoveAction = AlysMoveAction;
   _.AlysCreateAction = AlysCreateAction;
   _.AlysEndTurnAction = AlysEndTurnAction;
+  _.SimpleAlysAIType = SimpleAlysAIType;
   _.AlysBoardCreator = AlysBoardCreator;
   _.AlysDisplay = AlysDisplay;
-  _.SimpleAlysAIPlayerType = SimpleAlysAIPlayerType;
   _.AlysState = AlysState;
   _.BoardGame = BoardGame;
   _.BoardGameState = BoardGameState;
@@ -5501,7 +5854,6 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     get: ChessSas$Companion_getInstance
   });
   _.ChessSas = ChessSas;
-  _.ChessState = ChessState;
   _.ChessAction = ChessAction;
   Object.defineProperty(ChessPieceType, 'King', {
     get: ChessPieceType$King_getInstance
@@ -5534,19 +5886,21 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     get: ChessPiece$Companion_getInstance
   });
   _.ChessPiece = ChessPiece;
+  _.ChessState = ChessState;
   _.GameDisplay = GameDisplay;
-  _.Player = Player;
-  _.HumanPlayer = HumanPlayer;
-  _.AIPlayer = AIPlayer;
-  _.RandomAIPlayer = RandomAIPlayer;
-  _.SimpleAIPlayer = SimpleAIPlayer;
-  _.PlayerType = PlayerType;
-  _.HumanPlayerType = HumanPlayerType;
-  _.RandomAIPlayerType = RandomAIPlayerType;
   _.Grid = Grid;
   _.PositionedField = PositionedField;
   _.GridDisplay = GridDisplay;
   _.main_kand9s$ = main;
+  _.AIPlayable = AIPlayable;
+  _.Player = Player;
+  _.PlayerController = PlayerController;
+  _.HumanController = HumanController;
+  _.RandomAIController = RandomAIController;
+  _.SimpleAIController = SimpleAIController;
+  _.PlayerType = PlayerType;
+  _.HumanType = HumanType;
+  _.RandomAIType = RandomAIType;
   _.Position = Position;
   _.RuleArea = RuleArea;
   _.RuleSection = RuleSection;
@@ -5554,7 +5908,6 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   _.mustPlaceOwnPiece_97dxof$ = mustPlaceOwnPiece;
   _.placePiece_97dxof$ = placePiece_0;
   _.switchPlayer_97dxof$ = switchPlayer_0;
-  _.TicTacToeState = TicTacToeState;
   Object.defineProperty(TicTacToePiece, 'Cross', {
     get: TicTacToePiece$Cross_getInstance
   });
@@ -5564,6 +5917,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   _.TicTacToePiece = TicTacToePiece;
   _.TicTacToeAction = TicTacToeAction;
   _.TicTacToeDisplay = TicTacToeDisplay;
+  _.TicTacToeState = TicTacToeState;
   _.Virus = Virus;
   _.destinationMustBeWithinBoard_9rkvs1$ = destinationMustBeWithinBoard;
   _.originMustBeWithinBoard_9rkvs1$ = originMustBeWithinBoard;
@@ -5573,10 +5927,10 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   _.movePiece_9rkvs1$ = movePiece_0;
   _.turnNeighbours_9rkvs1$ = turnNeighbours;
   _.changePlayer_9rkvs1$ = changePlayer;
-  _.VirusState = VirusState;
   _.VirusAction = VirusAction;
+  _.SimpleVirusAIType = SimpleVirusAIType;
   _.VirusDisplay = VirusDisplay;
-  _.SimpleVirusAIPlayerType = SimpleVirusAIPlayerType;
+  _.VirusState = VirusState;
   main([]);
   Kotlin.defineModule('Tern', _);
   return _;

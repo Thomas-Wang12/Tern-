@@ -1,5 +1,3 @@
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import org.w3c.dom.*
 import org.w3c.dom.events.Event
 import kotlin.browser.document
@@ -9,10 +7,10 @@ class AlysDisplay(canvasContainer: HTMLElement, playerArea: HTMLElement, gameAre
 	: GameDisplay<Alys, AlysState, AlysField?, AlysAction, Int>(canvasContainer, playerArea, gameAreaTop, gameAreaRight) {
 	override var game = Alys()
 
-	var originPosition: Position? = null
-	var buildType: AlysType? = null
-	val previousStates = mutableListOf<AlysState>()
-	var selectedArea = listOf<Position>()
+	private var originPosition: Position? = null
+	private var buildType: AlysType? = null
+	private val previousStates = mutableListOf<AlysState>()
+	private var selectedArea = listOf<Position>()
 	override val playerTypes = listOf<PlayerType<AlysState, AlysAction>>(HumanType(), RandomAIType(), SimpleAlysAIType())
 	private val fortButton = document.createElement("button") as HTMLButtonElement
 	private val soldierButton = document.createElement("button") as HTMLButtonElement
@@ -20,9 +18,9 @@ class AlysDisplay(canvasContainer: HTMLElement, playerArea: HTMLElement, gameAre
 	private val endTurnButton = document.createElement("button") as HTMLButtonElement
 	private val statusArea = document.createElement("div") as HTMLDivElement
 
-	val images = mutableMapOf<String, HTMLImageElement>()
+	private val images = mutableMapOf<String, HTMLImageElement>()
 
-	val ruleArea = RuleArea("""Alys is a game about conquering an island.
+	private val ruleArea = RuleArea("""Alys is a game about conquering an island.
 			|<img src="assets/B.png" /> <img src="assets/S1.png" />
 			|You expand your territory by recruiting soldiers in town and using them to take new fields. Towns, forts and soldiers all protect the fields next to them, which means you need stronger soldiers to take them.
 			|<img src="assets/F.png" /> <img src="assets/T.png" />
@@ -109,7 +107,7 @@ class AlysDisplay(canvasContainer: HTMLElement, playerArea: HTMLElement, gameAre
 			context.drawImage(images[image], 0.0, 0.0, fieldSize, fieldSize)
 	}
 
-	fun soldierImage(piece: AlysPiece, showReady: Boolean): String {
+	private fun soldierImage(piece: AlysPiece, showReady: Boolean): String {
 		val flag = if (piece.hasMoved || !showReady) "" else "R"
 		return when (piece.strength) {
 			1 -> "S1$flag"
@@ -120,12 +118,12 @@ class AlysDisplay(canvasContainer: HTMLElement, playerArea: HTMLElement, gameAre
 		}
 	}
 
-	fun addImage(name: String) {
+	private fun addImage(name: String) {
 		images[name] = document.createElement("img") as HTMLImageElement
 		images[name]?.src = "assets/$name.png"
 	}
 
-	fun resize() {
+	private fun resize() {
 		val scale = window.devicePixelRatio
 		val size = (((canvas.width / scale - gridDisplay.outerBorder * 2) / game.state.width) - 1).toInt()
 		gridDisplay.fieldSize = (if (size % 2 == 0) size - 1 else size).toDouble()
@@ -224,7 +222,7 @@ class AlysDisplay(canvasContainer: HTMLElement, playerArea: HTMLElement, gameAre
 		}
 	}
 
-	fun selectField(position: Position?) {
+	private fun selectField(position: Position?) {
 		originPosition = position
 		if (position != null)
 			selectedArea = game.state.connectedPositions(position).map { it.position }
@@ -317,78 +315,4 @@ class AlysDisplay(canvasContainer: HTMLElement, playerArea: HTMLElement, gameAre
 		val playerController = game.currentPlayer()?.controller as? HumanController ?: return
 		playerController.performAction(AlysEndTurnAction())
 	}
-}
-
-class SimpleAlysAIType : PlayerType<AlysState, AlysAction>("CPU - Medium") {
-	override fun isOfType(player: Player<AlysState, AlysAction>): Boolean = player.controller is SimpleAIController
-	override fun getController() = SimpleAIController(::alysUtility)
-}
-
-private fun alysUtility(state: AlysState, action: AlysAction): Int {
-	if (action is AlysEndTurnAction)
-		return 0
-	if (action is AlysMoveAction)
-		return utilityFor(state, action)
-	if (action is AlysCreateAction)
-		return utilityFor(state, action)
-	return 1
-}
-
-private fun utilityFor(state: AlysState, action: AlysMoveAction): Int {
-	val destination = state.board[action.destination] as AlysField
-	if (destination.piece != null) {
-		return if (destination.player == state.currentPlayer) {
-			when (destination.piece.type) {
-				AlysType.Soldier -> if (isUpgradeWanted(state, PositionedField(action.destination, destination))) 10 else -1
-				AlysType.Tree -> 3
-				AlysType.CoastTree -> 10
-				else -> 1
-			}
-		} else when (destination.piece.type) {
-			AlysType.Soldier -> 5
-			AlysType.CoastTree -> 9
-			AlysType.Fort -> 5
-			else -> 1
-		}
-	}
-	return 0
-}
-
-private fun isUpgradeWanted(state: AlysState, place: PositionedField<AlysField>): Boolean {
-	val strength = place.field.piece?.strength ?: return false
-	if (place.field.piece.hasMoved)
-		return false
-	val area = state.connectedPositions(place.position)
-	if (!canAffordUpgrade(state, area, strength))
-		return false
-	val smallestDefense = state.neighbouringPositions(area).map { state.totalDefenseOf(it) }.min()
-			?: return false
-	if (strength <= smallestDefense)
-		return true
-	return false
-}
-
-private fun canAffordUpgrade(state: AlysState, area: List<PositionedField<AlysField>>, strength: Int): Boolean {
-	val oldUpkeep = Alys.upkeepFor(strength)
-	val newUpkeep = Alys.upkeepFor(strength + 1)
-	val base = area.find { it.field.treasury != null } ?: return false
-	val income = state.incomeFor(base.position)
-	val totalUpkeep = newUpkeep - oldUpkeep - 2 + area
-			.mapNotNull { it.field.piece }
-			.sumBy { Alys.upkeepFor(it) }
-	return income + (base.field.treasury ?: 0) >= totalUpkeep
-}
-
-private fun utilityFor(state: AlysState, action: AlysCreateAction): Int {
-	if (action.type == AlysType.Soldier)
-		return utilityFor(state, AlysMoveAction(action.origin, action.destination))
-	val adjacents = state.adjacentFields(action.destination)
-	val fortNearby = adjacents
-			.filter { it.field.player == state.currentPlayer }
-			.any { it.field.piece?.type == AlysType.Fort }
-	if (fortNearby)
-		return -1
-	val enemyNearby = adjacents.any { it.field.player != state.currentPlayer } ||
-			state.neighbouringPositions(adjacents).any { it.field.player != state.currentPlayer }
-	return if (enemyNearby) 3 else -1
 }
