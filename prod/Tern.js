@@ -272,7 +272,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
         tmp$ = 18;
         break;
       case 4:
-        tmp$ = 54;
+        tmp$ = 45;
         break;
       default:tmp$ = 0;
         break;
@@ -293,9 +293,9 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   }
   Alys.prototype.newGame_qt1dr2$ = function (width, height, seed) {
     if (width === void 0)
-      width = 15;
+      width = 18;
     if (height === void 0)
-      height = 15;
+      height = 18;
     if (seed === void 0)
       seed = 1;
     var creator = new AlysBoardCreator(width, height, seed);
