@@ -293,7 +293,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
   }
   Alys.prototype.newGame_qt1dr2$ = function (width, height, seed) {
     if (width === void 0)
-      width = 20;
+      width = 19;
     if (height === void 0)
       height = 20;
     if (seed === void 0)
