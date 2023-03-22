@@ -55,9 +55,9 @@ class AlysDisplay(canvasContainer: HTMLElement, playerArea: HTMLElement, gameAre
 							|<img src="assets/S2.png" /> <img src="assets/S2R.png" />
 							|Veterans (upkeep 6) can take fields defended by towns and recruits.
 							|<img src="assets/S3.png" /> <img src="assets/S3R.png" />
-							|Elites (upkeep 18) can take fields defended by forts and lower rank soldiers.
+							|Knights (upkeep 18) can take fields defended by forts and lower rank soldiers.
 							|<img src="assets/S4.png" /> <img src="assets/S4R.png" />
-							|Generals (upkeep 54) can take any field.
+							|Generals (upkeep 45) can take any field.
 							|
 							|Soldiers can generally only do one thing per turn, but are able to move freely between your empty fields.
 						""".trimMargin()),
@@ -148,7 +148,7 @@ class AlysDisplay(canvasContainer: HTMLElement, playerArea: HTMLElement, gameAre
 
 		aiDelay = 100
 		gridDisplay.gridColor = "#7df"
-		gridDisplay.outerBorder = 50.0
+		gridDisplay.outerBorder = 10.0
 		statusArea.className = "status-area"
 		statusArea.textContent = "Nothing selected"
 		fortButton.textContent = "Build fort (15)"

@@ -14,6 +14,8 @@ class AlysBoardCreator(width: Int, height: Int, val seed: Int) {
 		val fieldsToCreate = (board.fields.size * landFraction).toInt()
 		while(createdFields.size < fieldsToCreate) {
 			val position = remainingPositions.random(random)
+
+			//The Javascript for this section has been edited directly
 			if(position.adjacentHexes().any { createdFields.contains(it) }){
 				createdFields.add(position)
 				remainingPositions.remove(position)
