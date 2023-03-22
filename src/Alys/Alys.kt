@@ -129,13 +129,13 @@ class Alys(override var state: AlysState = AlysState())
 				1 -> 2
 				2 -> 6
 				3 -> 18
-				4 -> 54
+				4 -> 45
 				else -> 0
 			}
 		}
 	}
 
-	fun newGame(width: Int = 15, height: Int = 15, seed: Int = 1) {
+	fun newGame(width: Int = 18, height: Int = 18, seed: Int = 1) {
 		val creator = AlysBoardCreator(width, height, seed)
 		creator.generateLand()
 		creator.fillBoard(players.size)
