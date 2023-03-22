@@ -295,7 +295,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     if (width === void 0)
       width = 20;
     if (height === void 0)
-      height = 18;
+      height = 20;
     if (seed === void 0)
       seed = 1;
     var creator = new AlysBoardCreator(width, height, seed);
@@ -1632,7 +1632,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     this.addImage_0('G');
     this.aiDelay = L100;
     this.gridDisplay.gridColor = '#7df';
-    this.gridDisplay.outerBorder = 25.0;
+    this.gridDisplay.outerBorder = 40.0;
     this.statusArea_0.className = 'status-area';
     this.statusArea_0.textContent = 'Nothing selected';
     this.fortButton_0.textContent = 'Build fort (15)';
