@@ -1448,15 +1448,12 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
         while (tmp$_0.hasNext()) {
           var element = tmp$_0.next();
           if (createdFields.contains_11rb$(element)) {
-            if (adjCount == 0) {
-              adjCount += 1;
-            } else {
-              any$result = true;
-              break any$break;
-            }
+            adjCount++;
           }
         }
-        if(adjCount == 1 && Math.random() < 0.75) {
+        if(adjCount >= 2) {
+          any$result = true;
+        } else if(adjCount == 1 && Math.random() < 0.6) {
           any$result = true;
         } else {
           any$result = false;
@@ -1633,7 +1630,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     this.addImage_0('G');
     this.aiDelay = L100;
     this.gridDisplay.gridColor = '#7df';
-    this.gridDisplay.outerBorder = 10.0;
+    this.gridDisplay.outerBorder = 15.0;
     this.statusArea_0.className = 'status-area';
     this.statusArea_0.textContent = 'Nothing selected';
     this.fortButton_0.textContent = 'Build fort (15)';
