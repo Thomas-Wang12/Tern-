@@ -295,7 +295,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     if (width === void 0)
       width = 20;
     if (height === void 0)
-      height = 20;
+      height = 18;
     if (seed === void 0)
       seed = 1;
     var creator = new AlysBoardCreator(width, height, seed);
