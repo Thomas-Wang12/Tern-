@@ -1424,7 +1424,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     this.seed = seed;
     this.board = new Grid(width, height, AlysBoardCreator$board$lambda);
     this.numberOfCenters = 3;
-    this.landFraction = 0.75;
+    this.landFraction = 0.7;
   }
   AlysBoardCreator.prototype.generateLand = function () {
     var tmp$;
