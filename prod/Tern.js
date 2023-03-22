@@ -1451,9 +1451,9 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
             adjCount++;
           }
         }
-        if(adjCount >= 2) {
+        if(adjCount >= 6) {
           any$result = true;
-        } else if(adjCount == 1 && Math.random() < 0.6) {
+        } else if(adjCount >= 1 && Math.random() < 0.5) {
           any$result = true;
         } else {
           any$result = false;
