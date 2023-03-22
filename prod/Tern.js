@@ -4447,7 +4447,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     var tmp$;
     this.context = Kotlin.isType(tmp$ = this.canvas.getContext('2d'), CanvasRenderingContext2D) ? tmp$ : throwCCE();
     this.hexagonal_0 = false;
-    this.fieldSize = 50.0;
+    this.fieldSize = 60.0;
     this.gridThickness = 1.0;
     this.gridColor = 'black';
     this.outerBorder = 1.0;
