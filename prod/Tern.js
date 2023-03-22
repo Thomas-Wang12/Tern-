@@ -1650,11 +1650,11 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
       return $receiver.endTurn_0(event), Unit;
     }.bind(null, this)));
     this.players.add_11rb$(new Player('Player 1', 'yellow', new HumanController()));
-    this.players.add_11rb$(new Player('Player 2', 'orange', new SimpleAIController()));
-    this.players.add_11rb$(new Player('Player 3', 'red', new SimpleAIController()));
-    this.players.add_11rb$(new Player('Player 4', 'blue', new SimpleAIController()));
-    this.players.add_11rb$(new Player('Player 5', 'black', new SimpleAIController()));
-    this.players.add_11rb$(new Player('Player 6', 'green', new SimpleAIController()));
+    this.players.add_11rb$(new Player('Player 2', 'orange', new RandomAIController()));
+    this.players.add_11rb$(new Player('Player 3', 'red', new RandomAIController()));
+    this.players.add_11rb$(new Player('Player 4', 'blue', new RandomAIController()));
+    this.players.add_11rb$(new Player('Player 5', 'black', new RandomAIController()));
+    this.players.add_11rb$(new Player('Player 6', 'green', new RandomAIController()));
     this.gridDisplay.onClick = AlysDisplay_init$lambda(this);
     this.onCompleteAction_1nmxi3$_0 = AlysDisplay$onCompleteAction$lambda(this);
     this.onShowGame_59dkf9$_0 = AlysDisplay$onShowGame$lambda(this, gameAreaTop, gameAreaRight);
