@@ -1632,7 +1632,7 @@ var Tern = function (_, Kotlin, $module$kotlinx_coroutines_core) {
     this.addImage_0('G');
     this.aiDelay = L100;
     this.gridDisplay.gridColor = '#7df';
-    this.gridDisplay.outerBorder = 15.0;
+    this.gridDisplay.outerBorder = 20.0;
     this.statusArea_0.className = 'status-area';
     this.statusArea_0.textContent = 'Nothing selected';
     this.fortButton_0.textContent = 'Build fort (15)';
