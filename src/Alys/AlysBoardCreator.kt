@@ -4,7 +4,7 @@ import kotlin.random.Random
 class AlysBoardCreator(width: Int, height: Int, val seed: Int) {
 	val board: Grid<AlysField?> = Grid(width, height, { _, _ -> null })
 	var numberOfCenters: Int = 3
-	var landFraction: Double = 0.96
+	var landFraction: Double = 0.7
 
 	fun generateLand() {
 		val random = Random(seed)
@@ -40,7 +40,7 @@ class AlysBoardCreator(width: Int, height: Int, val seed: Int) {
 		var count = 0
 		while(remainingPositions.size>0){
 			for(player in 1..playerCount){
-				if(count > landFraction * (averageFields + averageFields * player.toDouble()/playerCount.toDouble()))
+				if(count > 0.7 * (averageFields + averageFields * player.toDouble()/playerCount.toDouble()))
 					continue
 				if(remainingPositions.size == 0)
 					break
